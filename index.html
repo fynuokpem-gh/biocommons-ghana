@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BioCommons Ghana — Open Science. Open Doors. Open Ghana.</title>
+<meta name="description" content="BioCommons Ghana connects biological scientists across Ghana to scholarships, jobs, reagent exchange, workshops, and more."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --cream:#FFFBF4;--dark:#0B2618;--dark2:#163A24;
+  --green:#0D7C3E;--green-dim:rgba(13,124,62,0.1);
+  --gold:#F5A623;--gold-dim:#FFF3D6;
+  --red:#CE1126;--red-dim:rgba(206,17,38,0.08);
+  --blue:#1A4A7A;--blue-dim:rgba(26,74,122,0.1);
+  --text:#1A1207;--muted:#5C6B5E;--muted2:#9AAA9C;
+  --border:#E2DDD6;--white:#FFFFFF;--surface:#F7F4EE;
+  --radius:14px;--radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--cream);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ANNOUNCEMENT BAR */
+.announce-bar{
+  background:var(--dark);color:rgba(255,251,244,0.85);
+  font-size:15px;font-weight:500;
+  padding:14px 5%;display:flex;align-items:center;gap:16px;
+  border-bottom:1px solid rgba(255,255,255,0.06);overflow:hidden;
+}
+.announce-label{
+  background:var(--gold);color:var(--dark);font-size:12px;font-weight:800;
+  padding:5px 14px;border-radius:50px;white-space:nowrap;letter-spacing:0.05em;
+  text-transform:uppercase;flex-shrink:0;
+}
+.announce-ticker-wrap{overflow:hidden;flex:1;}
+.announce-ticker{
+  display:flex;gap:56px;white-space:nowrap;
+  animation:ticker 28s linear infinite;
+}
+.announce-ticker:hover{animation-play-state:paused;}
+.announce-ticker span{white-space:nowrap;color:rgba(255,251,244,0.75);}
+.announce-ticker span strong{color:var(--gold);font-weight:700;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* NAV */
+.nav-bar{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5%;height:100px;
+  background:rgba(255,251,244,0.97);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-links{display:flex;gap:2px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600;padding:8px 12px;border-radius:10px;transition:all 0.2s;}
+.nav-links a:hover{color:var(--dark);background:var(--surface);}
+.btn-nav{background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;border:none;padding:14px 32px;border-radius:50px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+.btn-nav:hover{background:var(--dark2);transform:translateY(-1px);}
+
+/* HERO */
+.hero{background:var(--dark);padding:96px 5% 0;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
+.hero-inner{display:flex;align-items:center;gap:0;position:relative;z-index:1;}
+.hero-left{flex:0 0 52%;max-width:600px;padding-bottom:80px;}
+.hero-right{flex:0 0 620px;display:flex;align-items:flex-end;justify-content:center;}
+
+.hero-eyebrow{
+  display:flex;align-items:center;gap:10px;margin-bottom:22px;
+}
+.hero-eyebrow-line{width:28px;height:2px;background:var(--gold);border-radius:2px;flex-shrink:0;}
+.hero-eyebrow-text{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);
+  color:rgba(255,251,244,0.7);font-size:11px;font-weight:600;letter-spacing:0.07em;
+  text-transform:uppercase;padding:5px 12px 5px 8px;border-radius:50px;margin-bottom:24px;
+}
+.pulse{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(42px,5vw,72px);
+  font-weight:900;line-height:1.06;margin-bottom:20px;
+  letter-spacing:-0.5px;
+}
+.hero h1 .line-label{
+  display:block;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,251,244,0.35);margin-bottom:2px;font-family:'Plus Jakarta Sans',sans-serif;
+}
+.hero-sub{
+  font-size:15px;color:rgba(255,251,244,0.65);
+  line-height:1.9;margin-bottom:32px;max-width:440px;
+}
+.hero-cta-row{display:flex;align-items:center;gap:14px;margin-bottom:40px;flex-wrap:wrap;}
+.hero-cta-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gold);color:#1A0C00;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;
+  padding:13px 26px;border-radius:50px;text-decoration:none;
+  transition:all 0.2s;white-space:nowrap;letter-spacing:0.01em;
+}
+.hero-cta-primary:hover{background:#FFB733;transform:translateY(-1px);}
+.hero-cta-primary svg{flex-shrink:0;}
+.hero-cta-secondary{
+  font-size:13px;font-weight:600;color:rgba(255,251,244,0.5);
+  text-decoration:none;transition:color 0.2s;white-space:nowrap;
+}
+.hero-cta-secondary:hover{color:rgba(255,251,244,0.85);}
+
+/* SECTION BUTTONS */
+.hero-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:620px;}
+.hero-btn{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,251,244,0.04);
+  border:1px solid rgba(255,251,244,0.1);
+  border-left:3px solid rgba(255,251,244,0.12);
+  border-radius:12px;padding:14px 18px;cursor:pointer;
+  text-decoration:none;transition:all 0.22s;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.hero-btn:hover{background:rgba(255,251,244,0.09);border-color:rgba(255,251,244,0.22);border-left-color:rgba(255,251,244,0.22);transform:translateY(-1px);}
+.hero-btn-icon{font-size:20px;flex-shrink:0;}
+.hero-btn-label{font-size:12px;font-weight:700;color:rgba(255,251,244,0.85);line-height:1.3;}
+.hero-btn-count{font-size:10px;color:rgba(255,251,244,0.35);margin-top:2px;font-weight:500;}
+.hero-btn.gold{border-color:rgba(245,166,35,0.25);border-left-color:var(--gold);background:rgba(245,166,35,0.06);}
+.hero-btn.gold:hover{background:rgba(245,166,35,0.12);border-color:rgba(245,166,35,0.4);border-left-color:var(--gold);}
+.hero-btn.gold .hero-btn-label{color:#F5C55A;}
+
+/* STATS BAR */
+.stats-bar{
+  display:flex;border-top:1px solid rgba(255,251,244,0.07);
+  background:rgba(0,0,0,0.15);
+}
+.stat-item{
+  flex:1;padding:20px 24px;border-right:1px solid rgba(255,251,244,0.06);
+  display:flex;flex-direction:column;gap:3px;
+}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1;}
+.stat-label{font-size:10px;color:rgba(255,251,244,0.32);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;}
+
+/* TABS */
+.tabs-wrap{position:sticky;top:88px;z-index:100;background:rgba(255,251,244,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;overflow-x:auto;}
+.tabs{display:flex;white-space:nowrap;}
+.tab-btn{padding:15px 18px;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
+.tab-count{background:var(--surface);color:var(--muted);font-size:11px;font-weight:700;padding:2px 7px;border-radius:50px;border:1px solid var(--border);}
+.tab-btn.active .tab-count{background:var(--green-dim);color:var(--green);border-color:rgba(13,124,62,0.2);}
+
+/* SECTIONS */
+.section{padding:52px 5%;display:none;}
+.section.active{display:block;}
+.section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+.section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);}
+.section-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+.result-count{font-size:13px;color:var(--muted);padding-top:8px;}
+
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;}
+.f-btn{padding:7px 16px;border-radius:50px;border:1px solid var(--border);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.f-btn:hover{border-color:var(--dark);color:var(--dark);}
+.f-btn.active{background:var(--dark);color:var(--cream);border-color:var(--dark);}
+
+/* CARDS */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all 0.22s;display:flex;flex-direction:column;gap:12px;}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(11,38,24,0.1);border-color:rgba(11,38,24,0.2);}
+.card-flag{font-size:26px;}
+.card-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.3;}
+.card-host{font-size:13px;color:var(--muted);font-weight:500;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
+.badge-green{background:var(--green-dim);color:var(--green);}
+.badge-gold{background:var(--gold-dim);color:#7A5010;}
+.badge-red{background:var(--red-dim);color:var(--red);}
+.badge-blue{background:var(--blue-dim);color:var(--blue);}
+.badge-muted{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-size:11px;color:var(--muted);background:var(--surface);padding:3px 9px;border-radius:6px;border:1px solid var(--border);}
+.card-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:auto;}
+.card-action{display:block;text-align:center;background:var(--dark);color:var(--cream);font-size:13px;font-weight:700;padding:10px;border-radius:8px;text-decoration:none;transition:all 0.2s;margin-top:4px;}
+.card-action:hover{background:var(--dark2);}
+
+/* REAGENT */
+.reagent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.reagent-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:10px;transition:all 0.2s;}
+.reagent-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(11,38,24,0.08);}
+.reagent-type{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);}
+.reagent-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);}
+.reagent-detail{font-size:13px;color:var(--muted);line-height:1.6;}
+.reagent-meta{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px;margin-top:auto;}
+.reagent-inst{font-size:11px;color:var(--muted);}
+.reagent-contact{font-size:11px;font-weight:700;color:var(--dark);background:var(--gold-dim);padding:4px 12px;border-radius:50px;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;}
+.reagent-contact:hover{background:var(--gold);}
+
+/* PROFESSORS */
+.prof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+.prof-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:14px;transition:all 0.2s;}
+.prof-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(11,38,24,0.08);}
+.prof-top{display:flex;align-items:center;gap:14px;}
+.prof-avatar{width:50px;height:50px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--white);}
+.prof-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);}
+.prof-dept{font-size:12px;color:var(--muted);}
+.prof-uni{font-size:11px;color:var(--muted2);margin-top:2px;}
+.rating-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.rating-bar-bg{height:5px;background:var(--surface);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+.rating-bar-fill{height:5px;border-radius:3px;}
+.prof-overall{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:14px;}
+.overall-score{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--dark);}
+.overall-label{font-size:11px;color:var(--muted);}
+.stars{color:var(--gold);font-size:14px;margin-top:4px;}
+.rate-btn{background:var(--gold-dim);color:#7A5010;border:1px solid rgba(212,145,10,0.2);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;padding:8px 16px;border-radius:50px;cursor:pointer;transition:all 0.2s;}
+.rate-btn:hover{background:var(--gold);color:var(--dark);}
+
+/* SUBMIT */
+.submit-wrap{max-width:680px;}
+.submit-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.s-tab{padding:8px 18px;border-radius:50px;border:1px solid var(--border);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.s-tab:hover{border-color:var(--dark);color:var(--dark);}
+.s-tab.active{background:var(--dark);color:var(--cream);border-color:var(--dark);}
+.s-form{display:none;flex-direction:column;gap:14px;}
+.s-form.active{display:flex;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-row{display:flex;gap:12px;flex-wrap:wrap;}
+.form-row .form-group{flex:1;min-width:180px;}
+label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
+input,select,textarea{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--dark);}
+textarea{min-height:100px;resize:vertical;}
+.btn-submit{background:var(--dark);color:var(--cream);border:none;padding:14px 32px;border-radius:50px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;align-self:flex-start;}
+.btn-submit:hover{background:var(--dark2);transform:translateY(-1px);}
+.submit-note{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* EMPTY */
+.empty{text-align:center;padding:64px 20px;display:none;}
+.empty h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);margin-bottom:8px;}
+.empty p{color:var(--muted);font-size:14px;}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(11,38,24,0.55);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:20px;max-width:560px;width:100%;padding:36px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal-x{position:absolute;top:18px;right:18px;background:var(--surface);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);transition:all 0.2s;}
+.modal-x:hover{background:var(--dark);color:var(--cream);}
+.modal-flag{font-size:40px;margin-bottom:12px;}
+.modal h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-host{font-size:14px;color:var(--muted);margin-bottom:14px;}
+.modal hr{border:none;border-top:1px solid var(--border);margin:16px 0;}
+.modal-row{display:flex;gap:12px;margin-bottom:10px;}
+.modal-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;min-width:88px;padding-top:2px;}
+.modal-val{font-size:14px;color:var(--text);flex:1;}
+.modal-desc{font-size:14px;color:var(--muted);line-height:1.75;margin:14px 0 24px;}
+.modal-apply{display:inline-block;background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;text-decoration:none;padding:13px 28px;border-radius:50px;transition:background 0.2s;}
+.modal-apply:hover{background:var(--dark2);}
+
+/* CONTACT BAR */
+.contact-bar{background:var(--surface);border-top:1px solid var(--border);padding:28px 5%;}
+.contact-bar-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;max-width:1100px;margin:0 auto;}
+.contact-bar h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.contact-bar p{font-size:13px;color:var(--muted);}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:50px;white-space:nowrap;transition:background 0.2s;}
+.contact-btn:hover{background:var(--dark2);}
+
+/* FOOTER */
+footer{background:var(--dark);padding:52px 5% 32px;}
+.footer-inner{display:flex;gap:48px;flex-wrap:wrap;margin-bottom:40px;}
+.footer-brand{flex:2;min-width:220px;}
+.footer-tagline{font-size:13px;color:rgba(255,251,244,0.4);line-height:1.7;max-width:260px;margin-top:10px;}
+.footer-venture{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,251,244,0.08);}
+.footer-venture-label{font-size:10px;font-weight:700;color:rgba(255,251,244,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;}
+.footer-venture-badge{display:flex;align-items:center;gap:10px;}
+.fj-ring{width:34px;height:34px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);flex-shrink:0;}
+.fj-name{font-size:13px;font-weight:700;color:rgba(255,251,244,0.8);}
+.fj-sub{font-size:11px;color:rgba(255,251,244,0.35);margin-top:2px;}
+.footer-col{flex:1;min-width:120px;}
+.footer-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,251,244,0.3);margin-bottom:14px;}
+.footer-col a{display:block;font-size:13px;color:rgba(255,251,244,0.5);text-decoration:none;margin-bottom:10px;transition:color 0.2s;}
+.footer-col a:hover{color:var(--gold);}
+.footer-bottom{border-top:1px solid rgba(255,251,244,0.08);padding-top:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.footer-copy{font-size:12px;color:rgba(255,251,244,0.3);}
+.footer-gh{font-size:12px;color:var(--gold);font-weight:700;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;z-index:999;background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:14px 22px;border-radius:12px;transform:translateY(80px);opacity:0;transition:all 0.35s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+@media(max-width:768px){
+  .nav-bar{padding:0 4%;}.nav-links{display:none;}
+  .hero{padding:52px 4% 0;}.hero-inner{flex-direction:column;gap:0;}
+  .hero-right{display:none;}
+  .hero-left{padding-bottom:40px;}
+  .hero-btns{grid-template-columns:1fr 1fr;}
+  .stats-bar{flex-wrap:wrap;}.stat-item{flex:0 0 50%;padding:16px;}
+  .section{padding:36px 4%;}.tabs-wrap{padding:0 4%;}
+  .contact-bar{padding:24px 4%;}
+  footer{padding:40px 4% 24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announce-bar">
+  <span class="announce-label">📢 Announcements</span>
+  <div class="announce-ticker-wrap">
+    <div class="announce-ticker">
+      <span>🎓 <strong>Gates Cambridge Scholarship</strong> deadline: 08 Jan 2026 — Apply now</span>
+      <span>⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits available at Noguchi Institute</span>
+      <span>🏛 <strong>DAAD Scholarships</strong> closing 15 Oct 2025 — Don't miss it</span>
+      <span>🔬 <strong>NIH Summer Fellowship</strong> open for African applicants — Deadline 15 Jan 2026</span>
+      <span>📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop — Register now</span>
+      <span>🎓 <strong>Gates Cambridge Scholarship</strong> deadline: 08 Jan 2026 — Apply now</span>
+      <span>⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits available at Noguchi Institute</span>
+      <span>🏛 <strong>DAAD Scholarships</strong> closing 15 Oct 2025 — Don't miss it</span>
+      <span>🔬 <strong>NIH Summer Fellowship</strong> open for African applicants — Deadline 15 Jan 2026</span>
+      <span>📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop — Register now</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <a href="#" style="text-decoration:none" onclick="event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})">
+    <svg width="290" height="75" viewBox="0 0 340 95" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="45" cy="47" r="32" fill="none" stroke="#F5A623" stroke-width="7"/>
+      <line x1="45" y1="24" x2="28" y2="56" stroke="#0D7C3E" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="28" y1="56" x2="62" y2="56" stroke="#0D7C3E" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="45" y1="24" x2="62" y2="56" stroke="#0D7C3E" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="45" cy="24" r="4" fill="#0D7C3E"/>
+      <circle cx="28" cy="56" r="4" fill="#0D7C3E"/>
+      <circle cx="62" cy="56" r="4" fill="#0D7C3E"/>
+      <text x="92" y="40" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="800" fill="#111111">BioCommons</text>
+      <text x="92" y="67" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="800" fill="#0D7C3E">Ghana</text>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showSection('opportunities')">Scholarships</a></li>
+    <li><a href="#" onclick="showSection('grants')">Grants</a></li>
+    <li><a href="#" onclick="showSection('reagents')">Reagents</a></li>
+    <li><a href="#" onclick="showSection('internships')">Jobs & Internships</a></li>
+    <li><a href="#" onclick="showSection('workshops')">Workshops & Conferences</a></li>
+    <li><a href="#" onclick="showSection('programmes')">Graduate Programs-GH</a></li>
+  </ul>
+  <a href="#" class="btn-nav" onclick="showSection('submit')">+ Submit</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge"><div class="pulse"></div>Built for Ghana's Biological Scientists</div>
+      <h1>
+        <span style="color:#FFFFFF">Open Science.</span><br/>
+        <span style="color:#FFFFFF">Open Doors.</span><br/>
+        <span style="color:#FFFFFF">Open Ghana.</span>
+      </h1>
+      <p class="hero-sub">Scholarships, funding, jobs, reagent exchange, and workshops — all in one place, free for biological scientists across Ghana.</p>
+      <div class="hero-cta-row">
+        <a class="hero-cta-primary" href="#" onclick="showSection('opportunities')">
+          Explore Opportunities
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="hero-cta-secondary" href="#" onclick="showSection('submit')">Submit an opportunity →</a>
+      </div>
+      <div class="hero-btns">
+        <a class="hero-btn gold" href="#" onclick="showSection('opportunities')">
+          <span class="hero-btn-icon">🎓</span>
+          <div><div class="hero-btn-label">Scholarships</div><div class="hero-btn-count">12 open now</div></div>
+        </a>
+        <a class="hero-btn" href="#" onclick="showSection('grants')">
+          <span class="hero-btn-icon">💰</span>
+          <div><div class="hero-btn-label">Grants</div><div class="hero-btn-count">8 available</div></div>
+        </a>
+        <a class="hero-btn" href="#" onclick="showSection('reagents')">
+          <span class="hero-btn-icon">⚗️</span>
+          <div><div class="hero-btn-label">Reagent Exchange</div><div class="hero-btn-count">10 listings</div></div>
+        </a>
+        <a class="hero-btn" href="#" onclick="showSection('internships')">
+          <span class="hero-btn-icon">💼</span>
+          <div><div class="hero-btn-label">Jobs & Internships</div><div class="hero-btn-count">9 positions</div></div>
+        </a>
+        <a class="hero-btn" href="#" onclick="showSection('workshops')">
+          <span class="hero-btn-icon">🏛</span>
+          <div><div class="hero-btn-label">Workshops & Conferences</div><div class="hero-btn-count">6 upcoming</div></div>
+        </a>
+        <a class="hero-btn" href="#" onclick="showSection('programmes')">
+          <span class="hero-btn-icon">📚</span>
+          <div><div class="hero-btn-label">Graduate Programs-GH</div><div class="hero-btn-count">8 programmes</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- BACKGROUND IMAGE — behind hero-inner text -->
+  <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;">
+      <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1920&q=85"
+        alt="Researcher at microscope"
+        style="width:100%;height:100%;object-fit:cover;object-position:72% 40%;
+               opacity:1;display:block;
+               filter:contrast(1.1) saturate(1.12) brightness(0.78);"/>
+      <!-- Left fade — cleanly separates text from image -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,var(--dark) 0%,var(--dark) 32%,rgba(11,38,24,0.92) 40%,rgba(11,38,24,0.6) 50%,rgba(11,38,24,0.15) 62%,transparent 72%);pointer-events:none;"></div>
+      <!-- Top fade — dissolves top edge into hero background -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to bottom,var(--dark) 0%,rgba(11,38,24,0.85) 8%,rgba(11,38,24,0.4) 18%,transparent 32%);pointer-events:none;"></div>
+      <!-- Right fade — dissolves right edge -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to left,var(--dark) 0%,rgba(11,38,24,0.75) 5%,rgba(11,38,24,0.2) 12%,transparent 22%);pointer-events:none;"></div>
+      <!-- Bottom fade — dissolves into stats bar -->
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,var(--dark) 0%,rgba(11,38,24,0.8) 8%,rgba(11,38,24,0.3) 18%,transparent 30%);pointer-events:none;"></div>
+    </div>
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Scholarships</div></div>
+    <div class="stat-item"><div class="stat-num">9</div><div class="stat-label">Jobs & Internships</div></div>
+    <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Reagents Listed</div></div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Programmes</div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Workshops</div></div>
+    <div class="stat-item"><div class="stat-num">Free</div><div class="stat-label">Always & forever</div></div>
+  </div>
+</section>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showSection('opportunities')" id="tab-opportunities">🎓 Scholarships <span class="tab-count">18</span></button>
+    <button class="tab-btn" onclick="showSection('grants')" id="tab-grants">💰 Grants <span class="tab-count">8</span></button>
+    <button class="tab-btn" onclick="showSection('reagents')" id="tab-reagents">⚗️ Reagents <span class="tab-count">10</span></button>
+    <button class="tab-btn" onclick="showSection('internships')" id="tab-internships">💼 Jobs & Internships <span class="tab-count">9</span></button>
+    <button class="tab-btn" onclick="showSection('workshops')" id="tab-workshops">🏛 Workshops & Conferences <span class="tab-count">6</span></button>
+    <button class="tab-btn" onclick="showSection('programmes')" id="tab-programmes">📚 Graduate Programs-GH <span class="tab-count">8</span></button>
+    <button class="tab-btn" onclick="showSection('submit')" id="tab-submit">➕ Submit</button>
+  </div>
+</div>
+
+<!-- SCHOLARSHIPS -->
+<div class="section active" id="sec-opportunities">
+  <div class="section-hd">
+    <div><div class="section-title">Scholarships & Funding</div><div class="section-sub">Fully funded and partial opportunities for Ghanaian biological scientists</div></div>
+    <span class="result-count" id="opp-count"></span>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterOpportunities(this)">All</button>
+    <button class="f-btn" data-f="local" onclick="filterOpportunities(this)">🇬🇭 Local</button>
+    <button class="f-btn" data-f="international" onclick="filterOpportunities(this)">🌍 International</button>
+    <button class="f-btn" data-f="fully-funded" onclick="filterOpportunities(this)">Fully Funded</button>
+    <button class="f-btn" data-f="phd" onclick="filterOpportunities(this)">PhD</button>
+    <button class="f-btn" data-f="msc" onclick="filterOpportunities(this)">MSc</button>
+    <button class="f-btn" data-f="deadline-soon" onclick="filterOpportunities(this)">Closing Soon</button>
+  </div>
+  <div class="grid" id="opp-grid"></div>
+  <div class="empty" id="opp-empty"><h3>No results found</h3><p>Try a different filter or <a href="#" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
+</div>
+
+<!-- GRANTS -->
+<div class="section" id="sec-grants">
+  <div class="section-hd">
+    <div><div class="section-title">Research Grants & Funding</div><div class="section-sub">Lab grants, institutional funding, and research awards for Ghanaian biological scientists</div></div>
+    <span class="result-count" id="grants-count"></span>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterGrants(this)">All</button>
+    <button class="f-btn" data-f="research" onclick="filterGrants(this)">Research</button>
+    <button class="f-btn" data-f="travel" onclick="filterGrants(this)">Travel</button>
+    <button class="f-btn" data-f="equipment" onclick="filterGrants(this)">Equipment</button>
+    <button class="f-btn" data-f="africa" onclick="filterGrants(this)">Africa-Based</button>
+    <button class="f-btn" data-f="deadline-soon" onclick="filterGrants(this)">Closing Soon</button>
+  </div>
+  <div class="grid" id="grants-grid"></div>
+  <div class="empty" id="grants-empty"><h3>No results found</h3><p>Try a different filter or <a href="#" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
+</div>
+
+<!-- JOBS & INTERNSHIPS -->
+<div class="section" id="sec-internships">
+  <div class="section-hd">
+    <div><div class="section-title">Jobs & Internships</div><div class="section-sub">Lab internships, research assistantships, industry jobs, and field placements</div></div>
+    <span class="result-count" id="int-count"></span>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterInternships(this)">All</button>
+    <button class="f-btn" data-f="paid" onclick="filterInternships(this)">Paid</button>
+    <button class="f-btn" data-f="research" onclick="filterInternships(this)">Research</button>
+    <button class="f-btn" data-f="industry" onclick="filterInternships(this)">Industry</button>
+    <button class="f-btn" data-f="international" onclick="filterInternships(this)">International</button>
+    <button class="f-btn" data-f="wanted" onclick="filterInternships(this)" style="border-color:rgba(206,17,38,0.3);color:var(--red)">🙋 Job Wanted</button>
+  </div>
+  <div class="grid" id="int-grid"></div>
+</div>
+
+<!-- REAGENTS -->
+<div class="section" id="sec-reagents">
+  <div class="section-hd">
+    <div><div class="section-title">Reagent Exchange</div><div class="section-sub">Share or request lab reagents, equipment, and consumables across institutions</div></div>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterReagents(this)">All</button>
+    <button class="f-btn" data-f="available" onclick="filterReagents(this)">Available</button>
+    <button class="f-btn" data-f="seeking" onclick="filterReagents(this)">Seeking</button>
+    <button class="f-btn" data-f="equipment" onclick="filterReagents(this)">Equipment</button>
+    <button class="f-btn" data-f="chemicals" onclick="filterReagents(this)">Chemicals</button>
+    <button class="f-btn" data-f="kits" onclick="filterReagents(this)">Kits</button>
+  </div>
+  <div class="reagent-grid" id="reagent-grid"></div>
+</div>
+
+<!-- WORKSHOPS & CONFERENCES -->
+<div class="section" id="sec-workshops">
+  <div class="section-hd">
+    <div><div class="section-title">Workshops & Conferences</div><div class="section-sub">Training workshops, scientific conferences, and networking events for biological scientists in Ghana</div></div>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterWorkshops(this)">All</button>
+    <button class="f-btn" data-f="workshop" onclick="filterWorkshops(this)">Workshops</button>
+    <button class="f-btn" data-f="conference" onclick="filterWorkshops(this)">Conferences</button>
+    <button class="f-btn" data-f="free" onclick="filterWorkshops(this)">Free</button>
+    <button class="f-btn" data-f="virtual" onclick="filterWorkshops(this)">Virtual</button>
+  </div>
+  <div class="grid" id="workshop-grid"></div>
+</div>
+
+<!-- PROGRAMMES -->
+<div class="section" id="sec-programmes">
+  <div class="section-hd">
+    <div><div class="section-title">Graduate Programmes</div><div class="section-sub">MSc and PhD programmes at Ghanaian universities</div></div>
+    <span class="result-count" id="prog-count"></span>
+  </div>
+  <div class="filter-row">
+    <button class="f-btn active" data-f="all" onclick="filterProgrammes(this)">All</button>
+    <button class="f-btn" data-f="msc" onclick="filterProgrammes(this)">MSc / MPhil</button>
+    <button class="f-btn" data-f="phd" onclick="filterProgrammes(this)">PhD</button>
+    <button class="f-btn" data-f="ug" onclick="filterProgrammes(this)">Univ. of Ghana</button>
+    <button class="f-btn" data-f="knust" onclick="filterProgrammes(this)">KNUST</button>
+    <button class="f-btn" data-f="ucc" onclick="filterProgrammes(this)">UCC</button>
+  </div>
+  <div class="grid" id="prog-grid"></div>
+</div>
+
+<!-- SUBMIT -->
+<div class="section" id="sec-submit">
+  <div class="section-hd">
+    <div><div class="section-title">Submit to BioCommons Ghana</div><div class="section-sub">All submissions reviewed before going live — within 24 hours.</div></div>
+  </div>
+  <div class="submit-wrap">
+    <div class="submit-tabs">
+      <button class="s-tab active" onclick="showSubmitForm('scholarship',this)">🎓 Scholarship</button>
+      <button class="s-tab" onclick="showSubmitForm('internship',this)">💼 Job / Internship</button>
+      <button class="s-tab" onclick="showSubmitForm('jobwanted',this)">🙋 Job Wanted</button>
+      <button class="s-tab" onclick="showSubmitForm('reagent',this)">⚗️ Reagent</button>
+      <button class="s-tab" onclick="showSubmitForm('workshop',this)">🏛 Workshop / Conference</button>
+      <button class="s-tab" onclick="showSubmitForm('programme',this)">📚 Programme</button>
+    </div>
+
+    <div class="s-form active" id="sf-scholarship">
+      <div class="form-row">
+        <div class="form-group"><label>Scholarship Name</label><input type="text" placeholder="e.g. Commonwealth Scholarships"/></div>
+        <div class="form-group"><label>Host Organisation</label><input type="text" placeholder="e.g. Commonwealth Commission"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Country</label><input type="text" placeholder="e.g. United Kingdom"/></div>
+        <div class="form-group"><label>Deadline</label><input type="text" placeholder="e.g. 15 Jan 2026"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Degree Level</label><select><option>MSc</option><option>PhD</option><option>Both MSc & PhD</option><option>Postdoc</option></select></div>
+        <div class="form-group"><label>Funding Type</label><select><option>Fully Funded</option><option>Partial Funding</option><option>Stipend Only</option></select></div>
+      </div>
+      <div class="form-group"><label>Official Link</label><input type="url" placeholder="https://"/></div>
+      <div class="form-group"><label>Description</label><textarea placeholder="Who is eligible? What does it cover?"></textarea></div>
+      <div class="form-group"><label>Your Email (optional)</label><input type="email" placeholder="you@example.com"/></div>
+      <button class="btn-submit" onclick="submitForm('Scholarship')">Submit Scholarship →</button>
+      <p class="submit-note">Reviewed within 24 hours. We verify all links before publishing.</p>
+    </div>
+
+    <div class="s-form" id="sf-internship">
+      <div class="form-row">
+        <div class="form-group"><label>Position Title</label><input type="text" placeholder="e.g. Research Assistant — Molecular Biology"/></div>
+        <div class="form-group"><label>Organisation</label><input type="text" placeholder="e.g. CSIR-SARI"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Location</label><input type="text" placeholder="e.g. Accra, Ghana"/></div>
+        <div class="form-group"><label>Duration</label><input type="text" placeholder="e.g. 3 months"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Type</label><select><option>Research</option><option>Industry</option><option>Field Work</option><option>Clinical</option></select></div>
+        <div class="form-group"><label>Compensation</label><select><option>Paid</option><option>Stipend</option><option>Unpaid</option><option>Accommodation Provided</option></select></div>
+      </div>
+      <div class="form-group"><label>Description & How to Apply</label><textarea placeholder="What will the person do? What are the requirements?"></textarea></div>
+      <div class="form-group"><label>Application Link / Contact</label><input type="text" placeholder="Link or email"/></div>
+      <button class="btn-submit" onclick="submitForm('Job / Internship')">Submit →</button>
+    </div>
+
+    <div class="s-form" id="sf-jobwanted">
+      <div style="background:var(--red-dim);border:1px solid rgba(206,17,38,0.15);border-radius:var(--radius-sm);padding:14px 18px;font-size:13px;color:var(--red);font-weight:600;">
+        🙋 You are posting what <em>you</em> are looking for. Reviewed before going live.
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Your Name</label><input type="text" placeholder="e.g. Dr. Ama Asante"/></div>
+        <div class="form-group"><label>Your Institution</label><input type="text" placeholder="e.g. University of Ghana / Independent"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Role / Position Sought</label><input type="text" placeholder="e.g. Research Assistant, Lab Technician, Postdoc"/></div>
+        <div class="form-group"><label>Field / Specialisation</label><input type="text" placeholder="e.g. Molecular Biology, Parasitology"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Preferred Location</label><input type="text" placeholder="e.g. Accra, Remote, Anywhere"/></div>
+        <div class="form-group"><label>Availability</label><select><option>Immediately available</option><option>Within 1 month</option><option>Within 3 months</option><option>After graduation</option></select></div>
+      </div>
+      <div class="form-group"><label>Highest Qualification</label><select><option>BSc (in progress)</option><option>BSc (completed)</option><option>MSc (in progress)</option><option>MSc (completed)</option><option>PhD (in progress)</option><option>PhD (completed)</option><option>Postdoc</option></select></div>
+      <div class="form-group"><label>Skills & Experience</label><textarea placeholder="Key skills, lab techniques, and what kind of role you're looking for…"></textarea></div>
+      <div class="form-group"><label>Contact Email</label><input type="email" placeholder="your@email.com"/></div>
+      <button class="btn-submit" onclick="submitForm('Job Wanted post')">Post Job Wanted →</button>
+      <p class="submit-note">Reviewed within 24 hours. Contact only shown after approval.</p>
+    </div>
+
+    <div class="s-form" id="sf-reagent">
+      <div class="form-row">
+        <div class="form-group"><label>Listing Type</label><select><option>I have it (Available)</option><option>I need it (Seeking)</option></select></div>
+        <div class="form-group"><label>Category</label><select><option>Chemicals</option><option>Kits</option><option>Equipment</option><option>Consumables</option><option>Biological Materials</option></select></div>
+      </div>
+      <div class="form-group"><label>Reagent / Item Name</label><input type="text" placeholder="e.g. Taq DNA Polymerase 500U"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantity</label><input type="text" placeholder="e.g. 200µl, 1 kit, 50g"/></div>
+        <div class="form-group"><label>Condition</label><select><option>New / Unopened</option><option>Partially Used</option><option>Expired (non-critical)</option></select></div>
+      </div>
+      <div class="form-group"><label>What Can You Offer in Exchange? (optional)</label><input type="text" placeholder="e.g. Agarose powder, PCR tubes, open to discussion"/></div>
+      <div class="form-group"><label>Your Institution</label><input type="text" placeholder="e.g. KNUST Biochemistry Lab"/></div>
+      <div class="form-group"><label>Contact Email</label><input type="email" placeholder="lab@example.edu.gh"/></div>
+      <div class="form-group"><label>Additional Notes</label><textarea placeholder="Storage conditions, expiry, urgency…" style="min-height:70px"></textarea></div>
+      <button class="btn-submit" onclick="submitForm('Reagent listing')">Submit Reagent →</button>
+      <p class="submit-note">Reviewed within 24 hours. Contact shared only after approval.</p>
+    </div>
+
+    <div class="s-form" id="sf-workshop">
+      <div class="form-row">
+        <div class="form-group"><label>Event Name</label><input type="text" placeholder="e.g. Bioinformatics Boot Camp 2026"/></div>
+        <div class="form-group"><label>Type</label><select><option>Workshop</option><option>Conference</option><option>Symposium</option><option>Seminar</option><option>Webinar</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Organiser</label><input type="text" placeholder="e.g. CSIR, University of Ghana"/></div>
+        <div class="form-group"><label>Date</label><input type="text" placeholder="e.g. 15–17 March 2026"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Location / Mode</label><input type="text" placeholder="e.g. Accra / Virtual / Hybrid"/></div>
+        <div class="form-group"><label>Cost</label><select><option>Free</option><option>Paid — registration fee</option><option>Funded (travel & accommodation)</option></select></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea placeholder="What is the event about? Who should attend? Key topics covered?"></textarea></div>
+      <div class="form-group"><label>Registration / Event Link</label><input type="url" placeholder="https://"/></div>
+      <div class="form-group"><label>Your Email (optional)</label><input type="email" placeholder="you@example.com"/></div>
+      <button class="btn-submit" onclick="submitForm('Workshop / Conference')">Submit Event →</button>
+      <p class="submit-note">Reviewed within 24 hours.</p>
+    </div>
+
+    <div class="s-form" id="sf-programme">
+      <div class="form-row">
+        <div class="form-group"><label>Programme Name</label><input type="text" placeholder="e.g. MSc Biochemistry"/></div>
+        <div class="form-group"><label>University</label><input type="text" placeholder="e.g. University of Ghana"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Degree Type</label><select><option>MSc</option><option>MPhil</option><option>PhD</option><option>PGDip</option></select></div>
+        <div class="form-group"><label>Duration</label><input type="text" placeholder="e.g. 2 years"/></div>
+      </div>
+      <div class="form-group"><label>Admission Requirements</label><textarea placeholder="Entry requirements, GPA, other qualifications…"></textarea></div>
+      <div class="form-group"><label>Programme Link</label><input type="url" placeholder="https://"/></div>
+      <button class="btn-submit" onclick="submitForm('Programme')">Submit Programme →</button>
+    </div>
+
+    <div class="s-form" id="sf-professor">
+      <div class="form-row">
+        <div class="form-group"><label>Professor's Name</label><input type="text" placeholder="e.g. Prof. Kofi Mensah"/></div>
+        <div class="form-group"><label>University</label><select><option>University of Ghana (UG)</option><option>KNUST</option><option>University of Cape Coast (UCC)</option><option>University for Dev. Studies (UDS)</option><option>Other</option></select></div>
+      </div>
+      <div class="form-group"><label>Department</label><input type="text" placeholder="e.g. Biochemistry, Cell & Molecular Biology"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Teaching Quality (1–5)</label><select><option>5 — Excellent</option><option>4 — Good</option><option>3 — Average</option><option>2 — Below Average</option><option>1 — Poor</option></select></div>
+        <div class="form-group"><label>Accessibility (1–5)</label><select><option>5 — Excellent</option><option>4 — Good</option><option>3 — Average</option><option>2 — Below Average</option><option>1 — Poor</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Research Mentorship (1–5)</label><select><option>5 — Excellent</option><option>4 — Good</option><option>3 — Average</option><option>2 — Below Average</option><option>1 — Poor</option></select></div>
+        <div class="form-group"><label>Overall Rating (1–5)</label><select><option>5 — Excellent</option><option>4 — Good</option><option>3 — Average</option><option>2 — Below Average</option><option>1 — Poor</option></select></div>
+      </div>
+      <div class="form-group"><label>Your Review</label><textarea placeholder="Share your honest experience. Be constructive and respectful."></textarea></div>
+      <button class="btn-submit" onclick="submitForm('Professor rating')">Submit Rating →</button>
+      <p class="submit-note">Ratings are anonymous. Identifying information removed before publishing.</p>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div style="background:var(--dark);padding:56px 5%;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <span style="background:var(--gold);color:var(--dark);font-size:11px;font-weight:800;padding:4px 12px;border-radius:50px;letter-spacing:0.06em;text-transform:uppercase;">Monthly Newsletter</span>
+    </div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--cream);margin-bottom:10px;line-height:1.15;">Stay in the loop.<br/><span style="color:var(--gold)">Never miss an opportunity.</span></h2>
+    <p style="font-size:15px;color:rgba(255,251,244,0.5);margin-bottom:32px;line-height:1.75;">Every month we send a curated digest of new scholarships, open jobs, reagent listings, and upcoming workshops directly to your inbox. Free. No spam.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <input type="text" id="nl-name" placeholder="Your full name" style="flex:1;min-width:160px;background:rgba(255,251,244,0.07);border:1px solid rgba(255,251,244,0.15);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;" onfocus="this.style.borderColor='rgba(245,166,35,0.5)'" onblur="this.style.borderColor='rgba(255,251,244,0.15)'"/>
+      <input type="text" id="nl-institution" placeholder="Institution / University" style="flex:1;min-width:180px;background:rgba(255,251,244,0.07);border:1px solid rgba(255,251,244,0.15);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;" onfocus="this.style.borderColor='rgba(245,166,35,0.5)'" onblur="this.style.borderColor='rgba(255,251,244,0.15)'"/>
+      <input type="email" id="nl-email" placeholder="Your email address" style="flex:2;min-width:220px;background:rgba(255,251,244,0.07);border:1px solid rgba(255,251,244,0.15);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;" onfocus="this.style.borderColor='rgba(245,166,35,0.5)'" onblur="this.style.borderColor='rgba(255,251,244,0.15)'"/>
+      <button onclick="subscribeNewsletter()" style="background:var(--gold);color:var(--dark);border:none;padding:14px 28px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='#FFB733'" onmouseout="this.style.background='#F5A623'">Subscribe →</button>
+    </div>
+    <p style="font-size:12px;color:rgba(255,251,244,0.25);margin-top:14px;">By subscribing you agree to receive the BioCommons Ghana monthly newsletter. Unsubscribe anytime.</p>
+  </div>
+</div>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <div class="contact-bar-inner">
+    <div>
+      <h3>Contact BioCommons Ghana</h3>
+      <p>Suggestions, partnerships, broken links? We respond within 24 hours.</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <a class="contact-btn" href="mailto:biocommonsghana@gmail.com">📧 biocommonsghana@gmail.com</a>
+      <a class="contact-btn" href="https://twitter.com/BioCommons_GH" target="_blank" rel="noopener" style="background:#000000;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"/></svg>
+        @BioCommons_GH
+      </a>
+      <a class="contact-btn" href="https://linkedin.com/company/biocommons-ghana" target="_blank" rel="noopener" style="background:#0A66C2;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        BioCommons Ghana
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg width="180" height="58" viewBox="0 0 340 95" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="45" cy="47" r="32" fill="none" stroke="#F5A623" stroke-width="7"/>
+        <line x1="45" y1="24" x2="28" y2="56" stroke="#22A85A" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="28" y1="56" x2="62" y2="56" stroke="#22A85A" stroke-width="2.2" stroke-linecap="round"/>
+        <line x1="45" y1="24" x2="62" y2="56" stroke="#22A85A" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="45" cy="24" r="4" fill="#22A85A"/>
+        <circle cx="28" cy="56" r="4" fill="#22A85A"/>
+        <circle cx="62" cy="56" r="4" fill="#22A85A"/>
+        <text x="92" y="40" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="800" fill="#FFFBF4">BioCommons</text>
+        <text x="92" y="67" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="800" fill="#22A85A">Ghana</text>
+      </svg>
+      <p class="footer-tagline">Open science infrastructure for biological scientists across Ghana.</p>
+      <div class="footer-venture">
+        <div class="footer-venture-label">A venture of</div>
+        <div class="footer-venture-badge">
+          <div class="fj-ring">F&amp;J</div>
+          <div><div class="fj-name">F&amp;J Company Limited</div><div class="fj-sub">Also: Fons Biotech</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="#" onclick="showSection('opportunities')">Scholarships</a>
+      <a href="#" onclick="showSection('internships')">Jobs & Internships</a>
+      <a href="#" onclick="showSection('reagents')">Reagent Exchange</a>
+      <a href="#" onclick="showSection('workshops')">Workshops & Conferences</a>
+      <a href="#" onclick="showSection('programmes')">Programmes</a>
+    </div>
+    <div class="footer-col">
+      <h4>Universities</h4>
+      <a href="#">Univ. of Ghana</a>
+      <a href="#">KNUST</a>
+      <a href="#">Univ. of Cape Coast</a>
+      <a href="#">UDS</a>
+    </div>
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <a href="https://twitter.com/BioCommons_GH" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"/></svg>
+        @BioCommons_GH
+      </a>
+      <a href="https://linkedin.com/company/biocommons-ghana" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        BioCommons Ghana
+      </a>
+      <a href="mailto:biocommonsghana@gmail.com" style="display:flex;align-items:center;gap:8px;">✉ biocommonsghana@gmail.com</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 BioCommons Ghana · An F&amp;J Company Venture. Free, always.</span>
+    <span class="footer-gh">🇬🇭 Made for Ghana</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="modal-flag" id="m-flag"></div>
+    <h2 id="m-title"></h2>
+    <div class="modal-host" id="m-host"></div>
+    <div class="badges" id="m-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Country</div><div class="modal-val" id="m-country"></div></div>
+    <div class="modal-row"><div class="modal-label">Degree</div><div class="modal-val" id="m-degree"></div></div>
+    <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="m-fields"></div></div>
+    <div class="modal-row"><div class="modal-label">Funding</div><div class="modal-val" id="m-funding"></div></div>
+    <div class="modal-row"><div class="modal-label">Deadline</div><div class="modal-val" id="m-deadline"></div></div>
+    <hr/>
+    <p class="modal-desc" id="m-desc"></p>
+    <a class="modal-apply" id="m-link" href="#" target="_blank" rel="noopener">Apply Now →</a>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── BioCommons Ghana Database API ───────────────────────────────────────
+   Paste your Google Apps Script Web App URL below after deployment.
+   Leave empty ('') to run in offline/demo mode.
+   ──────────────────────────────────────────────────────────────────────── */
+const BIOCOMMONS_API = 'https://script.google.com/macros/s/AKfycbzDfl9FxRfdm-tdiLYdVdKuFdor6kdcS-eIw26WJ448yuU76JA_WEtuiu-YZ86hojJ8/exec';
+
+const opportunities=[
+  {scope:'international',id:1,flag:"🇬🇧",country:"United Kingdom",title:"Commonwealth Scholarships",host:"Commonwealth Scholarship Commission",degree:"MSc & PhD",fields:"Biological Sciences, Health, Environment",tags:["fully-funded","msc","phd"],funding:"Full tuition + living + flights",deadline:"17 Jan 2026",soon:false,desc:"Fully funded awards for Ghanaian scientists to pursue master's or PhD at UK universities.",link:"https://cscuk.fcdo.gov.uk/scholarships/"},
+  {scope:'international',id:2,flag:"🇩🇪",country:"Germany",title:"DAAD Research Scholarships",host:"DAAD",degree:"MSc & PhD",fields:"Natural Sciences, Biochemistry, Ecology",tags:["fully-funded","msc","phd"],funding:"Full tuition + €1,200/month",deadline:"15 Oct 2025",soon:true,desc:"Germany charges no tuition at public universities. DAAD covers living costs with a generous stipend.",link:"https://www.daad.de/en/"},
+  {scope:'international',id:3,flag:"🇳🇱",country:"Netherlands",title:"Erasmus Mundus Joint Masters",host:"European Commission",degree:"MSc",fields:"All Biological Sciences",tags:["fully-funded","msc"],funding:"€1,400/month + full tuition + travel",deadline:"Jan 2026",soon:false,desc:"Study in at least two European countries under one of the most prestigious EU scholarship schemes.",link:"https://www.eacea.ec.europa.eu/"},
+  {scope:'international',id:4,flag:"🇯🇵",country:"Japan",title:"MEXT Government Scholarship",host:"Japanese Ministry of Education",degree:"MSc & PhD",fields:"Sciences, Biotechnology, Agriculture",tags:["fully-funded","msc","phd"],funding:"Full tuition + ¥143,000/month + flights",deadline:"Jun 2026",soon:false,desc:"One of the most comprehensive scholarships in Asia. World-class research in molecular biology.",link:"https://www.mext.go.jp/en/"},
+  {scope:'international',id:5,flag:"🇬🇧",country:"United Kingdom",title:"Gates Cambridge Scholarship",host:"University of Cambridge",degree:"MSc & PhD",fields:"Biological Sciences, Medicine, Ecology",tags:["fully-funded","msc","phd"],funding:"Full University costs + living",deadline:"08 Jan 2026",soon:true,desc:"Among the most prestigious scholarships in the world. Based on excellence, leadership, and impact.",link:"https://www.gatescambridge.org/"},
+  {scope:'international',id:6,flag:"🇨🇭",country:"Switzerland",title:"Swiss Government Excellence Scholarships",host:"Swiss Confederation",degree:"PhD & Postdoc",fields:"Sciences, Engineering, Health",tags:["fully-funded","phd"],funding:"CHF 1,920/month + tuition + housing",deadline:"31 Oct 2025",soon:true,desc:"Awarded to young researchers from Ghana for doctoral and postdoctoral studies at Swiss universities.",link:"https://www.sbfi.admin.ch/"},
+  {scope:'international',id:7,flag:"🇰🇷",country:"South Korea",title:"Global Korea Scholarship (GKS)",host:"NIIED",degree:"MSc & PhD",fields:"Sciences, Biotechnology, Engineering",tags:["fully-funded","msc","phd"],funding:"Full tuition + KRW 900,000/month",deadline:"Feb 2026",soon:false,desc:"Strong in biotech and molecular sciences.",link:"https://www.studyinkorea.go.kr/"},
+  {scope:'international',id:8,flag:"🇸🇪",country:"Sweden",title:"Swedish Institute Scholarships",host:"Swedish Institute",degree:"MSc",fields:"Environment, Sciences, Sustainability",tags:["fully-funded","msc"],funding:"Full tuition + SEK 11,000/month",deadline:"10 Feb 2026",soon:false,desc:"Sweden has no tuition fees. Scholarship covers all living costs.",link:"https://si.se/en/"},
+  {scope:'international',id:9,flag:"🇦🇺",country:"Australia",title:"Australia Awards Scholarships",host:"Australian Government (DFAT)",degree:"MSc & PhD",fields:"Agriculture, Health, Environment, Sciences",tags:["fully-funded","msc","phd","africa"],funding:"Full tuition + living + flights + health",deadline:"30 Apr 2026",soon:false,desc:"Ghana is a priority country. Very high success rate from West Africa.",link:"https://www.australiaawards.gov.au/"},
+  {scope:'international',id:10,flag:"🇧🇪",country:"Belgium",title:"VLIR-UOS Scholarships",host:"VLIR-UOS",degree:"MSc",fields:"Agriculture, Health, Environment",tags:["fully-funded","msc","africa"],funding:"Full tuition + €800/month + travel",deadline:"01 Feb 2026",soon:false,desc:"Belgian development cooperation scholarships for Global South scientists.",link:"https://www.vliruos.be/en/"},
+  {scope:'international',id:11,flag:"🇨🇦",country:"Canada",title:"Vanier Canada Graduate Scholarship",host:"Government of Canada",degree:"PhD",fields:"Health, Sciences, Social Sciences",tags:["fully-funded","phd"],funding:"CAD $50,000/year × 3 years",deadline:"Nov 2025",soon:true,desc:"World-class doctoral scholarship based on leadership and academic excellence.",link:"https://vanier.gc.ca/"},
+  {scope:'international',id:12,flag:"🇺🇸",country:"United States",title:"MasterCard Foundation Scholars",host:"Various US Universities",degree:"MSc",fields:"Sciences, Computing, Social",tags:["fully-funded","msc","africa"],funding:"Full tuition + living + mentorship",deadline:"Rolling",soon:false,desc:"For academically talented young Africans with limited financial means.",link:"https://mastercardfdn.org/all/scholars/"},
+  {scope:'local',id:13,flag:'🇬🇭',country:'Ghana',title:'GETFund Scholarship Scheme',host:'Ghana Education Trust Fund',degree:'MSc & PhD',fields:'Sciences, Health, Engineering',tags:['fully-funded','msc','phd'],funding:'Full tuition + stipend',deadline:'31 Mar 2026',soon:false,desc:'GETFund supports Ghanaian students pursuing postgraduate studies locally and abroad at accredited institutions.',link:'https://www.getfund.gov.gh/'},
+  {scope:'local',id:14,flag:'🇬🇭',country:'Ghana',title:'KNUST Postgraduate Scholarship',host:'Kwame Nkrumah University of Science & Technology',degree:'MSc & PhD',fields:'Biological Sciences, Biochemistry, Agriculture',tags:['fully-funded','msc','phd'],funding:'Full tuition + GH¢ 2,000/month',deadline:'01 Jul 2026',soon:false,desc:'KNUST awards competitive scholarships to high-achieving students admitted to its postgraduate science programmes.',link:'https://pg.knust.edu.gh/'},
+  {scope:'local',id:15,flag:'🇬🇭',country:'Ghana',title:'University of Ghana Research Fellowship',host:'University of Ghana, Legon',degree:'PhD',fields:'Molecular Biology, Immunology, Epidemiology',tags:['fully-funded','phd'],funding:'Full tuition + GH¢ 3,000/month',deadline:'30 Apr 2026',soon:false,desc:'Research fellowships for PhD candidates at UG Legon, with access to Noguchi Memorial Institute facilities.',link:'https://ug.edu.gh/'},
+  {scope:'local',id:16,flag:'🇬🇭',country:'Ghana',title:'CSIR-Ghana Research Studentship',host:'Council for Scientific & Industrial Research',degree:'MSc & PhD',fields:'Food Science, Agri-Biotech, Industrial Microbiology',tags:['fully-funded','msc','phd'],funding:'Full stipend + lab access',deadline:'Rolling',soon:false,desc:'CSIR Ghana places postgraduate students in its 13 research institutes across the country.',link:'https://csir.org.gh/'},
+  {scope:'local',id:17,flag:'🇬🇭',country:'Ghana',title:'Ghana Science Association Research Award',host:'Ghana Science Association',degree:'MSc',fields:'All Sciences',tags:['msc'],funding:'GH¢ 10,000 research grant',deadline:'15 Jun 2026',soon:false,desc:'Annual awards for outstanding MSc research by Ghanaian biological scientists under 35.',link:'#'},
+  {scope:'local',id:18,flag:'🇬🇭',country:'Ghana',title:'Noguchi Memorial Institute Fellowship',host:'Noguchi Memorial Institute for Medical Research',degree:'PhD',fields:'Virology, Parasitology, Bacteriology, Immunology',tags:['fully-funded','phd'],funding:'Full stipend + world-class lab access',deadline:'28 Feb 2026',soon:false,desc:"Prestigious research fellowships at Ghana's premier biomedical research centre, based at UG Legon.",link:'https://noguchimedres.ug.edu.gh/'}
+];
+
+const programmes=[{id:1,uni:"ug",flag:"🇬🇭",title:"MPhil Biochemistry, Cell & Molecular Biology",host:"University of Ghana, Legon",degree:"MPhil",duration:"2 years",fields:"Biochemistry, Molecular Biology",deadline:"March 2026",link:"https://www.ug.edu.gh"},{id:2,uni:"knust",flag:"🇬🇭",title:"MSc Biotechnology",host:"KNUST",degree:"MSc",duration:"2 years",fields:"Biotechnology, Genetics, Agriculture",deadline:"April 2026",link:"https://www.knust.edu.gh"},{id:3,uni:"ucc",flag:"🇬🇭",title:"MPhil Environmental Science",host:"University of Cape Coast",degree:"MPhil",duration:"2 years",fields:"Ecology, Conservation, Climate",deadline:"March 2026",link:"https://www.ucc.edu.gh"},{id:4,uni:"ug",flag:"🇬🇭",title:"PhD Immunology",host:"University of Ghana Medical School",degree:"PhD",duration:"4 years",fields:"Immunology, Infectious Disease, Medicine",deadline:"February 2026",link:"https://www.ug.edu.gh"},{id:5,uni:"knust",flag:"🇬🇭",title:"MSc Pharmacology",host:"KNUST School of Pharmacy",degree:"MSc",duration:"2 years",fields:"Pharmacology, Drug Discovery, Biochemistry",deadline:"April 2026",link:"https://www.knust.edu.gh"},{id:6,uni:"uds",flag:"🇬🇭",title:"MPhil Ecology & Biodiversity",host:"University for Development Studies",degree:"MPhil",duration:"2 years",fields:"Ecology, Biodiversity, Northern Ghana",deadline:"March 2026",link:"https://www.uds.edu.gh"},{id:7,uni:"ug",flag:"🇬🇭",title:"MSc Epidemiology & Disease Control",host:"UG School of Public Health",degree:"MSc",duration:"1.5 years",fields:"Epidemiology, Public Health, Disease",deadline:"May 2026",link:"https://www.ug.edu.gh"},{id:8,uni:"knust",flag:"🇬🇭",title:"PhD Food Science & Technology",host:"KNUST",degree:"PhD",duration:"4 years",fields:"Food Science, Nutrition, Agriculture",deadline:"February 2026",link:"https://www.knust.edu.gh"}];
+
+const internships=[{id:1,flag:"🇬🇭",title:"Research Assistant — Malaria Genomics",host:"Noguchi Memorial Institute",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"6 months",fields:"Genomics, Malaria, Parasitology",link:"https://www.noguchi.ug.edu.gh"},{id:2,flag:"🇬🇭",title:"Lab Intern — Plant Biotechnology",host:"CSIR — Plant Genetic Resources Research Institute",location:"Bunso, Ghana",type:"research",paid:true,compensation:"Paid",duration:"3 months",fields:"Plant Biology, Biotechnology, Agriculture",link:"https://www.csir.org.gh"},{id:3,flag:"🇬🇭",title:"Field Research Assistant — Wildlife Ecology",host:"Wildlife Division, Forestry Commission",location:"Mole National Park",type:"research",paid:false,compensation:"Accommodation provided",duration:"4 months",fields:"Ecology, Wildlife, Conservation",link:"https://www.fcghana.org"},{id:4,flag:"🇺🇸",title:"Summer Research Fellow — Infectious Disease",host:"NIH — NIAID",location:"Bethesda, USA",type:"international",paid:true,compensation:"Fully Paid",duration:"10 weeks",fields:"Infectious Disease, Immunology, Virology",link:"https://www.niaid.nih.gov"},{id:5,flag:"🇬🇭",title:"Quality Assurance Intern — Pharmaceuticals",host:"Dannex Ayrton Starwin Pharmaceuticals",location:"Accra, Ghana",type:"industry",paid:true,compensation:"Paid",duration:"3 months",fields:"Pharmacology, Quality Assurance, Biochemistry",link:"https://www.das-pharma.com"},{id:6,flag:"🇿🇦",title:"Research Intern — African Academy of Sciences",host:"African Academy of Sciences",location:"Nairobi / Remote",type:"research",paid:true,compensation:"Stipend",duration:"3 months",fields:"Science Policy, Research Management",link:"https://www.aasciences.africa"},{id:7,flag:"🇬🇭",title:"Microbiology Intern",host:"Ghana Standards Authority",location:"Accra, Ghana",type:"industry",paid:false,compensation:"Certificate",duration:"2 months",fields:"Microbiology, Food Safety, Standards",link:"https://www.gsa.gov.gh"},{id:8,flag:"🇬🇧",title:"Computational Biology Internship",host:"Wellcome Sanger Institute",location:"Cambridge, UK",type:"international",paid:true,compensation:"Fully Paid",duration:"12 weeks",fields:"Bioinformatics, Genomics, Computing",link:"https://www.sanger.ac.uk"},{id:9,flag:"🇬🇭",title:"Research Assistant — Aquatic Biology",host:"Water Research Institute, CSIR",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"4 months",fields:"Aquatic Biology, Water Quality, Ecology",link:"https://www.csir.org.gh"}];
+
+const reagents=[{id:1,type:"available",category:"chemicals",name:"Taq DNA Polymerase",qty:"500U (200µl remaining)",condition:"Partially Used",inst:"KNUST Biochemistry Dept.",notes:"Stored at -20°C. Valid until March 2026.",contact:"reagents@knust.edu.gh",exchange:""},{id:2,type:"seeking",category:"chemicals",name:"Ethidium Bromide",qty:"10mg needed",condition:"New preferred",inst:"UG Molecular Biology Lab",notes:"For gel electrophoresis.",contact:"molbio@ug.edu.gh",exchange:"Agarose powder (100g), PCR tubes"},{id:3,type:"available",category:"kits",name:"DNA Extraction Kit (Qiagen DNeasy)",qty:"3 kits (25 preps each)",condition:"New / Unopened",inst:"Noguchi Institute — NMIMR",notes:"Excess from a completed project.",contact:"labmanager@noguchi.ug.edu.gh",exchange:""},{id:4,type:"seeking",category:"equipment",name:"Microcentrifuge (benchtop)",qty:"1 unit needed",condition:"Working condition",inst:"UCC Life Sciences Dept.",notes:"Borrowing preferred — grant pending.",contact:"lifesci@ucc.edu.gh",exchange:"Bradford assay kits, lab glassware"},{id:5,type:"available",category:"chemicals",name:"Agarose Powder (Molecular Grade)",qty:"100g",condition:"New / Unopened",inst:"UDS Biological Sciences",notes:"Free to any Ghanaian institution.",contact:"biolab@uds.edu.gh",exchange:""},{id:6,type:"available",category:"kits",name:"Bradford Protein Assay Kit",qty:"200 assays",condition:"New / Unopened",inst:"CSIR-Food Research Institute",notes:"Expires Dec 2026.",contact:"fri@csir.org.gh",exchange:""},{id:7,type:"seeking",category:"chemicals",name:"Restriction Enzymes (EcoRI, HindIII)",qty:"1,000U each",condition:"Any",inst:"University of Ghana — Biotechnology Dept.",notes:"For cloning project.",contact:"biotech@ug.edu.gh",exchange:"Co-authorship or Taq polymerase"},{id:8,type:"available",category:"equipment",name:"UV Transilluminator",qty:"1 unit",condition:"Working — minor cosmetic wear",inst:"KNUST Molecular Lab",notes:"Available for long-term loan.",contact:"mollab@knust.edu.gh",exchange:""},{id:9,type:"seeking",category:"kits",name:"ELISA Kit — Malaria Antigen (PfHRP2)",qty:"1–2 kits",condition:"New only",inst:"Ghana Health Service — Research Dept.",notes:"For validation study.",contact:"research@ghs.gov.gh",exchange:"ELISA reader access, co-authorship"},{id:10,type:"available",category:"chemicals",name:"Liquid Nitrogen (for transport)",qty:"20L available",condition:"N/A — cryogenic",inst:"UGMS Biobank",notes:"Available for collection by Accra-based labs.",contact:"biobank@ugmedical.edu.gh",exchange:""}];
+
+const workshops=[{id:1,flag:"🇬🇭",title:"Bioinformatics & Genomics Boot Camp",host:"H3ABioNet / University of Ghana",date:"10–14 March 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Bioinformatics, Genomics, Data Analysis",desc:"Intensive hands-on training in bioinformatics tools for African researchers. Covers sequence analysis, variant calling, and data visualisation.",link:"https://www.h3abionet.org"},{id:2,flag:"🇬🇭",title:"West Africa Microbiology Conference",host:"Ghana Society for Microbiology",date:"22–24 April 2026",location:"KNUST, Kumasi",type:"conference",cost:"paid",mode:"in-person",fields:"Microbiology, Infectious Disease, AMR",desc:"Annual gathering of microbiologists from West Africa. Keynotes, oral presentations, poster sessions, and networking.",link:"https://www.knust.edu.gh"},{id:3,flag:"🌐",title:"One Health Africa Symposium",host:"African Union / WHO",date:"5–7 May 2026",location:"Virtual",type:"conference",cost:"free",mode:"virtual",fields:"Public Health, Zoonosis, Ecology",desc:"Interdisciplinary symposium on the intersection of human, animal, and environmental health. Open to all researchers.",link:"https://www.who.int"},{id:4,flag:"🇬🇭",title:"PCR & Molecular Techniques Workshop",host:"CSIR — Water Research Institute",date:"20–21 February 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Molecular Biology, PCR, Lab Techniques",desc:"Practical training workshop on PCR techniques, gel electrophoresis, and basic molecular biology. Limited spaces.",link:"https://www.csir.org.gh"},{id:5,flag:"🇳🇬",title:"African Society for Biochemistry Conference",host:"ASBMB",date:"15–18 June 2026",location:"Lagos, Nigeria",type:"conference",cost:"paid",mode:"in-person",fields:"Biochemistry, Molecular Biology, Enzymology",desc:"Premier biochemistry conference for African researchers. Travel grants available for Ghanaian participants.",link:"https://www.asbmb.org"},{id:6,flag:"🌐",title:"Science Communication for African Researchers",host:"SciDev.Net / AESA",date:"Rolling — Online",location:"Virtual",type:"workshop",cost:"free",mode:"virtual",fields:"Science Communication, Writing, Media",desc:"Self-paced online workshop on communicating science to policymakers and the public. Certificate on completion.",link:"https://www.scidev.net"}];
+
+const professors=[{id:1,uni:"ug",name:"Prof. Theophilus Kweku Boateng",dept:"Biochemistry, Cell & Molecular Biology",uni_name:"University of Ghana",teaching:4.6,access:4.2,research:4.8,overall:4.5,color:"#0B2618",reviews:23},{id:2,uni:"knust",name:"Dr. Abena Asante-Pokuaa",dept:"Biological Sciences",uni_name:"KNUST",teaching:4.1,access:3.8,research:4.4,overall:4.2,color:"#0D7C3E",reviews:18},{id:3,uni:"ucc",name:"Prof. Emmanuel K. Asante",dept:"Molecular Biology & Biotechnology",uni_name:"University of Cape Coast",teaching:3.6,access:4.0,research:3.9,overall:3.8,color:"#1A4A7A",reviews:15},{id:4,uni:"ug",name:"Dr. Nana Afia Mensah-Brown",dept:"Immunology",uni_name:"University of Ghana Medical School",teaching:4.8,access:4.5,research:4.9,overall:4.8,color:"#CE1126",reviews:31},{id:5,uni:"uds",name:"Prof. Issahaku Haruna",dept:"Ecology & Resource Management",uni_name:"University for Development Studies",teaching:4.0,access:4.3,research:3.7,overall:4.0,color:"#0B2618",reviews:9},{id:6,uni:"knust",name:"Dr. Kwame Opoku-Agyeman",dept:"Pharmacology",uni_name:"KNUST School of Pharmacy",teaching:3.8,access:3.5,research:4.1,overall:3.8,color:"#0D7C3E",reviews:12}];
+
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  const tab=document.getElementById('tab-'+name);
+  if(tab)tab.classList.add('active');
+  const tw=document.querySelector('.tabs-wrap');
+  window.scrollTo({top:tw.offsetTop-100,behavior:'smooth'});
+}
+
+let oppFilter='all';
+const grants=[
+  {id:'g1',flag:'🌍',title:'Wellcome Trust Africa Research Grant',host:'Wellcome Trust',country:'UK/Africa',type:'research',amount:'Up to $50,000',deadline:'30 Apr 2026',soon:false,fields:'Any biological science discipline',desc:'Supports early-career African researchers conducting high-impact science on the continent.',link:'#',tags:['research']},
+  {id:'g2',flag:'🇺🇸',title:'NIH Fogarty International Research Grant',host:'NIH Fogarty Center',country:'USA',type:'research',amount:'Up to $75,000',deadline:'15 Feb 2026',soon:false,fields:'Infectious disease, genomics, public health',desc:'Supports collaborative research between US and low/middle-income country scientists.',link:'#',tags:['research']},
+  {id:'g3',flag:'🌍',title:'African Academy of Sciences CARTA Grant',host:'AAS / CARTA',country:'Africa',type:'research',amount:'Up to $20,000',deadline:'31 Mar 2026',soon:false,fields:'Population health, epidemiology, biomedical sciences',desc:'CARTA grants support doctoral and post-doctoral researchers at African institutions.',link:'#',tags:['research','africa']},
+  {id:'g4',flag:'🇩🇪',title:'DAAD Research Travel Grant',host:'DAAD',country:'Germany',type:'travel',amount:'€1,500 – €3,000',deadline:'01 Jun 2026',soon:false,fields:'All sciences',desc:'Covers travel and accommodation for short-term research visits to German institutions.',link:'#',tags:['travel']},
+  {id:'g5',flag:'🇬🇧',title:'Royal Society Africa Travel Grant',host:'Royal Society',country:'UK',type:'travel',amount:'Up to £5,000',deadline:'15 May 2026',soon:true,fields:'All sciences',desc:'Enables African researchers to visit UK institutions for collaborative research.',link:'#',tags:['travel']},
+  {id:'g6',flag:'🇬🇭',title:'Ghana NaCCA Research Equipment Grant',host:'NaCCA Ghana',country:'Ghana',type:'equipment',amount:'GH¢ 50,000',deadline:'20 Mar 2026',soon:false,fields:'Laboratory sciences',desc:'Provides lab equipment grants to accredited Ghanaian research institutions.',link:'#',tags:['equipment','africa']},
+  {id:'g7',flag:'🌍',title:'H3Africa Research Grant',host:'H3Africa Consortium',country:'Africa',type:'research',amount:'Up to $100,000',deadline:'28 Feb 2026',soon:false,fields:'Genomics, population genetics',desc:'Supports genomics and population health research led by African researchers.',link:'#',tags:['research','africa']},
+  {id:'g8',flag:'🇺🇸',title:'American Society for Microbiology SMID Grant',host:'ASM',country:'USA',type:'research',amount:'Up to $3,000',deadline:'01 Apr 2026',soon:false,fields:'Microbiology, infectious disease',desc:'Small research grants for early-career microbiologists, open to African applicants.',link:'#',tags:['research']},
+];
+function renderGrants(data){
+  document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
+  const grid=document.getElementById('grants-grid');
+  const empty=document.getElementById('grants-empty');
+  grid.innerHTML=data.map(g=>'<div class="card">'+
+    '<div class="card-flag">'+g.flag+'</div>'+
+    '<div class="badges">'+
+      '<span class="badge badge-green">'+g.amount+'</span>'+
+      (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
+    '</div>'+
+    '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+' · '+g.country+'</div></div>'+
+    '<div class="card-tags">'+g.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
+    '<div class="card-meta"><span>📅 Deadline: '+g.deadline+'</span></div>'+
+    '<div style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:4px;">'+g.desc+'</div>'+
+    '<a class="card-action" href="'+g.link+'" target="_blank" rel="noopener">View Grant →</a>'+
+  '</div>').join('');
+  empty.style.display=data.length?'none':'block';
+}
+function filterGrants(btn){
+  document.querySelectorAll('#sec-grants .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderGrants(f==='all'?grants:grants.filter(g=>g.type===f||g.tags.includes(f)||(f==='deadline-soon'&&g.soon)));
+}
+
+function renderOpportunities(data){
+  const grid=document.getElementById('opp-grid'),empty=document.getElementById('opp-empty');
+  document.getElementById('opp-count').textContent='Showing '+data.length+' of '+opportunities.length;
+  if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
+    '<div class="card-flag">'+o.flag+'</div>'+
+    '<div class="badges">'+
+      (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
+      (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
+      (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
+      (o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+    '</div>'+
+    '<div><div class="card-title">'+o.title+'</div><div class="card-host">'+o.host+'</div></div>'+
+    '<div class="card-meta"><span>📅 '+o.deadline+'</span><span>🎓 '+o.degree+'</span></div>'+
+    '<a class="card-action" href="'+o.link+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">View & Apply →</a>'+
+  '</div>').join('');
+}
+function filterOpportunities(btn){
+  document.querySelectorAll('#sec-opportunities .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');oppFilter=btn.dataset.f;
+  applyOppFilter();
+}
+function applyOppFilter(q=''){
+  let data=opportunities;
+  if(oppFilter==='local')data=data.filter(o=>o.scope==='local');
+  else if(oppFilter==='international')data=data.filter(o=>o.scope==='international');
+  else if(oppFilter!=='all')data=data.filter(o=>o.tags.includes(oppFilter)||(oppFilter==='deadline-soon'&&o.soon));
+  if(q)data=data.filter(o=>o.title.toLowerCase().includes(q)||o.host.toLowerCase().includes(q)||o.country.toLowerCase().includes(q)||o.fields.toLowerCase().includes(q));
+  renderOpportunities(data);
+}
+
+function renderProgrammes(data){
+  document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
+  document.getElementById('prog-grid').innerHTML=data.map(p=>'<div class="card">'+
+    '<div class="card-flag">'+p.flag+'</div>'+
+    '<div class="badges"><span class="badge '+(p.degree==='PhD'?'badge-blue':'badge-green')+'">'+p.degree+'</span><span class="badge badge-muted">'+p.duration+'</span></div>'+
+    '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
+    '<div class="card-tags">'+p.fields.split(', ').map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
+    '<div class="card-meta"><span>📅 Apply by '+p.deadline+'</span></div>'+
+    '<a class="card-action" href="'+p.link+'" target="_blank" rel="noopener">Programme Details →</a>'+
+  '</div>').join('');
+}
+function filterProgrammes(btn){
+  document.querySelectorAll('#sec-programmes .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderProgrammes(f==='all'?programmes:programmes.filter(p=>p.uni===f||p.degree.toLowerCase().includes(f)));
+}
+
+function renderInternships(data){
+  document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
+  document.getElementById('int-grid').innerHTML=data.map(i=>'<div class="card">'+
+    '<div class="card-flag">'+i.flag+'</div>'+
+    '<div class="badges">'+
+      (i.paid?'<span class="badge badge-green">'+i.compensation+'</span>':'<span class="badge badge-muted">'+i.compensation+'</span>')+
+      '<span class="badge badge-blue">'+i.type.charAt(0).toUpperCase()+i.type.slice(1)+'</span>'+
+    '</div>'+
+    '<div><div class="card-title">'+i.title+'</div><div class="card-host">'+i.host+'</div></div>'+
+    '<div class="card-tags">'+i.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
+    '<div class="card-meta"><span>📍 '+i.location+'</span><span>⏱ '+i.duration+'</span></div>'+
+    '<a class="card-action" href="'+i.link+'" target="_blank" rel="noopener">View Position →</a>'+
+  '</div>').join('');
+}
+function filterInternships(btn){
+  document.querySelectorAll('#sec-internships .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderInternships(f==='all'?internships:internships.filter(i=>i.type===f||(f==='paid'&&i.paid)||(f==='wanted'&&i.type==='wanted')));
+}
+
+function renderReagents(data){
+  document.getElementById('reagent-grid').innerHTML=data.map(r=>'<div class="reagent-card">'+
+    '<div><div class="reagent-type">'+(r.type==='available'?'✅ Available':'🔍 Seeking')+' · '+r.category+'</div>'+
+    '<div class="reagent-name">'+r.name+'</div></div>'+
+    '<div class="reagent-detail"><strong style="color:var(--text)">'+r.qty+'</strong> · '+r.condition+
+      '<br/><span style="margin-top:4px;display:block">'+r.notes+'</span>'+
+      (r.exchange?'<span style="display:block;margin-top:6px;font-size:11px;font-weight:700;color:var(--green)">🔄 Can offer: '+r.exchange+'</span>':'')+
+    '</div>'+
+    '<div class="reagent-meta"><div class="reagent-inst">🏛 '+r.inst+'</div>'+
+    '<button class="reagent-contact" onclick="showToast(\'Contact: \'+this.dataset.email)" data-email="'+r.contact+'">Contact</button></div>'+
+  '</div>').join('');
+}
+function filterReagents(btn){
+  document.querySelectorAll('#sec-reagents .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderReagents(f==='all'?reagents:reagents.filter(r=>r.type===f||r.category===f));
+}
+
+function renderWorkshops(data){
+  document.getElementById('workshop-grid').innerHTML=data.map(w=>'<div class="card">'+
+    '<div class="card-flag">'+w.flag+'</div>'+
+    '<div class="badges">'+
+      '<span class="badge '+(w.type==='conference'?'badge-blue':'badge-green')+'">'+(w.type==='conference'?'Conference':'Workshop')+'</span>'+
+      (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">Paid</span>')+
+      (w.mode==='virtual'?'<span class="badge badge-gold">Virtual</span>':'<span class="badge badge-muted">In-Person</span>')+
+    '</div>'+
+    '<div><div class="card-title">'+w.title+'</div><div class="card-host">'+w.host+'</div></div>'+
+    '<div class="card-tags">'+w.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
+    '<div class="card-meta"><span>📅 '+w.date+'</span><span>📍 '+w.location+'</span></div>'+
+    '<a class="card-action" href="'+w.link+'" target="_blank" rel="noopener">View Event →</a>'+
+  '</div>').join('');
+}
+function filterWorkshops(btn){
+  document.querySelectorAll('#sec-workshops .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderWorkshops(f==='all'?workshops:workshops.filter(w=>w.type===f||w.cost===f||w.mode===f));
+}
+
+function renderProfs(data){
+  document.getElementById('prof-grid').innerHTML=data.map(p=>{
+    const initials=p.name.split(' ').filter(w=>w.match(/^[A-Z]/)).slice(0,2).map(w=>w[0]).join('');
+    const stars='★'.repeat(Math.round(p.overall))+'☆'.repeat(5-Math.round(p.overall));
+    return'<div class="prof-card">'+
+      '<div class="prof-top"><div class="prof-avatar" style="background:'+p.color+'">'+initials+'</div>'+
+      '<div><div class="prof-name">'+p.name+'</div><div class="prof-dept">'+p.dept+'</div><div class="prof-uni">'+p.uni_name+'</div></div></div>'+
+      '<div>'+
+        '<div class="rating-row"><span>Teaching</span><span style="color:var(--text);font-weight:700">'+p.teaching+'</span></div>'+
+        '<div class="rating-bar-bg"><div class="rating-bar-fill" style="width:'+p.teaching/5*100+'%;background:var(--dark)"></div></div>'+
+        '<div class="rating-row"><span>Accessibility</span><span style="color:var(--text);font-weight:700">'+p.access+'</span></div>'+
+        '<div class="rating-bar-bg"><div class="rating-bar-fill" style="width:'+p.access/5*100+'%;background:var(--green)"></div></div>'+
+        '<div class="rating-row"><span>Research Mentorship</span><span style="color:var(--text);font-weight:700">'+p.research+'</span></div>'+
+        '<div class="rating-bar-bg"><div class="rating-bar-fill" style="width:'+p.research/5*100+'%;background:var(--gold)"></div></div>'+
+      '</div>'+
+      '<div class="prof-overall">'+
+        '<div><div class="overall-score">'+p.overall+'</div><div class="overall-label">/ 5.0 · '+p.reviews+' ratings</div><div class="stars">'+stars+'</div></div>'+
+        '<button class="rate-btn" onclick="showSection(\'submit\')">Rate →</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+function filterProfs(btn){
+  document.querySelectorAll('#sec-professors .f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');const f=btn.dataset.f;
+  renderProfs(f==='all'?professors:professors.filter(p=>p.uni===f));
+}
+
+function openModal(id){
+  const o=opportunities.find(x=>x.id===id);if(!o)return;
+  document.getElementById('m-flag').textContent=o.flag;
+  document.getElementById('m-title').textContent=o.title;
+  document.getElementById('m-host').textContent=o.host;
+  document.getElementById('m-country').textContent=o.country;
+  document.getElementById('m-degree').textContent=o.degree;
+  document.getElementById('m-fields').textContent=o.fields;
+  document.getElementById('m-funding').textContent=o.funding;
+  document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
+  document.getElementById('m-desc').textContent=o.desc;
+  document.getElementById('m-link').href=o.link;
+  document.getElementById('m-badges').innerHTML=
+    (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
+    (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
+    (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
+    (o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('overlay'))return;
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function showSubmitForm(name,btn){
+  document.querySelectorAll('.s-form').forEach(f=>f.classList.remove('active'));
+  document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sf-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+function subscribeNewsletter(){
+  const name=document.getElementById('nl-name').value.trim();
+  const institution=document.getElementById('nl-institution').value.trim();
+  const email=document.getElementById('nl-email').value.trim();
+  if(!name||!institution||!email){showToast('Please fill in all fields.');return;}
+  if(!email.includes('@')){showToast('Please enter a valid email address.');return;}
+  const clear=()=>{
+    document.getElementById('nl-name').value='';
+    document.getElementById('nl-institution').value='';
+    document.getElementById('nl-email').value='';
+  };
+  if(!BIOCOMMONS_API){
+    showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');
+    clear();return;
+  }
+  showToast('Subscribing…');
+  fetch(BIOCOMMONS_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({type:'newsletter',name,institution,email})})
+  .then(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();})
+  .catch(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();});
+}
+
+function collectFormData(formId){
+  const form=document.getElementById(formId);
+  if(!form)return{};
+  const data={};
+  form.querySelectorAll('.form-group').forEach(group=>{
+    const label=group.querySelector('label');
+    const input=group.querySelector('input,select,textarea');
+    if(label&&input){
+      const key=label.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+      data[key]=input.value.trim();
+    }
+  });
+  return data;
+}
+
+function submitForm(type){
+  const formMap={
+    'Scholarship':'sf-scholarship',
+    'Job / Internship':'sf-internship',
+    'Job Wanted post':'sf-jobwanted',
+    'Reagent listing':'sf-reagent',
+    'Workshop / Conference':'sf-workshop',
+    'Programme':'sf-programme'
+  };
+  const formId=formMap[type];
+  const formData=collectFormData(formId);
+  formData.type=type.toLowerCase();
+  formData.submittedAt=new Date().toISOString();
+
+  const done=()=>{
+    showToast('✅ '+type+' submitted! We\'ll review within 24 hrs.');
+    if(formId){
+      document.getElementById(formId)
+        ?.querySelectorAll('input:not([type=submit]),textarea')
+        .forEach(el=>el.value='');
+    }
+  };
+
+  if(!BIOCOMMONS_API){done();return;}
+  showToast('Submitting…');
+  fetch(BIOCOMMONS_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify(formData)})
+  .then(done).catch(done);
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+
+renderGrants(grants);
+renderOpportunities(opportunities);
+renderProgrammes(programmes);
+renderInternships(internships);
+renderReagents(reagents);
+renderWorkshops(workshops);
+renderProfs(professors);
+</script>
+</body>
+</html>
