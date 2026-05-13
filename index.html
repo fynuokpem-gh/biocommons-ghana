@@ -1133,6 +1133,114 @@ renderInternships(internships);
 renderReagents(reagents);
 renderWorkshops(workshops);
 renderProfs(professors);
+
+// ─── Load approved entries from Google Sheets ────────────────────────────────
+
+function sheetToScholarship(row, id) {
+  const title = row.title || '';
+  const country = row.country || 'Ghana';
+  const tags = [];
+  const tl = title.toLowerCase() + ' ' + (row.description||'').toLowerCase();
+  if (tl.includes('fully funded') || tl.includes('full tuition')) tags.push('fully-funded');
+  if (tl.includes('phd')) tags.push('phd');
+  if (tl.includes('msc') || tl.includes('masters')) tags.push('msc');
+  const isLocal = country.toLowerCase().includes('ghana');
+  return {
+    scope: isLocal ? 'local' : 'international',
+    id: 1000 + id, flag: isLocal ? '🇬🇭' : '🌍',
+    country, title: title, host: row.host,
+    degree: tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD',
+    fields: 'Biological Sciences', tags,
+    funding: 'See link', deadline: row.deadline,
+    soon: false, desc: row.description, link: row.link
+  };
+}
+
+function sheetToGrant(row, id) {
+  return {
+    id: 2000 + id, flag: '🌍', title: row.title, host: row.host,
+    country: row.country || 'Ghana', type: 'research',
+    amount: 'See link', deadline: row.deadline, soon: false,
+    fields: 'Biological Sciences', desc: row.description,
+    link: row.link, tags: ['research']
+  };
+}
+
+function sheetToInternship(row, id) {
+  return {
+    id: 3000 + id, flag: '🇬🇭', title: row.title, host: row.host,
+    location: row.country || 'Ghana', type: 'research',
+    paid: true, compensation: 'See link', duration: 'See link',
+    fields: 'Biological Sciences', link: row.link
+  };
+}
+
+function sheetToReagent(row, id) {
+  return {
+    id: 4000 + id, type: 'available', category: 'Chemicals',
+    name: row.title, qty: 'See link', condition: 'See link',
+    notes: row.description, exchange: '', inst: row.host,
+    contact: row.link
+  };
+}
+
+function sheetToWorkshop(row, id) {
+  return {
+    id: 5000 + id, flag: '🇬🇭', title: row.title, host: row.host,
+    type: 'workshop', cost: 'free', mode: 'in-person',
+    date: row.deadline, location: row.country || 'Ghana',
+    fields: 'Biological Sciences', link: row.link
+  };
+}
+
+function sheetToProgramme(row, id) {
+  return {
+    id: 6000 + id, uni: 'other', flag: '🇬🇭',
+    title: row.title, host: row.host,
+    degree: 'MSc', duration: 'See link',
+    fields: 'Biological Sciences',
+    deadline: row.deadline, link: row.link
+  };
+}
+
+async function loadApprovedEntries() {
+  if (!BIOCOMMONS_API) return;
+
+  const sheets = [
+    { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter() },
+    { name: 'Grants',             mapper: sheetToGrant,        store: grants,          render: ()=>renderGrants(grants) },
+    { name: 'Jobs & Internships', mapper: sheetToInternship,   store: internships,     render: ()=>renderInternships(internships) },
+    { name: 'Reagents',           mapper: sheetToReagent,      store: reagents,        render: ()=>renderReagents(reagents) },
+    { name: 'Workshops',          mapper: sheetToWorkshop,     store: workshops,       render: ()=>renderWorkshops(workshops) },
+    { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes) },
+  ];
+
+  for (const s of sheets) {
+    try {
+      const url = BIOCOMMONS_API + '?sheet=' + encodeURIComponent(s.name);
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.success && json.data && json.data.length) {
+        // Remove any previously loaded sheet entries (id >= 1000)
+        const baseId = s.store === opportunities ? 1000 : s.store === grants ? 2000 :
+                       s.store === internships ? 3000 : s.store === reagents ? 4000 :
+                       s.store === workshops ? 5000 : 6000;
+        // Remove old dynamic entries
+        const existing = s.store.filter(e => (e.id || 0) < baseId);
+        const newEntries = json.data.map((row, i) => s.mapper(row, i));
+        // Merge: hardcoded first, approved from sheet appended
+        s.store.length = 0;
+        existing.forEach(e => s.store.push(e));
+        newEntries.forEach(e => s.store.push(e));
+        s.render();
+      }
+    } catch(err) {
+      console.warn('Could not load ' + s.name + ':', err.message);
+    }
+  }
+}
+
+loadApprovedEntries();
 </script>
 </body>
 </html>
