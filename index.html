@@ -948,7 +948,7 @@ function renderGrants(data){
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
   grid.innerHTML=data.map(g=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+
+    '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
       (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
@@ -974,7 +974,7 @@ function renderOpportunities(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+
+    '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
@@ -1003,8 +1003,8 @@ function applyOppFilter(q=''){
 function renderProgrammes(data){
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
   document.getElementById('prog-grid').innerHTML=data.map(p=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+
-    '<div class="badges"><span class="badge '+(p.degree==='PhD'?'badge-blue':'badge-green')+'">'+p.degree+'</span><span class="badge badge-muted">'+p.duration+'</span></div>'+
+    '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
+    '<div class="badges"><span class="badge '+(p.degree==="PhD"?'badge-blue':'badge-green')+'">'+(p.degree)+'</span><span class="badge badge-muted">'+p.duration+'</span></div>'+
     '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
     '<div class="card-tags">'+p.fields.split(', ').map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
     '<div class="card-meta"><span>📅 Apply by '+p.deadline+'</span></div>'+
@@ -1020,7 +1020,7 @@ function filterProgrammes(btn){
 function renderInternships(data){
   document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
   document.getElementById('int-grid').innerHTML=data.map(i=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+
+    '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
     '<div class="badges">'+
       (i.paid?'<span class="badge badge-green">'+i.compensation+'</span>':'<span class="badge badge-muted">'+i.compensation+'</span>')+
       '<span class="badge badge-blue">'+i.type.charAt(0).toUpperCase()+i.type.slice(1)+'</span>'+
@@ -1057,7 +1057,7 @@ function filterReagents(btn){
 
 function renderWorkshops(data){
   document.getElementById('workshop-grid').innerHTML=data.map(w=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(w.location||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+
+    '<div class="card-flag"><span class="card-flag-label">'+(w.location||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
     '<div class="badges">'+
       '<span class="badge '+(w.type==='conference'?'badge-blue':'badge-green')+'">'+(w.type==='conference'?'Conference':'Workshop')+'</span>'+
       (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">Paid</span>')+
