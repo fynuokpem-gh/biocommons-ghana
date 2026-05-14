@@ -1093,7 +1093,9 @@ function collectFormData(formId){
     const label=group.querySelector('label');
     const input=group.querySelector('input,select,textarea');
     if(label&&input){
-      const key=label.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+      // Strip parenthetical hints like "(optional)" then convert to snake_case key
+      const cleanLabel = label.textContent.trim().replace(/\s*\([^)]*\)/g,'');
+      const key=cleanLabel.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
       data[key]=input.value.trim();
     }
   });
