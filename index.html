@@ -1143,6 +1143,14 @@ renderProfs(professors);
 
 // ─── Load approved entries from Google Sheets ────────────────────────────────
 
+function normalizeUrl(url) {
+  if (!url || url === '#' || url === '—') return '#';
+  const u = String(url).trim();
+  if (!u) return '#';
+  if (/^https?:\/\//i.test(u) || u.startsWith('mailto:') || u.startsWith('#')) return u;
+  return 'https://' + u.replace(/^\/+/, '');
+}
+
 function sheetToScholarship(row, id) {
   const title = row.title || '';
   const country = row.country || 'Ghana';
@@ -1159,7 +1167,7 @@ function sheetToScholarship(row, id) {
     degree: tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD',
     fields: 'Biological Sciences', tags,
     funding: 'See link', deadline: row.deadline,
-    soon: false, desc: row.description, link: row.link
+    soon: false, desc: row.description, link: normalizeUrl(row.link)
   };
 }
 
@@ -1169,7 +1177,7 @@ function sheetToGrant(row, id) {
     country: row.country || 'Ghana', type: 'research',
     amount: 'See link', deadline: row.deadline, soon: false,
     fields: 'Biological Sciences', desc: row.description,
-    link: row.link, tags: ['research']
+    link: normalizeUrl(row.link), tags: ['research']
   };
 }
 
@@ -1178,7 +1186,7 @@ function sheetToInternship(row, id) {
     id: 3000 + id, flag: '🇬🇭', title: row.title, host: row.host,
     location: row.country || 'Ghana', type: 'research',
     paid: true, compensation: 'See link', duration: 'See link',
-    fields: 'Biological Sciences', link: row.link
+    fields: 'Biological Sciences', link: normalizeUrl(row.link)
   };
 }
 
@@ -1187,7 +1195,7 @@ function sheetToReagent(row, id) {
     id: 4000 + id, type: 'available', category: 'Chemicals',
     name: row.title, qty: 'See link', condition: 'See link',
     notes: row.description, exchange: '', inst: row.host,
-    contact: row.link
+    contact: normalizeUrl(row.link)
   };
 }
 
@@ -1196,7 +1204,7 @@ function sheetToWorkshop(row, id) {
     id: 5000 + id, flag: '🇬🇭', title: row.title, host: row.host,
     type: 'workshop', cost: 'free', mode: 'in-person',
     date: row.deadline, location: row.country || 'Ghana',
-    fields: 'Biological Sciences', link: row.link
+    fields: 'Biological Sciences', link: normalizeUrl(row.link)
   };
 }
 
@@ -1206,7 +1214,7 @@ function sheetToProgramme(row, id) {
     title: row.title, host: row.host,
     degree: 'MSc', duration: 'See link',
     fields: 'Biological Sciences',
-    deadline: row.deadline, link: row.link
+    deadline: row.deadline, link: normalizeUrl(row.link)
   };
 }
 
