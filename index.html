@@ -1205,54 +1205,43 @@ function sheetToProgramme(row, id) {
   };
 }
 
+const SHEETDB_API = 'https://sheetdb.io/api/v1/xsf1gvqdj9gt9';
+
 async function loadApprovedEntries() {
-  if (!BIOCOMMONS_API) return;
-
   const sheetConfig = [
-    { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),         baseId: 1000 },
-    { name: 'Grants',             mapper: sheetToGrant,        store: grants,          render: ()=>renderGrants(grants),     baseId: 2000 },
-    { name: 'Jobs & Internships', mapper: sheetToInternship,   store: internships,     render: ()=>renderInternships(internships), baseId: 3000 },
-    { name: 'Reagents',           mapper: sheetToReagent,      store: reagents,        render: ()=>renderReagents(reagents), baseId: 4000 },
-    { name: 'Workshops',          mapper: sheetToWorkshop,     store: workshops,       render: ()=>renderWorkshops(workshops), baseId: 5000 },
-    { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes), baseId: 6000 },
+    { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),              baseId: 1000 },
+    { name: 'Grants',             mapper: sheetToGrant,        store: grants,          render: ()=>renderGrants(grants),          baseId: 2000 },
+    { name: 'Jobs & Internships', mapper: sheetToInternship,   store: internships,     render: ()=>renderInternships(internships),baseId: 3000 },
+    { name: 'Reagents',           mapper: sheetToReagent,      store: reagents,        render: ()=>renderReagents(reagents),      baseId: 4000 },
+    { name: 'Workshops',          mapper: sheetToWorkshop,     store: workshops,       render: ()=>renderWorkshops(workshops),    baseId: 5000 },
+    { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes),  baseId: 6000 },
   ];
-
-  function jsonp(url) {
-    return new Promise((resolve, reject) => {
-      const cbName = 'bcg_cb_' + Math.random().toString(36).slice(2);
-      const script = document.createElement('script');
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error('Timeout'));
-      }, 8000);
-      function cleanup() {
-        clearTimeout(timeout);
-        delete window[cbName];
-        if (script.parentNode) script.parentNode.removeChild(script);
-      }
-      window[cbName] = function(data) {
-        cleanup();
-        resolve(data);
-      };
-      script.src = url + '&callback=' + cbName;
-      script.onerror = () => { cleanup(); reject(new Error('Script error')); };
-      document.head.appendChild(script);
-    });
-  }
 
   for (const s of sheetConfig) {
     try {
-      const url = BIOCOMMONS_API + '?sheet=' + encodeURIComponent(s.name);
-      const json = await jsonp(url);
-      if (json && json.success && json.data && json.data.length > 0) {
-        const existing = s.store.filter(e => (e.id || 0) < s.baseId);
-        const newEntries = json.data.map((row, i) => s.mapper(row, i));
-        s.store.length = 0;
-        existing.forEach(e => s.store.push(e));
-        newEntries.forEach(e => s.store.push(e));
-        s.render();
-        console.log('Loaded ' + newEntries.length + ' approved entries from ' + s.name);
-      }
+      const url = SHEETDB_API + '/search?sheet=' + encodeURIComponent(s.name) + '&Status=APPROVED';
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) continue;
+
+      // Map SheetDB column names to our format
+      const rows = data.map(r => ({
+        title:       r['Title / Name'] || '',
+        host:        r['Host / Org']   || '',
+        country:     r['Country']      || 'Ghana',
+        deadline:    r['Deadline']     || '',
+        link:        r['Link']         || '#',
+        description: r['Description']  || ''
+      }));
+
+      const existing = s.store.filter(e => (e.id || 0) < s.baseId);
+      const newEntries = rows.map((row, i) => s.mapper(row, i));
+      s.store.length = 0;
+      existing.forEach(e => s.store.push(e));
+      newEntries.forEach(e => s.store.push(e));
+      s.render();
+      console.log('✅ Loaded ' + newEntries.length + ' approved from ' + s.name);
     } catch(err) {
       console.warn('Could not load ' + s.name + ':', err.message);
     }
