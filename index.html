@@ -884,7 +884,7 @@ function renderGrants(data){
     '<div class="card-tags">'+g.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
     '<div class="card-meta"><span>📅 Deadline: '+g.deadline+'</span></div>'+
     '<div style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:4px;">'+g.desc+'</div>'+
-    '<a class="card-action" href="'+g.link+'" target="_blank" rel="noopener">View Grant →</a>'+
+    '<a class="card-action" href="'+normalizeUrl(g.link)+'" target="_blank" rel="noopener">View Grant →</a>'+
   '</div>').join('');
   empty.style.display=data.length?'none':'block';
 }
@@ -909,7 +909,7 @@ function renderOpportunities(data){
     '</div>'+
     '<div><div class="card-title">'+o.title+'</div><div class="card-host">'+o.host+'</div></div>'+
     '<div class="card-meta"><span>📅 '+o.deadline+'</span><span>🎓 '+o.degree+'</span></div>'+
-    '<a class="card-action" href="'+o.link+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">View & Apply →</a>'+
+    '<a class="card-action" href="'+normalizeUrl(o.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">View & Apply →</a>'+
   '</div>').join('');
 }
 function filterOpportunities(btn){
@@ -934,7 +934,7 @@ function renderProgrammes(data){
     '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
     '<div class="card-tags">'+p.fields.split(', ').map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
     '<div class="card-meta"><span>📅 Apply by '+p.deadline+'</span></div>'+
-    '<a class="card-action" href="'+p.link+'" target="_blank" rel="noopener">Programme Details →</a>'+
+    '<a class="card-action" href="'+normalizeUrl(p.link)+'" target="_blank" rel="noopener">Programme Details →</a>'+
   '</div>').join('');
 }
 function filterProgrammes(btn){
@@ -954,7 +954,7 @@ function renderInternships(data){
     '<div><div class="card-title">'+i.title+'</div><div class="card-host">'+i.host+'</div></div>'+
     '<div class="card-tags">'+i.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
     '<div class="card-meta"><span>📍 '+i.location+'</span><span>⏱ '+i.duration+'</span></div>'+
-    '<a class="card-action" href="'+i.link+'" target="_blank" rel="noopener">View Position →</a>'+
+    '<a class="card-action" href="'+normalizeUrl(i.link)+'" target="_blank" rel="noopener">View Position →</a>'+
   '</div>').join('');
 }
 function filterInternships(btn){
@@ -992,7 +992,7 @@ function renderWorkshops(data){
     '<div><div class="card-title">'+w.title+'</div><div class="card-host">'+w.host+'</div></div>'+
     '<div class="card-tags">'+w.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
     '<div class="card-meta"><span>📅 '+w.date+'</span><span>📍 '+w.location+'</span></div>'+
-    '<a class="card-action" href="'+w.link+'" target="_blank" rel="noopener">View Event →</a>'+
+    '<a class="card-action" href="'+normalizeUrl(w.link)+'" target="_blank" rel="noopener">View Event →</a>'+
   '</div>').join('');
 }
 function filterWorkshops(btn){
@@ -1043,7 +1043,7 @@ function openModal(id){
   document.getElementById('m-funding').textContent=o.funding;
   document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
   document.getElementById('m-desc').textContent=o.desc;
-  document.getElementById('m-link').href=o.link;
+  document.getElementById('m-link').href=normalizeUrl(o.link);
   document.getElementById('m-badges').innerHTML=
     (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
     (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
