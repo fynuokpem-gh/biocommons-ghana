@@ -1288,12 +1288,21 @@ function sheetToScholarship(row, id) {
 }
 
 function sheetToGrant(row, id) {
+  // Support both standard column names AND the snake_case keys the form submits
+  const title   = row['Title / Name']     || row['title']            || row['grant_name']        || row['Grant Name']        || '';
+  const host    = row['Host / Org']       || row['host']             || row['host_organisation']  || row['Host Organisation']  || '';
+  const country = row['Country']          || row['country']          || 'Ghana';
+  const amount  = row['Amount / Value']   || row['amount_value']     || row['Funding']            || row['funding']            || 'See link';
+  const dead    = row['Deadline']         || row['deadline']         || '';
+  const desc    = row['Description']      || row['description']      || '';
+  const link    = row['Link']             || row['link']             || row['official_link']      || row['Official Link']      || '#';
+  const gtype   = (row['Grant Type']      || row['grant_type']       || 'research').toLowerCase();
+  const tag     = gtype.includes('travel') ? 'travel' : gtype.includes('equip') ? 'equipment' : 'research';
   return {
-    id: 2000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
-    country: row.country || 'Ghana', type: 'research',
-    amount: 'See link', deadline: row.deadline, soon: false,
-    fields: 'Biological Sciences', desc: row.description,
-    link: normalizeUrl(row.link), tags: ['research']
+    id: 2000 + id, flag: flagFor(country), title, host, country,
+    type: tag, amount, deadline: dead, soon: false,
+    fields: 'Biological Sciences', desc,
+    link: normalizeUrl(link), tags: [tag]
   };
 }
 
@@ -1374,7 +1383,8 @@ async function loadApprovedEntries() {
         funding:     r['Funding'] || r['FUNDING'] || r['funding'] || ''
       }));
 
-      const existing = s.store.filter(e => (e.id || 0) < s.baseId);
+      // Preserve hardcoded entries (string IDs like 'g1') AND numeric IDs below baseId
+      const existing = s.store.filter(e => typeof e.id !== 'number' || e.id < s.baseId);
       const newEntries = rows.map((row, i) => s.mapper(row, i));
       s.store.length = 0;
       existing.forEach(e => s.store.push(e));
