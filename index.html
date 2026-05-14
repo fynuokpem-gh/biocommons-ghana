@@ -943,6 +943,39 @@ function updateAllCounts() {
   setText('st-workshops', counts.workshops);
 }
 
+const COUNTRY_CODES = {
+  'ghana':'gh','nigeria':'ng','kenya':'ke','south africa':'za','uganda':'ug',
+  'tanzania':'tz','rwanda':'rw','ethiopia':'et','egypt':'eg','morocco':'ma',
+  'senegal':'sn','ivory coast':'ci','côte d\'ivoire':'ci','cameroon':'cm',
+  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb',
+  'usa':'us','united states':'us','us':'us','america':'us',
+  'germany':'de','france':'fr','italy':'it','spain':'es','netherlands':'nl',
+  'belgium':'be','switzerland':'ch','sweden':'se','norway':'no','denmark':'dk',
+  'finland':'fi','austria':'at','poland':'pl','portugal':'pt','ireland':'ie',
+  'canada':'ca','australia':'au','new zealand':'nz',
+  'japan':'jp','china':'cn','south korea':'kr','korea':'kr','india':'in',
+  'singapore':'sg','malaysia':'my','indonesia':'id','thailand':'th',
+  'brazil':'br','mexico':'mx','argentina':'ar','chile':'cl',
+  'uae':'ae','saudi arabia':'sa','israel':'il','turkey':'tr',
+  'nairobi':'ke','accra':'gh','kumasi':'gh','legon':'gh'
+};
+
+function flagFor(country) {
+  if (!country) return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+  const key = String(country).toLowerCase().trim();
+  let code = COUNTRY_CODES[key];
+  if (!code) {
+    for (const k in COUNTRY_CODES) {
+      if (key.includes(k) || k.includes(key)) { code = COUNTRY_CODES[k]; break; }
+    }
+  }
+  if (code) {
+    return '<span class="fi fi-' + code + ' fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+  }
+  return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+}
+
+
 function renderGrants(data){
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
   const grid=document.getElementById('grants-grid');
@@ -1218,38 +1251,6 @@ renderProfs(professors);
 updateAllCounts();
 
 // ─── Load approved entries from Google Sheets ────────────────────────────────
-
-const COUNTRY_CODES = {
-  'ghana':'gh','nigeria':'ng','kenya':'ke','south africa':'za','uganda':'ug',
-  'tanzania':'tz','rwanda':'rw','ethiopia':'et','egypt':'eg','morocco':'ma',
-  'senegal':'sn','ivory coast':'ci','côte d\'ivoire':'ci','cameroon':'cm',
-  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb',
-  'usa':'us','united states':'us','us':'us','america':'us',
-  'germany':'de','france':'fr','italy':'it','spain':'es','netherlands':'nl',
-  'belgium':'be','switzerland':'ch','sweden':'se','norway':'no','denmark':'dk',
-  'finland':'fi','austria':'at','poland':'pl','portugal':'pt','ireland':'ie',
-  'canada':'ca','australia':'au','new zealand':'nz',
-  'japan':'jp','china':'cn','south korea':'kr','korea':'kr','india':'in',
-  'singapore':'sg','malaysia':'my','indonesia':'id','thailand':'th',
-  'brazil':'br','mexico':'mx','argentina':'ar','chile':'cl',
-  'uae':'ae','saudi arabia':'sa','israel':'il','turkey':'tr',
-  'nairobi':'ke','accra':'gh','kumasi':'gh','legon':'gh'
-};
-
-function flagFor(country) {
-  if (!country) return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
-  const key = String(country).toLowerCase().trim();
-  let code = COUNTRY_CODES[key];
-  if (!code) {
-    for (const k in COUNTRY_CODES) {
-      if (key.includes(k) || k.includes(key)) { code = COUNTRY_CODES[k]; break; }
-    }
-  }
-  if (code) {
-    return '<span class="fi fi-' + code + ' fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
-  }
-  return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
-}
 
 function normalizeUrl(url) {
   if (!url || url === '#' || url === '—') return '#';
