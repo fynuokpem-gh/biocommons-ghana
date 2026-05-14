@@ -1180,6 +1180,32 @@ updateAllCounts();
 
 // ─── Load approved entries from Google Sheets ────────────────────────────────
 
+const COUNTRY_FLAGS = {
+  'ghana':'🇬🇭','nigeria':'🇳🇬','kenya':'🇰🇪','south africa':'🇿🇦','uganda':'🇺🇬',
+  'tanzania':'🇹🇿','rwanda':'🇷🇼','ethiopia':'🇪🇹','egypt':'🇪🇬','morocco':'🇲🇦',
+  'senegal':'🇸🇳','ivory coast':'🇨🇮','côte d\'ivoire':'🇨🇮','cameroon':'🇨🇲',
+  'uk':'🇬🇧','united kingdom':'🇬🇧','england':'🇬🇧','scotland':'🇬🇧',
+  'usa':'🇺🇸','united states':'🇺🇸','us':'🇺🇸','america':'🇺🇸',
+  'germany':'🇩🇪','france':'🇫🇷','italy':'🇮🇹','spain':'🇪🇸','netherlands':'🇳🇱',
+  'belgium':'🇧🇪','switzerland':'🇨🇭','sweden':'🇸🇪','norway':'🇳🇴','denmark':'🇩🇰',
+  'finland':'🇫🇮','austria':'🇦🇹','poland':'🇵🇱','portugal':'🇵🇹','ireland':'🇮🇪',
+  'canada':'🇨🇦','australia':'🇦🇺','new zealand':'🇳🇿',
+  'japan':'🇯🇵','china':'🇨🇳','south korea':'🇰🇷','korea':'🇰🇷','india':'🇮🇳',
+  'singapore':'🇸🇬','malaysia':'🇲🇾','indonesia':'🇮🇩','thailand':'🇹🇭',
+  'brazil':'🇧🇷','mexico':'🇲🇽','argentina':'🇦🇷','chile':'🇨🇱',
+  'uae':'🇦🇪','saudi arabia':'🇸🇦','israel':'🇮🇱','turkey':'🇹🇷'
+};
+
+function flagFor(country) {
+  if (!country) return '🌍';
+  const key = String(country).toLowerCase().trim();
+  if (COUNTRY_FLAGS[key]) return COUNTRY_FLAGS[key];
+  for (const k in COUNTRY_FLAGS) {
+    if (key.includes(k) || k.includes(key)) return COUNTRY_FLAGS[k];
+  }
+  return '🌍';
+}
+
 function normalizeUrl(url) {
   if (!url || url === '#' || url === '—') return '#';
   const u = String(url).trim();
@@ -1192,25 +1218,32 @@ function sheetToScholarship(row, id) {
   const title = row.title || '';
   const country = row.country || 'Ghana';
   const tags = [];
-  const tl = title.toLowerCase() + ' ' + (row.description||'').toLowerCase();
-  if (tl.includes('fully funded') || tl.includes('full tuition')) tags.push('fully-funded');
-  if (tl.includes('phd')) tags.push('phd');
-  if (tl.includes('msc') || tl.includes('masters')) tags.push('msc');
+  // Combine all sources for tag detection
+  const blob = (title + ' ' + (row.description||'') + ' ' + (row.degree||'') + ' ' + (row.funding||'')).toLowerCase();
+  // Funding tags
+  if (blob.includes('fully funded') || blob.includes('full tuition') || blob.includes('fully-funded')) {
+    tags.push('fully-funded');
+  }
+  // Degree tags
+  if (blob.includes('phd') || blob.includes('doctor')) tags.push('phd');
+  if (blob.includes('msc') || blob.includes('master') || blob.includes('mphil')) tags.push('msc');
   const isLocal = country.toLowerCase().includes('ghana');
   return {
     scope: isLocal ? 'local' : 'international',
-    id: 1000 + id, flag: isLocal ? '🇬🇭' : '🌍',
-    country, title: title, host: row.host,
-    degree: tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD',
+    id: 1000 + id,
+    flag: flagFor(country),
+    country, title, host: row.host,
+    degree: row.degree || (tags.includes('phd') && tags.includes('msc') ? 'MSc & PhD' :
+            tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD'),
     fields: 'Biological Sciences', tags,
-    funding: 'See link', deadline: row.deadline,
+    funding: row.funding || 'See link', deadline: row.deadline,
     soon: false, desc: row.description, link: normalizeUrl(row.link)
   };
 }
 
 function sheetToGrant(row, id) {
   return {
-    id: 2000 + id, flag: '🌍', title: row.title, host: row.host,
+    id: 2000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
     country: row.country || 'Ghana', type: 'research',
     amount: 'See link', deadline: row.deadline, soon: false,
     fields: 'Biological Sciences', desc: row.description,
@@ -1220,7 +1253,7 @@ function sheetToGrant(row, id) {
 
 function sheetToInternship(row, id) {
   return {
-    id: 3000 + id, flag: '🇬🇭', title: row.title, host: row.host,
+    id: 3000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
     location: row.country || 'Ghana', type: 'research',
     paid: true, compensation: 'See link', duration: 'See link',
     fields: 'Biological Sciences', link: normalizeUrl(row.link)
@@ -1238,7 +1271,7 @@ function sheetToReagent(row, id) {
 
 function sheetToWorkshop(row, id) {
   return {
-    id: 5000 + id, flag: '🇬🇭', title: row.title, host: row.host,
+    id: 5000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
     type: 'workshop', cost: 'free', mode: 'in-person',
     date: row.deadline, location: row.country || 'Ghana',
     fields: 'Biological Sciences', link: normalizeUrl(row.link)
@@ -1247,7 +1280,7 @@ function sheetToWorkshop(row, id) {
 
 function sheetToProgramme(row, id) {
   return {
-    id: 6000 + id, uni: 'other', flag: '🇬🇭',
+    id: 6000 + id, uni: 'other', flag: flagFor(row.country),
     title: row.title, host: row.host,
     degree: 'MSc', duration: 'See link',
     fields: 'Biological Sciences',
@@ -1290,7 +1323,9 @@ async function loadApprovedEntries() {
         country:     r['Country']      || r['country'] || 'Ghana',
         deadline:    r['Deadline']     || r['deadline'] || '',
         link:        r['Link']         || r['link']  || '#',
-        description: r['Description']  || r['description'] || ''
+        description: r['Description']  || r['description'] || '',
+        degree:      r['Degree']       || r['degree']      || '',
+        funding:     r['Funding']      || r['funding']     || ''
       }));
 
       const existing = s.store.filter(e => (e.id || 0) < s.baseId);
