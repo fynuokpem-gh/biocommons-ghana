@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"/>
 <style>
 :root{
   --cream:#FFFBF4;--dark:#0B2618;--dark2:#163A24;
@@ -914,7 +913,7 @@ function renderGrants(data){
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
   grid.innerHTML=data.map(g=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+
+    '<div class=\"card-flag\"><span class=\"card-flag-emoji\">'+g.flag+'</span><span class=\"card-flag-label\">'+(g.country||'Global')+'</span></div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
       (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
@@ -940,7 +939,7 @@ function renderOpportunities(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+
+    '<div class=\"card-flag\"><span class=\"card-flag-emoji\">'+o.flag+'</span><span class=\"card-flag-label\">'+(o.country||'Global')+'</span></div>'+
     '<div class="badges">'+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
@@ -969,7 +968,7 @@ function applyOppFilter(q=''){
 function renderProgrammes(data){
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
   document.getElementById('prog-grid').innerHTML=data.map(p=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+
+    '<div class=\"card-flag\"><span class=\"card-flag-emoji\">'+p.flag+'</span><span class=\"card-flag-label\">'+(p.host||'Ghana')+'</span></div>'+
     '<div class="badges"><span class="badge '+(p.degree==='PhD'?'badge-blue':'badge-green')+'">'+p.degree+'</span><span class="badge badge-muted">'+p.duration+'</span></div>'+
     '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
     '<div class="card-tags">'+p.fields.split(', ').map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
@@ -986,7 +985,7 @@ function filterProgrammes(btn){
 function renderInternships(data){
   document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
   document.getElementById('int-grid').innerHTML=data.map(i=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+
+    '<div class=\"card-flag\"><span class=\"card-flag-emoji\">'+i.flag+'</span><span class=\"card-flag-label\">'+(i.location||i.country||'Ghana')+'</span></div>'+
     '<div class="badges">'+
       (i.paid?'<span class="badge badge-green">'+i.compensation+'</span>':'<span class="badge badge-muted">'+i.compensation+'</span>')+
       '<span class="badge badge-blue">'+i.type.charAt(0).toUpperCase()+i.type.slice(1)+'</span>'+
@@ -1023,7 +1022,7 @@ function filterReagents(btn){
 
 function renderWorkshops(data){
   document.getElementById('workshop-grid').innerHTML=data.map(w=>'<div class="card">'+
-    '<div class=\\"card-flag\\"><span class=\\"card-flag-label\\">'+(w.location||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+
+    '<div class=\"card-flag\"><span class=\"card-flag-emoji\">'+w.flag+'</span><span class=\"card-flag-label\">'+(w.location||'Ghana')+'</span></div>'+
     '<div class="badges">'+
       '<span class="badge '+(w.type==='conference'?'badge-blue':'badge-green')+'">'+(w.type==='conference'?'Conference':'Workshop')+'</span>'+
       (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">Paid</span>')+
@@ -1184,36 +1183,30 @@ updateAllCounts();
 
 // ─── Load approved entries from Google Sheets ────────────────────────────────
 
-const COUNTRY_CODES = {
-  'ghana':'gh','nigeria':'ng','kenya':'ke','south africa':'za','uganda':'ug',
-  'tanzania':'tz','rwanda':'rw','ethiopia':'et','egypt':'eg','morocco':'ma',
-  'senegal':'sn','ivory coast':'ci','côte d\'ivoire':'ci','cameroon':'cm',
-  'uk':'gb','united kingdom':'gb','england':'gb','scotland':'gb',
-  'usa':'us','united states':'us','us':'us','america':'us',
-  'germany':'de','france':'fr','italy':'it','spain':'es','netherlands':'nl',
-  'belgium':'be','switzerland':'ch','sweden':'se','norway':'no','denmark':'dk',
-  'finland':'fi','austria':'at','poland':'pl','portugal':'pt','ireland':'ie',
-  'canada':'ca','australia':'au','new zealand':'nz',
-  'japan':'jp','china':'cn','south korea':'kr','korea':'kr','india':'in',
-  'singapore':'sg','malaysia':'my','indonesia':'id','thailand':'th',
-  'brazil':'br','mexico':'mx','argentina':'ar','chile':'cl',
-  'uae':'ae','saudi arabia':'sa','israel':'il','turkey':'tr',
-  'nairobi':'ke','accra':'gh','kumasi':'gh','legon':'gh'
+const COUNTRY_FLAGS = {
+  'ghana':'🇬🇭','nigeria':'🇳🇬','kenya':'🇰🇪','south africa':'🇿🇦','uganda':'🇺🇬',
+  'tanzania':'🇹🇿','rwanda':'🇷🇼','ethiopia':'🇪🇹','egypt':'🇪🇬','morocco':'🇲🇦',
+  'senegal':'🇸🇳','ivory coast':'🇨🇮','côte d\'ivoire':'🇨🇮','cameroon':'🇨🇲',
+  'uk':'🇬🇧','united kingdom':'🇬🇧','england':'🇬🇧','scotland':'🇬🇧',
+  'usa':'🇺🇸','united states':'🇺🇸','us':'🇺🇸','america':'🇺🇸',
+  'germany':'🇩🇪','france':'🇫🇷','italy':'🇮🇹','spain':'🇪🇸','netherlands':'🇳🇱',
+  'belgium':'🇧🇪','switzerland':'🇨🇭','sweden':'🇸🇪','norway':'🇳🇴','denmark':'🇩🇰',
+  'finland':'🇫🇮','austria':'🇦🇹','poland':'🇵🇱','portugal':'🇵🇹','ireland':'🇮🇪',
+  'canada':'🇨🇦','australia':'🇦🇺','new zealand':'🇳🇿',
+  'japan':'🇯🇵','china':'🇨🇳','south korea':'🇰🇷','korea':'🇰🇷','india':'🇮🇳',
+  'singapore':'🇸🇬','malaysia':'🇲🇾','indonesia':'🇮🇩','thailand':'🇹🇭',
+  'brazil':'🇧🇷','mexico':'🇲🇽','argentina':'🇦🇷','chile':'🇨🇱',
+  'uae':'🇦🇪','saudi arabia':'🇸🇦','israel':'🇮🇱','turkey':'🇹🇷'
 };
 
 function flagFor(country) {
-  if (!country) return '<span class="fi fi-xx" style="font-size:20px;border-radius:3px;"></span>';
+  if (!country) return '🌍';
   const key = String(country).toLowerCase().trim();
-  let code = COUNTRY_CODES[key];
-  if (!code) {
-    for (const k in COUNTRY_CODES) {
-      if (key.includes(k) || k.includes(key)) { code = COUNTRY_CODES[k]; break; }
-    }
+  if (COUNTRY_FLAGS[key]) return COUNTRY_FLAGS[key];
+  for (const k in COUNTRY_FLAGS) {
+    if (key.includes(k) || k.includes(key)) return COUNTRY_FLAGS[k];
   }
-  if (code) {
-    return '<span class="fi fi-' + code + '" style="width:24px;height:18px;border-radius:3px;display:inline-block;vertical-align:middle;"></span>';
-  }
-  return '<span style="font-size:18px;vertical-align:middle;">🌍</span>';
+  return '🌍';
 }
 
 function normalizeUrl(url) {
