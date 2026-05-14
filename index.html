@@ -1002,7 +1002,9 @@ function filterWorkshops(btn){
 }
 
 function renderProfs(data){
-  document.getElementById('prof-grid').innerHTML=data.map(p=>{
+  const grid = document.getElementById('prof-grid');
+  if (!grid) return;
+  grid.innerHTML=data.map(p=>{
     const initials=p.name.split(' ').filter(w=>w.match(/^[A-Z]/)).slice(0,2).map(w=>w[0]).join('');
     const stars='★'.repeat(Math.round(p.overall))+'☆'.repeat(5-Math.round(p.overall));
     return'<div class="prof-card">'+
@@ -1025,6 +1027,7 @@ function renderProfs(data){
 }
 function filterProfs(btn){
   document.querySelectorAll('#sec-professors .f-btn').forEach(b=>b.classList.remove('active'));
+  if(!document.getElementById('prof-grid')) return;
   btn.classList.add('active');const f=btn.dataset.f;
   renderProfs(f==='all'?professors:professors.filter(p=>p.uni===f));
 }
