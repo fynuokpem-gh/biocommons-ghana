@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"/>
 <style>
 :root{
   --cream:#FFFBF4;--dark:#0B2618;--dark2:#163A24;
@@ -1202,7 +1201,7 @@ const COUNTRY_CODES = {
 };
 
 function flagFor(country) {
-  if (!country) return '<span class="fi fi-xx" style="font-size:20px;border-radius:3px;"></span>';
+  if (!country) return '<span style="font-size:18px">🌍</span>';
   const key = String(country).toLowerCase().trim();
   let code = COUNTRY_CODES[key];
   if (!code) {
@@ -1211,9 +1210,11 @@ function flagFor(country) {
     }
   }
   if (code) {
-    return '<span class="fi fi-' + code + '" style="width:24px;height:18px;border-radius:3px;display:inline-block;vertical-align:middle;"></span>';
+    return '<img src="https://flagcdn.com/20x15/' + code + '.png" '+
+           'style="width:20px;height:15px;border-radius:2px;vertical-align:middle;display:inline-block;" '+
+           'alt="' + country + '">';
   }
-  return '<span style="font-size:18px;vertical-align:middle;">🌍</span>';
+  return '<span style="font-size:18px">🌍</span>';
 }
 
 function normalizeUrl(url) {
