@@ -372,27 +372,27 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       <div class="hero-btns">
         <a class="hero-btn gold" href="javascript:void(0)" onclick="showSection('opportunities')">
           <span class="hero-btn-icon">🎓</span>
-          <div><div class="hero-btn-label">Scholarships</div><div class="hero-btn-count">12 open now</div></div>
+          <div><div class="hero-btn-label">Scholarships</div><div class="hero-btn-count" id="hc-opp">12 open now</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('grants')">
           <span class="hero-btn-icon">💰</span>
-          <div><div class="hero-btn-label">Grants</div><div class="hero-btn-count">8 available</div></div>
+          <div><div class="hero-btn-label">Grants</div><div class="hero-btn-count" id="hc-grants">8 available</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('reagents')">
           <span class="hero-btn-icon">⚗️</span>
-          <div><div class="hero-btn-label">Reagent Exchange</div><div class="hero-btn-count">10 listings</div></div>
+          <div><div class="hero-btn-label">Reagent Exchange</div><div class="hero-btn-count" id="hc-reagents">10 listings</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('internships')">
           <span class="hero-btn-icon">💼</span>
-          <div><div class="hero-btn-label">Jobs & Internships</div><div class="hero-btn-count">9 positions</div></div>
+          <div><div class="hero-btn-label">Jobs & Internships</div><div class="hero-btn-count" id="hc-int">9 positions</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('workshops')">
           <span class="hero-btn-icon">🏛</span>
-          <div><div class="hero-btn-label">Workshops & Conferences</div><div class="hero-btn-count">6 upcoming</div></div>
+          <div><div class="hero-btn-label">Workshops & Conferences</div><div class="hero-btn-count" id="hc-workshops">6 upcoming</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('programmes')">
           <span class="hero-btn-icon">📚</span>
-          <div><div class="hero-btn-label">Graduate Programs-GH</div><div class="hero-btn-count">8 programmes</div></div>
+          <div><div class="hero-btn-label">Graduate Programs-GH</div><div class="hero-btn-count" id="hc-prog">8 programmes</div></div>
         </a>
       </div>
     </div>
@@ -415,11 +415,11 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
   <!-- STATS -->
   <div class="stats-bar">
-    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Scholarships</div></div>
-    <div class="stat-item"><div class="stat-num">9</div><div class="stat-label">Jobs & Internships</div></div>
-    <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Reagents Listed</div></div>
-    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Programmes</div></div>
-    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Workshops</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-opp">12</div><div class="stat-label">Scholarships</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-int">9</div><div class="stat-label">Jobs & Internships</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-reagents">10</div><div class="stat-label">Reagents Listed</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-prog">8</div><div class="stat-label">Programmes</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-workshops">6</div><div class="stat-label">Workshops</div></div>
     <div class="stat-item"><div class="stat-num">Free</div><div class="stat-label">Always & forever</div></div>
   </div>
 </section>
@@ -427,12 +427,12 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <!-- TABS -->
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="showSection('opportunities')" id="tab-opportunities">🎓 Scholarships <span class="tab-count">18</span></button>
-    <button class="tab-btn" onclick="showSection('grants')" id="tab-grants">💰 Grants <span class="tab-count">8</span></button>
-    <button class="tab-btn" onclick="showSection('reagents')" id="tab-reagents">⚗️ Reagents <span class="tab-count">10</span></button>
-    <button class="tab-btn" onclick="showSection('internships')" id="tab-internships">💼 Jobs & Internships <span class="tab-count">9</span></button>
-    <button class="tab-btn" onclick="showSection('workshops')" id="tab-workshops">🏛 Workshops & Conferences <span class="tab-count">6</span></button>
-    <button class="tab-btn" onclick="showSection('programmes')" id="tab-programmes">📚 Graduate Programs-GH <span class="tab-count">8</span></button>
+    <button class="tab-btn active" onclick="showSection('opportunities')" id="tab-opportunities">🎓 Scholarships <span class="tab-count" id="tc-opp">18</span></button>
+    <button class="tab-btn" onclick="showSection('grants')" id="tab-grants">💰 Grants <span class="tab-count" id="tc-grants">8</span></button>
+    <button class="tab-btn" onclick="showSection('reagents')" id="tab-reagents">⚗️ Reagents <span class="tab-count" id="tc-reagents">10</span></button>
+    <button class="tab-btn" onclick="showSection('internships')" id="tab-internships">💼 Jobs & Internships <span class="tab-count" id="tc-int">9</span></button>
+    <button class="tab-btn" onclick="showSection('workshops')" id="tab-workshops">🏛 Workshops & Conferences <span class="tab-count" id="tc-workshops">6</span></button>
+    <button class="tab-btn" onclick="showSection('programmes')" id="tab-programmes">📚 Graduate Programs-GH <span class="tab-count" id="tc-prog">8</span></button>
     <button class="tab-btn" onclick="showSection('submit')" id="tab-submit">➕ Submit</button>
   </div>
 </div>
@@ -869,6 +869,42 @@ const grants=[
   {id:'g7',flag:'🌍',title:'H3Africa Research Grant',host:'H3Africa Consortium',country:'Africa',type:'research',amount:'Up to $100,000',deadline:'28 Feb 2026',soon:false,fields:'Genomics, population genetics',desc:'Supports genomics and population health research led by African researchers.',link:'#',tags:['research','africa']},
   {id:'g8',flag:'🇺🇸',title:'American Society for Microbiology SMID Grant',host:'ASM',country:'USA',type:'research',amount:'Up to $3,000',deadline:'01 Apr 2026',soon:false,fields:'Microbiology, infectious disease',desc:'Small research grants for early-career microbiologists, open to African applicants.',link:'#',tags:['research']},
 ];
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function updateAllCounts() {
+  const counts = {
+    opp:       opportunities.length,
+    grants:    grants.length,
+    reagents:  reagents.length,
+    int:       internships.length,
+    workshops: workshops.length,
+    prog:      programmes.length
+  };
+  // Tab counts (just the number)
+  setText('tc-opp',       counts.opp);
+  setText('tc-grants',    counts.grants);
+  setText('tc-reagents',  counts.reagents);
+  setText('tc-int',       counts.int);
+  setText('tc-workshops', counts.workshops);
+  setText('tc-prog',      counts.prog);
+  // Hero buttons (with descriptive suffix)
+  setText('hc-opp',       counts.opp + ' open now');
+  setText('hc-grants',    counts.grants + ' available');
+  setText('hc-reagents',  counts.reagents + ' listings');
+  setText('hc-int',       counts.int + ' positions');
+  setText('hc-workshops', counts.workshops + ' upcoming');
+  setText('hc-prog',      counts.prog + ' programmes');
+  // Stats bar
+  setText('st-opp',       counts.opp);
+  setText('st-int',       counts.int);
+  setText('st-reagents',  counts.reagents);
+  setText('st-prog',      counts.prog);
+  setText('st-workshops', counts.workshops);
+}
+
 function renderGrants(data){
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
   const grid=document.getElementById('grants-grid');
@@ -1140,6 +1176,7 @@ renderInternships(internships);
 renderReagents(reagents);
 renderWorkshops(workshops);
 renderProfs(professors);
+updateAllCounts();
 
 // ─── Load approved entries from Google Sheets ────────────────────────────────
 
@@ -1262,6 +1299,7 @@ async function loadApprovedEntries() {
       existing.forEach(e => s.store.push(e));
       newEntries.forEach(e => s.store.push(e));
       s.render();
+      updateAllCounts();
       console.log('✅ ' + s.name + ': added ' + newEntries.length + ' cards');
     } catch(err) {
       console.warn(s.name + ' error:', err.message);
