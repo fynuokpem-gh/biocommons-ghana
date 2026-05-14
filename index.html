@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BioCommons Ghana — Open Science. Open Doors. Open Ghana.</title>
-<meta name="description" content="BioCommons Ghana connects biological scientists across Ghana to scholarships, jobs, reagent exchange, workshops, and more."/>
+<meta name="description" content="BioCommons Ghana connects biological scientists across Ghana to scholarships, fellowships, jobs, reagent exchange, workshops, and more."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -345,7 +345,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </svg>
   </a>
   <ul class="nav-links">
-    <li><a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships</a></li>
+    <li><a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships & Fellowships</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('grants')">Grants</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('reagents')">Reagents</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a></li>
@@ -365,7 +365,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
         <span style="color:#FFFFFF">Open Doors.</span><br/>
         <span style="color:#FFFFFF">Open Ghana.</span>
       </h1>
-      <p class="hero-sub">Scholarships, funding, jobs, reagent exchange, and workshops — all in one place, free for biological scientists across Ghana.</p>
+      <p class="hero-sub">Scholarships, fellowships, grants, jobs, reagent exchange, and workshops — all in one place, free for biological scientists across Ghana.</p>
       <div class="hero-cta-row">
         <a class="hero-cta-primary" href="javascript:void(0)" onclick="showSection('opportunities')">
           Explore Opportunities
@@ -376,7 +376,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       <div class="hero-btns">
         <a class="hero-btn gold" href="javascript:void(0)" onclick="showSection('opportunities')">
           <span class="hero-btn-icon">🎓</span>
-          <div><div class="hero-btn-label">Scholarships</div><div class="hero-btn-count" id="hc-opp">12 open now</div></div>
+          <div><div class="hero-btn-label">Scholarships & Fellowships</div><div class="hero-btn-count" id="hc-opp">12 open now</div></div>
         </a>
         <a class="hero-btn" href="javascript:void(0)" onclick="showSection('grants')">
           <span class="hero-btn-icon">💰</span>
@@ -419,7 +419,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
   <!-- STATS -->
   <div class="stats-bar">
-    <div class="stat-item"><div class="stat-num" id="st-opp">12</div><div class="stat-label">Scholarships</div></div>
+    <div class="stat-item"><div class="stat-num" id="st-opp">12</div><div class="stat-label">Scholarships & Fellowships</div></div>
     <div class="stat-item"><div class="stat-num" id="st-int">9</div><div class="stat-label">Jobs & Internships</div></div>
     <div class="stat-item"><div class="stat-num" id="st-reagents">10</div><div class="stat-label">Reagents Listed</div></div>
     <div class="stat-item"><div class="stat-num" id="st-prog">8</div><div class="stat-label">Programmes</div></div>
@@ -431,7 +431,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <!-- TABS -->
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab-btn active" onclick="showSection('opportunities')" id="tab-opportunities">🎓 Scholarships <span class="tab-count" id="tc-opp">18</span></button>
+    <button class="tab-btn active" onclick="showSection('opportunities')" id="tab-opportunities">🎓 Scholarships & Fellowships <span class="tab-count" id="tc-opp">18</span></button>
     <button class="tab-btn" onclick="showSection('grants')" id="tab-grants">💰 Grants <span class="tab-count" id="tc-grants">8</span></button>
     <button class="tab-btn" onclick="showSection('reagents')" id="tab-reagents">⚗️ Reagents <span class="tab-count" id="tc-reagents">10</span></button>
     <button class="tab-btn" onclick="showSection('internships')" id="tab-internships">💼 Jobs & Internships <span class="tab-count" id="tc-int">9</span></button>
@@ -444,7 +444,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <!-- SCHOLARSHIPS -->
 <div class="section active" id="sec-opportunities">
   <div class="section-hd">
-    <div><div class="section-title">Scholarships & Funding</div><div class="section-sub">Fully funded and partial opportunities for Ghanaian biological scientists</div></div>
+    <div><div class="section-title">Scholarships & Fellowships</div><div class="section-sub">Fully funded and partial scholarships, fellowships and awards for Ghanaian biological scientists</div></div>
     <span class="result-count" id="opp-count"></span>
   </div>
   <div class="filter-row">
@@ -550,7 +550,8 @@ footer{background:var(--dark);padding:52px 5% 32px;}
   </div>
   <div class="submit-wrap">
     <div class="submit-tabs">
-      <button class="s-tab active" onclick="showSubmitForm('scholarship',this)">🎓 Scholarship</button>
+      <button class="s-tab active" onclick="showSubmitForm('scholarship',this)">🎓 Scholarship & Fellowship</button>
+      <button class="s-tab" onclick="showSubmitForm('grant',this)">💰 Grant</button>
       <button class="s-tab" onclick="showSubmitForm('internship',this)">💼 Job / Internship</button>
       <button class="s-tab" onclick="showSubmitForm('jobwanted',this)">🙋 Job Wanted</button>
       <button class="s-tab" onclick="showSubmitForm('reagent',this)">⚗️ Reagent</button>
@@ -575,6 +576,39 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       <div class="form-group"><label>Description</label><textarea placeholder="Who is eligible? What does it cover?"></textarea></div>
       <div class="form-group"><label>Your Email (optional)</label><input type="email" placeholder="you@example.com"/></div>
       <button class="btn-submit" onclick="submitForm('Scholarship')">Submit Scholarship →</button>
+      <p class="submit-note">Reviewed within 24 hours. We verify all links before publishing.</p>
+    </div>
+
+    <div class="s-form" id="sf-grant">
+      <div class="form-row">
+        <div class="form-group"><label>Grant Name</label><input type="text" placeholder="e.g. Wellcome Trust Africa Research Grant"/></div>
+        <div class="form-group"><label>Host Organisation</label><input type="text" placeholder="e.g. Wellcome Trust"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Country</label><input type="text" placeholder="e.g. United Kingdom, Ghana, USA"/></div>
+        <div class="form-group"><label>Grant Type</label>
+          <select>
+            <option value="">Select type...</option>
+            <option>Research Grant</option>
+            <option>Travel Grant</option>
+            <option>Equipment Grant</option>
+            <option>Seed Funding</option>
+            <option>Fellowship Award</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Amount / Value</label><input type="text" placeholder="e.g. Up to $50,000 or GH¢ 20,000"/></div>
+        <div class="form-group"><label>Deadline</label><input type="text" placeholder="e.g. 30 Apr 2026"/></div>
+      </div>
+      <div class="form-group"><label>Eligibility</label><input type="text" placeholder="e.g. Early-career African researchers, PhD holders..."/></div>
+      <div class="form-group"><label>Official Link</label><input type="url" placeholder="https://..."/></div>
+      <div class="form-group"><label>Description</label><textarea rows="3" placeholder="Brief description of the grant and what it funds..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Your Name</label><input type="text" placeholder="Full name"/></div>
+        <div class="form-group"><label>Your Email (optional)</label><input type="email" placeholder="you@example.com"/></div>
+      </div>
+      <button class="submit-btn" onclick="submitForm('Grant')">Submit Grant →</button>
       <p class="submit-note">Reviewed within 24 hours. We verify all links before publishing.</p>
     </div>
 
@@ -757,7 +791,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
     <div class="footer-col">
       <h4>Explore</h4>
-      <a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships</a>
+      <a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships & Fellowships</a>
       <a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a>
       <a href="javascript:void(0)" onclick="showSection('reagents')">Reagent Exchange</a>
       <a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a>
@@ -1144,7 +1178,8 @@ function collectFormData(formId){
 
 function submitForm(type){
   const formMap={
-    'Scholarship':'sf-scholarship',
+    'Scholarship & Fellowship':'sf-scholarship',
+    'Grant':'sf-grant',
     'Job / Internship':'sf-internship',
     'Job Wanted post':'sf-jobwanted',
     'Reagent listing':'sf-reagent',
