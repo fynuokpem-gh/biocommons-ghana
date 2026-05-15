@@ -315,17 +315,8 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <div class="announce-bar">
   <span class="announce-label">📢 Announcements</span>
   <div class="announce-ticker-wrap">
-    <div class="announce-ticker">
-      <span>🎓 <strong>Gates Cambridge Scholarship</strong> deadline: 08 Jan 2026 — Apply now</span>
-      <span>⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits available at Noguchi Institute</span>
-      <span>🏛 <strong>DAAD Scholarships</strong> closing 15 Oct 2025 — Don't miss it</span>
-      <span>🔬 <strong>NIH Summer Fellowship</strong> open for African applicants — Deadline 15 Jan 2026</span>
-      <span>📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop — Register now</span>
-      <span>🎓 <strong>Gates Cambridge Scholarship</strong> deadline: 08 Jan 2026 — Apply now</span>
-      <span>⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits available at Noguchi Institute</span>
-      <span>🏛 <strong>DAAD Scholarships</strong> closing 15 Oct 2025 — Don't miss it</span>
-      <span>🔬 <strong>NIH Summer Fellowship</strong> open for African applicants — Deadline 15 Jan 2026</span>
-      <span>📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop — Register now</span>
+    <div class="announce-ticker" id="announce-ticker">
+      <span>Loading announcements…</span>
     </div>
   </div>
 </div>
@@ -1345,6 +1336,40 @@ function sheetToProgramme(row, id) {
     deadline: row.deadline, link: normalizeUrl(row.link)
   };
 }
+
+// ─── Announcements ticker ────────────────────────────────────────────────────
+
+const DEFAULT_ANNOUNCEMENTS = [
+  '🎓 <strong>Gates Cambridge Scholarship</strong> — deadline 08 Jan 2026',
+  '⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits at Noguchi Institute',
+  '🏛 <strong>DAAD Scholarships</strong> — closing 15 Oct 2025',
+  '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
+  '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
+];
+
+function renderTicker(items) {
+  const ticker = document.getElementById('announce-ticker');
+  if (!ticker) return;
+  // Duplicate items for seamless infinite scroll
+  const all = [...items, ...items];
+  ticker.innerHTML = all.map(t => '<span>' + t + '</span>').join('');
+}
+
+async function loadAnnouncements() {
+  try {
+    const rows = await fetchSheetJSONP('Announcements');
+    if (rows && rows.length > 0) {
+      renderTicker(rows.map(r => r.text || r.title || ''));
+    } else {
+      renderTicker(DEFAULT_ANNOUNCEMENTS);
+    }
+  } catch(err) {
+    console.warn('[BioCommons] Announcements fallback to defaults:', err.message);
+    renderTicker(DEFAULT_ANNOUNCEMENTS);
+  }
+}
+
+loadAnnouncements();
 
 // ─── Load approved entries via JSONP (bypasses CORS on Apps Script) ────────────
 
