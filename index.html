@@ -1193,41 +1193,6 @@ function subscribeNewsletter(){
   .catch(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();});
 }
 
-// Maps auto-generated snake_case label keys → exact Google Sheet column headers
-const SHEET_KEY_MAP = {
-  // Shared
-  'host_organisation':       'Host / Org',
-  'official_link':           'Link',
-  'your_email':              'Submitter Email',
-  'submitter_email':         'Submitter Email',
-  // Scholarship
-  'scholarship_name':        'Title / Name',
-  'degree_level':            'Degree',
-  'funding_type':            'Funding',
-  // Grant
-  'grant_name':              'Title / Name',
-  'amount_value':            'Amount / Value',
-  'grant_type':              'Grant Type',
-  // Internship / Job
-  'position_title':          'Title / Name',
-  'organisation':            'Host / Org',
-  'application_link_contact':'Link',
-  // Job Wanted
-  'role_position_sought':    'Title / Name',
-  'your_institution':        'Host / Org',
-  'contact_email':           'Submitter Email',
-  // Reagent
-  'reagent_item_name':       'Title / Name',
-  // Workshop / Conference
-  'event_name':              'Title / Name',
-  'organiser':               'Host / Org',
-  'registration_event_link': 'Link',
-  // Programme
-  'programme_name':          'Title / Name',
-  'university':              'Host / Org',
-  'programme_link':          'Link',
-};
-
 function collectFormData(formId){
   const form=document.getElementById(formId);
   if(!form)return{};
@@ -1238,9 +1203,7 @@ function collectFormData(formId){
     if(label&&input){
       // Strip parenthetical hints like "(optional)" then convert to snake_case key
       const cleanLabel = label.textContent.trim().replace(/\s*\([^)]*\)/g,'');
-      const snakeKey=cleanLabel.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-      // Use the sheet column name if we have a mapping, otherwise use snake_case
-      const key = SHEET_KEY_MAP[snakeKey] || snakeKey;
+      const key=cleanLabel.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
       data[key]=input.value.trim();
     }
   });
@@ -1250,12 +1213,14 @@ function collectFormData(formId){
 function submitForm(type){
   const formMap={
     'Scholarship & Fellowship':'sf-scholarship',
+    'Scholarship':'sf-scholarship',
     'Grant':'sf-grant',
     'Job / Internship':'sf-internship',
     'Job Wanted post':'sf-jobwanted',
     'Reagent listing':'sf-reagent',
     'Workshop / Conference':'sf-workshop',
-    'Programme':'sf-programme'
+    'Programme':'sf-programme',
+    'Professor rating':'sf-professor'
   };
   const formId=formMap[type];
   const formData=collectFormData(formId);
@@ -1381,39 +1346,26 @@ function sheetToProgramme(row, id) {
   };
 }
 
-// ─── Direct Google Sheets (no third-party API — no usage limits) ─────────────
-const SHEET_ID = '1cKh0heHwwLIarTFJW6lsrCkl6PdvYzjDIEEjAe5QkA8';
+// ─── Load approved entries via JSONP (bypasses CORS on Apps Script) ────────────
 
-async function fetchSheet(sheetName) {
-  const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(sheetName);
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    if (text.includes('<html') || text.includes('accounts.google.com')) {
-      console.error('[BioCommons] ' + sheetName + ': Sheet not publicly shared! Go to Share → Anyone with the link → Viewer.');
-      return [];
-    }
-    const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?\s*$/);
-    if (!match) throw new Error('Unexpected gviz response format');
-    const json = JSON.parse(match[1]);
-    if (json.status !== 'ok') throw new Error('gviz: ' + (json.errors?.[0]?.message || 'unknown error'));
-    const cols = json.table.cols.map(c => c.label || c.id);
-    console.log('[BioCommons] ' + sheetName + ' columns:', cols);
-    const rows = (json.table.rows || []).map(row => {
-      const obj = {};
-      (row.c || []).forEach((cell, i) => {
-        obj[cols[i]] = (cell && cell.v !== null && cell.v !== undefined) ? String(cell.v) : '';
-      });
-      return obj;
-    });
-    console.log('[BioCommons] ' + sheetName + ': ' + rows.length + ' rows, statuses:', [...new Set(rows.map(r => r['Status'] || r['status'] || '(empty)'))]);
-    return rows;
-  } catch(err) {
-    console.error('[BioCommons] fetchSheet(' + sheetName + ') failed:', err.message);
-    return [];
-  }
+function fetchSheetJSONP(sheetName) {
+  return new Promise((resolve, reject) => {
+    const cbName = 'bc_' + sheetName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Date.now();
+    window[cbName] = function(data) {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (data && data.success) resolve(data.data || []);
+      else reject(new Error((data && data.error) || 'Apps Script error'));
+    };
+    const script = document.createElement('script');
+    script.src = BIOCOMMONS_API + '?sheet=' + encodeURIComponent(sheetName) + '&callback=' + cbName;
+    script.onerror = function() {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      reject(new Error('Script load failed for ' + sheetName));
+    };
+    document.head.appendChild(script);
+  });
 }
 
 async function loadApprovedEntries() {
@@ -1428,31 +1380,9 @@ async function loadApprovedEntries() {
 
   for (const s of sheetConfig) {
     try {
-      const data = await fetchSheet(s.name);
-      if (!data.length) { console.log(s.name + ': no data'); continue; }
-
-      // Filter approved rows (case-insensitive, trimmed)
-      const approved = data.filter(r =>
-        String(r['Status'] || r['status'] || '').trim().toUpperCase() === 'APPROVED'
-      );
-      console.log(s.name + ': ' + data.length + ' rows, ' + approved.length + ' approved');
-      if (approved.length === 0) continue;
-
-      // Map column names to our internal format
-      // Handles both admin-set headers (Title / Name, Host / Org…)
-      // AND the snake_case keys the submission form writes (scholarship_name, host_organisation…)
-      const rows = approved.map(r => ({
-        title:       r['Title / Name']    || r['scholarship_name'] || r['grant_name']        || r['title']       || '',
-        host:        r['Host / Org']      || r['host_organisation']|| r['host']              || '',
-        country:     r['Country']         || r['country']          || 'Ghana',
-        deadline:    r['Deadline']        || r['deadline']         || '',
-        link:        r['Link']            || r['official_link']    || r['link']              || '#',
-        description: r['Description']     || r['description']      || '',
-        degree:      r['Degree']          || r['degree_level']     || r['DEGREE']            || r['degree']       || '',
-        funding:     r['Funding']         || r['funding_type']     || r['FUNDING']           || r['funding']      || ''
-      }));
-
-      // Preserve hardcoded entries (string IDs like 'g1') AND numeric IDs below baseId
+      const rows = await fetchSheetJSONP(s.name);
+      if (!rows.length) { console.log('[BioCommons] ' + s.name + ': no approved data'); continue; }
+      console.log('[BioCommons] ✅ ' + s.name + ': ' + rows.length + ' approved entries loaded');
       const existing = s.store.filter(e => typeof e.id !== 'number' || e.id < s.baseId);
       const newEntries = rows.map((row, i) => s.mapper(row, i));
       s.store.length = 0;
@@ -1460,9 +1390,8 @@ async function loadApprovedEntries() {
       newEntries.forEach(e => s.store.push(e));
       s.render();
       updateAllCounts();
-      console.log('✅ ' + s.name + ': added ' + newEntries.length + ' cards');
     } catch(err) {
-      console.warn(s.name + ' error:', err.message);
+      console.warn('[BioCommons] ' + s.name + ' error:', err.message);
     }
   }
 }
