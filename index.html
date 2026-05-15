@@ -1110,7 +1110,7 @@ function filterInternships(btn){
 }
 
 function renderReagents(data){
-  document.getElementById('reagent-grid').innerHTML=data.map(r=>'<div class="reagent-card" onclick="openReagentModal('+JSON.stringify(String(r.id))+')" style="cursor:pointer">'+
+  document.getElementById('reagent-grid').innerHTML=data.map(r=>'<div class="reagent-card" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
     '<div><div class="reagent-type">'+(r.type==='available'?'✅ Available':'🔍 Seeking')+' · '+r.category+'</div>'+
     '<div class="reagent-name">'+r.name+'</div></div>'+
     '<div class="reagent-detail"><strong style="color:var(--text)">'+r.qty+'</strong> · '+r.condition+
