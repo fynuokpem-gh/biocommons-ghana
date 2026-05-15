@@ -912,14 +912,14 @@ function showSection(name){
 
 let oppFilter='all';
 const grants=[
-  {id:'g1',flag:'🌍',title:'Wellcome Trust Africa Research Grant',host:'Wellcome Trust',country:'UK/Africa',type:'research',amount:'Up to $50,000',deadline:'30 Apr 2026',soon:false,fields:'Any biological science discipline',desc:'Supports early-career African researchers conducting high-impact science on the continent.',link:'#',tags:['research']},
-  {id:'g2',flag:'🇺🇸',title:'NIH Fogarty International Research Grant',host:'NIH Fogarty Center',country:'USA',type:'research',amount:'Up to $75,000',deadline:'15 Feb 2026',soon:false,fields:'Infectious disease, genomics, public health',desc:'Supports collaborative research between US and low/middle-income country scientists.',link:'#',tags:['research']},
-  {id:'g3',flag:'🌍',title:'African Academy of Sciences CARTA Grant',host:'AAS / CARTA',country:'Africa',type:'research',amount:'Up to $20,000',deadline:'31 Mar 2026',soon:false,fields:'Population health, epidemiology, biomedical sciences',desc:'CARTA grants support doctoral and post-doctoral researchers at African institutions.',link:'#',tags:['research','africa']},
-  {id:'g4',flag:'🇩🇪',title:'DAAD Research Travel Grant',host:'DAAD',country:'Germany',type:'travel',amount:'€1,500 – €3,000',deadline:'01 Jun 2026',soon:false,fields:'All sciences',desc:'Covers travel and accommodation for short-term research visits to German institutions.',link:'#',tags:['travel']},
-  {id:'g5',flag:'🇬🇧',title:'Royal Society Africa Travel Grant',host:'Royal Society',country:'UK',type:'travel',amount:'Up to £5,000',deadline:'15 May 2026',soon:true,fields:'All sciences',desc:'Enables African researchers to visit UK institutions for collaborative research.',link:'#',tags:['travel']},
-  {id:'g6',flag:'🇬🇭',title:'Ghana NaCCA Research Equipment Grant',host:'NaCCA Ghana',country:'Ghana',type:'equipment',amount:'GH¢ 50,000',deadline:'20 Mar 2026',soon:false,fields:'Laboratory sciences',desc:'Provides lab equipment grants to accredited Ghanaian research institutions.',link:'#',tags:['equipment','africa']},
-  {id:'g7',flag:'🌍',title:'H3Africa Research Grant',host:'H3Africa Consortium',country:'Africa',type:'research',amount:'Up to $100,000',deadline:'28 Feb 2026',soon:false,fields:'Genomics, population genetics',desc:'Supports genomics and population health research led by African researchers.',link:'#',tags:['research','africa']},
-  {id:'g8',flag:'🇺🇸',title:'American Society for Microbiology SMID Grant',host:'ASM',country:'USA',type:'research',amount:'Up to $3,000',deadline:'01 Apr 2026',soon:false,fields:'Microbiology, infectious disease',desc:'Small research grants for early-career microbiologists, open to African applicants.',link:'#',tags:['research']},
+  {id:'g1',flag:'🌍',title:'Wellcome Trust Africa Research Grant',host:'Wellcome Trust',country:'UK/Africa',type:'research',amount:'Up to $50,000',deadline:'30 Apr 2026',soon:false,fields:'Any biological science discipline',desc:'Supports early-career African researchers conducting high-impact science on the continent.',link:'https://wellcome.org/grant-funding',tags:['research']},
+  {id:'g2',flag:'🇺🇸',title:'NIH Fogarty International Research Grant',host:'NIH Fogarty Center',country:'USA',type:'research',amount:'Up to $75,000',deadline:'15 Feb 2026',soon:false,fields:'Infectious disease, genomics, public health',desc:'Supports collaborative research between US and low/middle-income country scientists.',link:'https://www.fic.nih.gov/Funding/Pages/default.aspx',tags:['research']},
+  {id:'g3',flag:'🌍',title:'African Academy of Sciences CARTA Grant',host:'AAS / CARTA',country:'Africa',type:'research',amount:'Up to $20,000',deadline:'31 Mar 2026',soon:false,fields:'Population health, epidemiology, biomedical sciences',desc:'CARTA grants support doctoral and post-doctoral researchers at African institutions.',link:'https://cartafrica.org/',tags:['research','africa']},
+  {id:'g4',flag:'🇩🇪',title:'DAAD Research Travel Grant',host:'DAAD',country:'Germany',type:'travel',amount:'€1,500 – €3,000',deadline:'01 Jun 2026',soon:false,fields:'All sciences',desc:'Covers travel and accommodation for short-term research visits to German institutions.',link:'https://www.daad.de/en/study-and-research-in-germany/scholarships/',tags:['travel']},
+  {id:'g5',flag:'🇬🇧',title:'Royal Society Africa Travel Grant',host:'Royal Society',country:'UK',type:'travel',amount:'Up to £5,000',deadline:'15 May 2026',soon:true,fields:'All sciences',desc:'Enables African researchers to visit UK institutions for collaborative research.',link:'https://royalsociety.org/grants/',tags:['travel']},
+  {id:'g6',flag:'🇬🇭',title:'Ghana NaCCA Research Equipment Grant',host:'NaCCA Ghana',country:'Ghana',type:'equipment',amount:'GH¢ 50,000',deadline:'20 Mar 2026',soon:false,fields:'Laboratory sciences',desc:'Provides lab equipment grants to accredited Ghanaian research institutions.',link:'https://nacca.gov.gh/',tags:['equipment','africa']},
+  {id:'g7',flag:'🌍',title:'H3Africa Research Grant',host:'H3Africa Consortium',country:'Africa',type:'research',amount:'Up to $100,000',deadline:'28 Feb 2026',soon:false,fields:'Genomics, population genetics',desc:'Supports genomics and population health research led by African researchers.',link:'https://h3africa.org/',tags:['research','africa']},
+  {id:'g8',flag:'🇺🇸',title:'American Society for Microbiology SMID Grant',host:'ASM',country:'USA',type:'research',amount:'Up to $3,000',deadline:'01 Apr 2026',soon:false,fields:'Microbiology, infectious disease',desc:'Small research grants for early-career microbiologists, open to African applicants.',link:'https://asm.org/Grants',tags:['research']},
 ];
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -977,16 +977,23 @@ const COUNTRY_CODES = {
 function flagFor(country) {
   if (!country) return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
   const key = String(country).toLowerCase().trim();
+  // Generic regions/continents → use globe emoji, never a country flag
+  const GENERIC = ['africa','africa-based','europe','asia','global','international','worldwide','various','multiple','any','—',''];
+  if (GENERIC.indexOf(key) !== -1) {
+    return '<span style="font-size:20px;vertical-align:middle;display:inline-block;">🌍</span>';
+  }
   let code = COUNTRY_CODES[key];
   if (!code) {
     for (const k in COUNTRY_CODES) {
-      if (key.includes(k) || k.includes(key)) { code = COUNTRY_CODES[k]; break; }
+      // Only match if the country key STARTS with the full token, not just contains a substring
+      // This prevents 'africa' matching 'south africa'
+      if (key === k) { code = COUNTRY_CODES[k]; break; }
     }
   }
   if (code) {
     return '<span class="fi fi-' + code + ' fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
   }
-  return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+  return '<span style="font-size:20px;vertical-align:middle;display:inline-block;">🌍</span>';
 }
 
 
@@ -1330,16 +1337,21 @@ function sheetToScholarship(row, id) {
 }
 
 function sheetToGrant(row, id) {
-  // Support both standard column names AND the snake_case keys the form submits
-  const title   = row['Title / Name']     || row['title']            || row['grant_name']        || row['Grant Name']        || '';
-  const host    = row['Host / Org']       || row['host']             || row['host_organisation']  || row['Host Organisation']  || '';
-  const country = row['Country']          || row['country']          || 'Ghana';
-  const amount  = row['Amount / Value']   || row['amount_value']     || row['Funding']            || row['funding']            || 'See link';
-  const dead    = row['Deadline']         || row['deadline']         || '';
-  const desc    = row['Description']      || row['description']      || '';
-  const link    = row['Link']             || row['link']             || row['official_link']      || row['Official Link']      || '#';
-  const gtype   = (row['Grant Type']      || row['grant_type']       || 'research').toLowerCase();
-  const tag     = gtype.includes('travel') ? 'travel' : gtype.includes('equip') ? 'equipment' : 'research';
+  // Apps Script returns: title, host, country, deadline, link, description, degree, funding
+  // For grants: Degree column holds grant_type, Funding column holds amount
+  const title   = row.title       || '';
+  const host    = row.host        || '';
+  const country = row.country     || 'Ghana';
+  const dead    = row.deadline    || '';
+  const desc    = row.description || '';
+  const link    = row.link        || '#';
+  const amount  = row.funding     || 'See link';
+  const gtype   = String(row.degree || 'research').toLowerCase();
+  const tag     = gtype.includes('travel') ? 'travel'
+                : gtype.includes('equip')  ? 'equipment'
+                : gtype.includes('seed')   ? 'research'
+                : gtype.includes('fellow') ? 'research'
+                : 'research';
   return {
     id: 2000 + id, flag: flagFor(country), title, host, country,
     type: tag, amount, deadline: dead, soon: false,
