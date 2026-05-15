@@ -23,7 +23,7 @@
   --radius:14px;--radius-sm:8px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;scroll-padding-top:100px;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6;}
 ::-webkit-scrollbar{width:6px;}
 ::-webkit-scrollbar-track{background:var(--cream);}
@@ -783,12 +783,12 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
     <div class="footer-col">
       <h4>Explore</h4>
-      <a href="#" onclick="event.preventDefault();showSection('opportunities')">Scholarships & Fellowships</a>
-      <a href="#" onclick="event.preventDefault();showSection('grants')">Grants</a>
-      <a href="#" onclick="event.preventDefault();showSection('internships')">Jobs & Internships</a>
-      <a href="#" onclick="event.preventDefault();showSection('reagents')">Reagent Exchange</a>
-      <a href="#" onclick="event.preventDefault();showSection('workshops')">Workshops & Conferences</a>
-      <a href="#" onclick="event.preventDefault();showSection('programmes')">Graduate Programmes</a>
+      <a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships & Fellowships</a>
+      <a href="javascript:void(0)" onclick="showSection('grants')">Grants</a>
+      <a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a>
+      <a href="javascript:void(0)" onclick="showSection('reagents')">Reagent Exchange</a>
+      <a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a>
+      <a href="javascript:void(0)" onclick="showSection('programmes')">Graduate Programmes</a>
     </div>
     <div class="footer-col">
       <h4>Universities</h4>
@@ -885,9 +885,9 @@ function showSection(name){
   sec.classList.add('active');
   const tab=document.getElementById('tab-'+name);
   if(tab)tab.classList.add('active');
-  // offsetTop gives the natural document position — correct even for sticky elements
+  // scrollIntoView is the most reliable cross-browser scroll — works from footer too
   const tw=document.querySelector('.tabs-wrap');
-  if(tw) window.scrollTo({top: tw.offsetTop - 90, behavior:'smooth'});
+  if(tw) tw.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 let oppFilter='all';
@@ -1135,7 +1135,7 @@ function filterProfs(btn){
 
 function openModal(id){
   const o=opportunities.find(x=>x.id===id);if(!o)return;
-  document.getElementById('m-flag').textContent=o.flag;
+  document.getElementById('m-flag').innerHTML=o.flag;
   document.getElementById('m-title').textContent=o.title;
   document.getElementById('m-host').textContent=o.host;
   document.getElementById('m-country').textContent=o.country;
