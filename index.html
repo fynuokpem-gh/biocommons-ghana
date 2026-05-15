@@ -885,11 +885,9 @@ function showSection(name){
   sec.classList.add('active');
   const tab=document.getElementById('tab-'+name);
   if(tab)tab.classList.add('active');
+  // offsetTop gives the natural document position — correct even for sticky elements
   const tw=document.querySelector('.tabs-wrap');
-  if(tw){
-    // Small delay lets the DOM update before scrolling
-    setTimeout(()=>window.scrollTo({top:tw.getBoundingClientRect().top+window.pageYOffset-100,behavior:'smooth'}),10);
-  }
+  if(tw) window.scrollTo({top: tw.offsetTop - 90, behavior:'smooth'});
 }
 
 let oppFilter='all';
