@@ -835,6 +835,26 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a class="modal-apply" id="m-link" href="#" target="_blank" rel="noopener">Apply Now →</a>
   </div>
 </div>
+
+<!-- GRANT MODAL -->
+<div class="overlay" id="grant-overlay" onclick="closeGrantModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeGrantModal()">✕</button>
+    <div class="modal-flag" id="gm-flag"></div>
+    <h2 id="gm-title"></h2>
+    <div class="modal-host" id="gm-host"></div>
+    <div class="badges" id="gm-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Country</div><div class="modal-val" id="gm-country"></div></div>
+    <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="gm-type"></div></div>
+    <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="gm-fields"></div></div>
+    <div class="modal-row"><div class="modal-label">Amount</div><div class="modal-val" id="gm-amount"></div></div>
+    <div class="modal-row"><div class="modal-label">Deadline</div><div class="modal-val" id="gm-deadline"></div></div>
+    <hr/>
+    <p class="modal-desc" id="gm-desc"></p>
+    <a class="modal-apply" id="gm-link" href="#" target="_blank" rel="noopener">View Grant →</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -974,20 +994,19 @@ function renderGrants(data){
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
-  grid.innerHTML=data.map(g=>'<div class="card">'+
+  if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=data.map(g=>'<div class="card" onclick="openGrantModal(\''+g.id+'\')">'+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
       (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
       (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
     '</div>'+
-    '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+' · '+g.country+'</div></div>'+
-    '<div class="card-tags">'+g.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
-    '<div class="card-meta"><span>📅 Deadline: '+g.deadline+'</span></div>'+
-    '<div style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:4px;">'+g.desc+'</div>'+
-    '<a class="card-action" href="'+normalizeUrl(g.link)+'" target="_blank" rel="noopener">View Grant →</a>'+
+    '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+'</div></div>'+
+    '<div class="card-meta"><span>📅 '+g.deadline+'</span><span>💰 '+g.type+'</span></div>'+
+    '<a class="card-action" href="'+normalizeUrl(g.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">View Grant →</a>'+
   '</div>').join('');
-  empty.style.display=data.length?'none':'block';
 }
 function filterGrants(btn){
   document.querySelectorAll('#sec-grants .f-btn').forEach(b=>b.classList.remove('active'));
@@ -1156,6 +1175,33 @@ function openModal(id){
 function closeModal(e){
   if(e&&e.target!==document.getElementById('overlay'))return;
   document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openGrantModal(id){
+  // Support both string ids ('g1') and numeric ids — match loosely
+  const g=grants.find(x=>String(x.id)===String(id));if(!g)return;
+  document.getElementById('gm-flag').innerHTML=flagFor(g.country||'Global');
+  document.getElementById('gm-title').textContent=g.title;
+  document.getElementById('gm-host').textContent=g.host;
+  document.getElementById('gm-country').textContent=g.country||'Global';
+  document.getElementById('gm-type').textContent=(g.type||'').charAt(0).toUpperCase()+(g.type||'').slice(1);
+  document.getElementById('gm-fields').textContent=g.fields||'—';
+  document.getElementById('gm-amount').textContent=g.amount||'See link';
+  document.getElementById('gm-deadline').textContent=g.deadline+(g.soon?' ⏰ Closing soon!':'');
+  document.getElementById('gm-desc').textContent=g.desc||'';
+  document.getElementById('gm-link').href=normalizeUrl(g.link);
+  document.getElementById('gm-badges').innerHTML=
+    '<span class="badge badge-green">'+(g.amount||'See link')+'</span>'+
+    (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
+    (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'');
+  document.getElementById('grant-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeGrantModal(e){
+  if(e&&e.target!==document.getElementById('grant-overlay'))return;
+  document.getElementById('grant-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
 function showSubmitForm(name,btn){
