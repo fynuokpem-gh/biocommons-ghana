@@ -1391,15 +1391,17 @@ async function loadApprovedEntries() {
       if (approved.length === 0) continue;
 
       // Map column names to our internal format
+      // Handles both admin-set headers (Title / Name, Host / Org…)
+      // AND the snake_case keys the submission form writes (scholarship_name, host_organisation…)
       const rows = approved.map(r => ({
-        title:       r['Title / Name'] || r['title'] || '',
-        host:        r['Host / Org']   || r['host']  || '',
-        country:     r['Country']      || r['country'] || 'Ghana',
-        deadline:    r['Deadline']     || r['deadline'] || '',
-        link:        r['Link']         || r['link']  || '#',
-        description: r['Description']  || r['description'] || '',
-        degree:      r['Degree']  || r['DEGREE']  || r['degree']  || '',
-        funding:     r['Funding'] || r['FUNDING'] || r['funding'] || ''
+        title:       r['Title / Name']    || r['scholarship_name'] || r['grant_name']        || r['title']       || '',
+        host:        r['Host / Org']      || r['host_organisation']|| r['host']              || '',
+        country:     r['Country']         || r['country']          || 'Ghana',
+        deadline:    r['Deadline']        || r['deadline']         || '',
+        link:        r['Link']            || r['official_link']    || r['link']              || '#',
+        description: r['Description']     || r['description']      || '',
+        degree:      r['Degree']          || r['degree_level']     || r['DEGREE']            || r['degree']       || '',
+        funding:     r['Funding']         || r['funding_type']     || r['FUNDING']           || r['funding']      || ''
       }));
 
       // Preserve hardcoded entries (string IDs like 'g1') AND numeric IDs below baseId
