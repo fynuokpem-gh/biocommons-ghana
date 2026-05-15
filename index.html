@@ -47,7 +47,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
   animation:ticker 28s linear infinite;
 }
 .announce-ticker:hover{animation-play-state:paused;}
-.announce-ticker span{white-space:nowrap;color:rgba(255,251,244,0.75);}
+.announce-ticker span{white-space:nowrap;color:var(--gold);}
 .announce-ticker span strong{color:var(--gold);font-weight:700;}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
@@ -159,7 +159,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .tab-btn.active .tab-count{background:var(--green-dim);color:var(--green);border-color:rgba(13,124,62,0.2);}
 
 /* SECTIONS */
-.section{padding:52px 5%;display:none;}
+.section{padding:52px 5%;display:none;scroll-margin-top:150px;}
 .section.active{display:block;}
 .section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
 .section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);}
@@ -885,9 +885,9 @@ function showSection(name){
   sec.classList.add('active');
   const tab=document.getElementById('tab-'+name);
   if(tab)tab.classList.add('active');
-  // scrollIntoView is the most reliable cross-browser scroll — works from footer too
-  const tw=document.querySelector('.tabs-wrap');
-  if(tw) tw.scrollIntoView({behavior:'smooth', block:'start'});
+  // Scroll to the section itself (not the sticky tabs — sticky elements ignore scrollIntoView)
+  // scroll-margin-top on .section accounts for the sticky nav + tabs above it
+  sec.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 let oppFilter='all';
