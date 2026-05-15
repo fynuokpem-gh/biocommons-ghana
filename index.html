@@ -783,11 +783,12 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
     <div class="footer-col">
       <h4>Explore</h4>
-      <a href="javascript:void(0)" onclick="showSection('opportunities')">Scholarships & Fellowships</a>
-      <a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a>
-      <a href="javascript:void(0)" onclick="showSection('reagents')">Reagent Exchange</a>
-      <a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a>
-      <a href="javascript:void(0)" onclick="showSection('programmes')">Programmes</a>
+      <a href="#" onclick="event.preventDefault();showSection('opportunities')">Scholarships & Fellowships</a>
+      <a href="#" onclick="event.preventDefault();showSection('grants')">Grants</a>
+      <a href="#" onclick="event.preventDefault();showSection('internships')">Jobs & Internships</a>
+      <a href="#" onclick="event.preventDefault();showSection('reagents')">Reagent Exchange</a>
+      <a href="#" onclick="event.preventDefault();showSection('workshops')">Workshops & Conferences</a>
+      <a href="#" onclick="event.preventDefault();showSection('programmes')">Graduate Programmes</a>
     </div>
     <div class="footer-col">
       <h4>Universities</h4>
@@ -810,7 +811,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2025 BioCommons Ghana · An F&amp;J Company Venture. Free, always.</span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always.</span>
     <span class="footer-gh">🇬🇭 Made for Ghana</span>
   </div>
 </footer>
@@ -845,16 +846,16 @@ const BIOCOMMONS_API = 'https://script.google.com/macros/s/AKfycbzDfl9FxRfdm-tdi
 
 const opportunities=[
   {scope:'international',id:1,flag:"🇬🇧",country:"United Kingdom",title:"Commonwealth Scholarships",host:"Commonwealth Scholarship Commission",degree:"MSc & PhD",fields:"Biological Sciences, Health, Environment",tags:["fully-funded","msc","phd"],funding:"Full tuition + living + flights",deadline:"17 Jan 2026",soon:false,desc:"Fully funded awards for Ghanaian scientists to pursue master's or PhD at UK universities.",link:"https://cscuk.fcdo.gov.uk/scholarships/"},
-  {scope:'international',id:2,flag:"🇩🇪",country:"Germany",title:"DAAD Research Scholarships",host:"DAAD",degree:"MSc & PhD",fields:"Natural Sciences, Biochemistry, Ecology",tags:["fully-funded","msc","phd"],funding:"Full tuition + €1,200/month",deadline:"15 Oct 2025",soon:true,desc:"Germany charges no tuition at public universities. DAAD covers living costs with a generous stipend.",link:"https://www.daad.de/en/"},
+  {scope:'international',id:2,flag:"🇩🇪",country:"Germany",title:"DAAD Research Scholarships",host:"DAAD",degree:"MSc & PhD",fields:"Natural Sciences, Biochemistry, Ecology",tags:["fully-funded","msc","phd"],funding:"Full tuition + €1,200/month",deadline:"15 Oct 2026",soon:true,desc:"Germany charges no tuition at public universities. DAAD covers living costs with a generous stipend.",link:"https://www.daad.de/en/"},
   {scope:'international',id:3,flag:"🇳🇱",country:"Netherlands",title:"Erasmus Mundus Joint Masters",host:"European Commission",degree:"MSc",fields:"All Biological Sciences",tags:["fully-funded","msc"],funding:"€1,400/month + full tuition + travel",deadline:"Jan 2026",soon:false,desc:"Study in at least two European countries under one of the most prestigious EU scholarship schemes.",link:"https://www.eacea.ec.europa.eu/"},
   {scope:'international',id:4,flag:"🇯🇵",country:"Japan",title:"MEXT Government Scholarship",host:"Japanese Ministry of Education",degree:"MSc & PhD",fields:"Sciences, Biotechnology, Agriculture",tags:["fully-funded","msc","phd"],funding:"Full tuition + ¥143,000/month + flights",deadline:"Jun 2026",soon:false,desc:"One of the most comprehensive scholarships in Asia. World-class research in molecular biology.",link:"https://www.mext.go.jp/en/"},
   {scope:'international',id:5,flag:"🇬🇧",country:"United Kingdom",title:"Gates Cambridge Scholarship",host:"University of Cambridge",degree:"MSc & PhD",fields:"Biological Sciences, Medicine, Ecology",tags:["fully-funded","msc","phd"],funding:"Full University costs + living",deadline:"08 Jan 2026",soon:true,desc:"Among the most prestigious scholarships in the world. Based on excellence, leadership, and impact.",link:"https://www.gatescambridge.org/"},
-  {scope:'international',id:6,flag:"🇨🇭",country:"Switzerland",title:"Swiss Government Excellence Scholarships",host:"Swiss Confederation",degree:"PhD & Postdoc",fields:"Sciences, Engineering, Health",tags:["fully-funded","phd"],funding:"CHF 1,920/month + tuition + housing",deadline:"31 Oct 2025",soon:true,desc:"Awarded to young researchers from Ghana for doctoral and postdoctoral studies at Swiss universities.",link:"https://www.sbfi.admin.ch/"},
+  {scope:'international',id:6,flag:"🇨🇭",country:"Switzerland",title:"Swiss Government Excellence Scholarships",host:"Swiss Confederation",degree:"PhD & Postdoc",fields:"Sciences, Engineering, Health",tags:["fully-funded","phd"],funding:"CHF 1,920/month + tuition + housing",deadline:"31 Oct 2026",soon:true,desc:"Awarded to young researchers from Ghana for doctoral and postdoctoral studies at Swiss universities.",link:"https://www.sbfi.admin.ch/"},
   {scope:'international',id:7,flag:"🇰🇷",country:"South Korea",title:"Global Korea Scholarship (GKS)",host:"NIIED",degree:"MSc & PhD",fields:"Sciences, Biotechnology, Engineering",tags:["fully-funded","msc","phd"],funding:"Full tuition + KRW 900,000/month",deadline:"Feb 2026",soon:false,desc:"Strong in biotech and molecular sciences.",link:"https://www.studyinkorea.go.kr/"},
   {scope:'international',id:8,flag:"🇸🇪",country:"Sweden",title:"Swedish Institute Scholarships",host:"Swedish Institute",degree:"MSc",fields:"Environment, Sciences, Sustainability",tags:["fully-funded","msc"],funding:"Full tuition + SEK 11,000/month",deadline:"10 Feb 2026",soon:false,desc:"Sweden has no tuition fees. Scholarship covers all living costs.",link:"https://si.se/en/"},
   {scope:'international',id:9,flag:"🇦🇺",country:"Australia",title:"Australia Awards Scholarships",host:"Australian Government (DFAT)",degree:"MSc & PhD",fields:"Agriculture, Health, Environment, Sciences",tags:["fully-funded","msc","phd","africa"],funding:"Full tuition + living + flights + health",deadline:"30 Apr 2026",soon:false,desc:"Ghana is a priority country. Very high success rate from West Africa.",link:"https://www.australiaawards.gov.au/"},
   {scope:'international',id:10,flag:"🇧🇪",country:"Belgium",title:"VLIR-UOS Scholarships",host:"VLIR-UOS",degree:"MSc",fields:"Agriculture, Health, Environment",tags:["fully-funded","msc","africa"],funding:"Full tuition + €800/month + travel",deadline:"01 Feb 2026",soon:false,desc:"Belgian development cooperation scholarships for Global South scientists.",link:"https://www.vliruos.be/en/"},
-  {scope:'international',id:11,flag:"🇨🇦",country:"Canada",title:"Vanier Canada Graduate Scholarship",host:"Government of Canada",degree:"PhD",fields:"Health, Sciences, Social Sciences",tags:["fully-funded","phd"],funding:"CAD $50,000/year × 3 years",deadline:"Nov 2025",soon:true,desc:"World-class doctoral scholarship based on leadership and academic excellence.",link:"https://vanier.gc.ca/"},
+  {scope:'international',id:11,flag:"🇨🇦",country:"Canada",title:"Vanier Canada Graduate Scholarship",host:"Government of Canada",degree:"PhD",fields:"Health, Sciences, Social Sciences",tags:["fully-funded","phd"],funding:"CAD $50,000/year × 3 years",deadline:"Nov 2026",soon:true,desc:"World-class doctoral scholarship based on leadership and academic excellence.",link:"https://vanier.gc.ca/"},
   {scope:'international',id:12,flag:"🇺🇸",country:"United States",title:"MasterCard Foundation Scholars",host:"Various US Universities",degree:"MSc",fields:"Sciences, Computing, Social",tags:["fully-funded","msc","africa"],funding:"Full tuition + living + mentorship",deadline:"Rolling",soon:false,desc:"For academically talented young Africans with limited financial means.",link:"https://mastercardfdn.org/all/scholars/"},
   {scope:'local',id:13,flag:'🇬🇭',country:'Ghana',title:'GETFund Scholarship Scheme',host:'Ghana Education Trust Fund',degree:'MSc & PhD',fields:'Sciences, Health, Engineering',tags:['fully-funded','msc','phd'],funding:'Full tuition + stipend',deadline:'31 Mar 2026',soon:false,desc:'GETFund supports Ghanaian students pursuing postgraduate studies locally and abroad at accredited institutions.',link:'https://www.getfund.gov.gh/'},
   {scope:'local',id:14,flag:'🇬🇭',country:'Ghana',title:'KNUST Postgraduate Scholarship',host:'Kwame Nkrumah University of Science & Technology',degree:'MSc & PhD',fields:'Biological Sciences, Biochemistry, Agriculture',tags:['fully-funded','msc','phd'],funding:'Full tuition + GH¢ 2,000/month',deadline:'01 Jul 2026',soon:false,desc:'KNUST awards competitive scholarships to high-achieving students admitted to its postgraduate science programmes.',link:'https://pg.knust.edu.gh/'},
@@ -885,7 +886,10 @@ function showSection(name){
   const tab=document.getElementById('tab-'+name);
   if(tab)tab.classList.add('active');
   const tw=document.querySelector('.tabs-wrap');
-  if(tw)window.scrollTo({top:tw.offsetTop-100,behavior:'smooth'});
+  if(tw){
+    // Small delay lets the DOM update before scrolling
+    setTimeout(()=>window.scrollTo({top:tw.getBoundingClientRect().top+window.pageYOffset-100,behavior:'smooth'}),10);
+  }
 }
 
 let oppFilter='all';
@@ -1342,7 +1346,7 @@ function sheetToProgramme(row, id) {
 const DEFAULT_ANNOUNCEMENTS = [
   '🎓 <strong>Gates Cambridge Scholarship</strong> — deadline 08 Jan 2026',
   '⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits at Noguchi Institute',
-  '🏛 <strong>DAAD Scholarships</strong> — closing 15 Oct 2025',
+  '🏛 <strong>DAAD Scholarships</strong> — closing 15 Oct 2026',
   '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
