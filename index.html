@@ -855,6 +855,25 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a class="modal-apply" id="gm-link" href="#" target="_blank" rel="noopener">View Grant →</a>
   </div>
 </div>
+
+<!-- REAGENT MODAL -->
+<div class="overlay" id="reagent-overlay" onclick="closeReagentModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeReagentModal()">✕</button>
+    <h2 id="rm-name"></h2>
+    <div class="modal-host" id="rm-inst"></div>
+    <div class="badges" id="rm-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Status</div><div class="modal-val" id="rm-type"></div></div>
+    <div class="modal-row"><div class="modal-label">Category</div><div class="modal-val" id="rm-category"></div></div>
+    <div class="modal-row"><div class="modal-label">Quantity</div><div class="modal-val" id="rm-qty"></div></div>
+    <div class="modal-row"><div class="modal-label">Condition</div><div class="modal-val" id="rm-condition"></div></div>
+    <div class="modal-row" id="rm-exchange-row"><div class="modal-label">Exchange</div><div class="modal-val" id="rm-exchange"></div></div>
+    <hr/>
+    <p class="modal-desc" id="rm-notes"></p>
+    <a class="modal-apply" id="rm-contact" href="#">Contact →</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1091,15 +1110,14 @@ function filterInternships(btn){
 }
 
 function renderReagents(data){
-  document.getElementById('reagent-grid').innerHTML=data.map(r=>'<div class="reagent-card">'+
+  document.getElementById('reagent-grid').innerHTML=data.map(r=>'<div class="reagent-card" onclick="openReagentModal('+JSON.stringify(String(r.id))+')" style="cursor:pointer">'+
     '<div><div class="reagent-type">'+(r.type==='available'?'✅ Available':'🔍 Seeking')+' · '+r.category+'</div>'+
     '<div class="reagent-name">'+r.name+'</div></div>'+
     '<div class="reagent-detail"><strong style="color:var(--text)">'+r.qty+'</strong> · '+r.condition+
-      '<br/><span style="margin-top:4px;display:block">'+r.notes+'</span>'+
-      (r.exchange?'<span style="display:block;margin-top:6px;font-size:11px;font-weight:700;color:var(--green)">🔄 Can offer: '+r.exchange+'</span>':'')+
+      (r.exchange?'<br/><span style="display:block;margin-top:6px;font-size:11px;font-weight:700;color:var(--green)">🔄 Can offer: '+r.exchange+'</span>':'')+
     '</div>'+
     '<div class="reagent-meta"><div class="reagent-inst">🏛 '+r.inst+'</div>'+
-    '<button class="reagent-contact" onclick="showToast(\'Contact: \'+this.dataset.email)" data-email="'+r.contact+'">Contact</button></div>'+
+    '<button class="reagent-contact" onclick="event.stopPropagation();showToast(\'Contact: \'+this.dataset.email)" data-email="'+r.contact+'">Contact</button></div>'+
   '</div>').join('');
 }
 function filterReagents(btn){
@@ -1209,6 +1227,52 @@ function openGrantModal(id){
 function closeGrantModal(e){
   if(e&&e.target!==document.getElementById('grant-overlay'))return;
   document.getElementById('grant-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openReagentModal(id){
+  const r=reagents.find(x=>String(x.id)===String(id));if(!r)return;
+  document.getElementById('rm-name').textContent=r.name;
+  document.getElementById('rm-inst').textContent='🏛 '+r.inst;
+  document.getElementById('rm-type').textContent=r.type==='available'?'✅ Available — offering':'🔍 Seeking — needed';
+  document.getElementById('rm-category').textContent=r.category;
+  document.getElementById('rm-qty').textContent=r.qty;
+  document.getElementById('rm-condition').textContent=r.condition;
+
+  const exchRow=document.getElementById('rm-exchange-row');
+  if(r.exchange){
+    document.getElementById('rm-exchange').textContent=r.exchange;
+    exchRow.style.display='';
+  } else {
+    exchRow.style.display='none';
+  }
+
+  document.getElementById('rm-notes').textContent=r.notes||'';
+
+  // Contact button — mailto if it's an email, otherwise toast
+  const contactBtn=document.getElementById('rm-contact');
+  const isEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.contact);
+  if(isEmail){
+    contactBtn.href='mailto:'+r.contact+'?subject=BioCommons%20Ghana%20%E2%80%94%20'+encodeURIComponent(r.name);
+    contactBtn.textContent='Email '+r.contact+' →';
+    contactBtn.onclick=null;
+  } else {
+    contactBtn.href='#';
+    contactBtn.textContent='Contact: '+r.contact;
+    contactBtn.onclick=function(e){e.preventDefault();showToast('Contact: '+r.contact);};
+  }
+
+  document.getElementById('rm-badges').innerHTML=
+    '<span class="badge '+(r.type==='available'?'badge-green':'badge-gold')+'">'+(r.type==='available'?'Available':'Seeking')+'</span>'+
+    '<span class="badge badge-blue">'+r.category+'</span>';
+
+  document.getElementById('reagent-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeReagentModal(e){
+  if(e&&e.target!==document.getElementById('reagent-overlay'))return;
+  document.getElementById('reagent-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
 function showSubmitForm(name,btn){
@@ -1370,11 +1434,30 @@ function sheetToInternship(row, id) {
 }
 
 function sheetToReagent(row, id) {
+  // Apps Script encoding for reagents:
+  //   Degree col (row.degree)   → category ('Chemicals', 'Kits'…)
+  //   Funding col (row.funding) → listing_type ('available' / 'seeking')
+  //   Description encodes: Quantity, Condition, Exchange, Notes on separate lines
+  const desc = String(row.description || '');
+  const parse = (label) => {
+    const m = desc.match(new RegExp('^' + label + ':\\s*(.+)$', 'mi'));
+    return m ? m[1].trim() : '';
+  };
+  const qty       = parse('Quantity')   || 'See notes';
+  const condition = parse('Condition')  || 'See notes';
+  const exchange  = parse('Exchange')   || '';
+  const notes     = parse('Notes')      || desc;  // fallback to full description
+
+  const lt = String(row.funding || '').toLowerCase();
+  const type = lt.includes('seek') || lt.includes('need') ? 'seeking' : 'available';
+  const category = row.degree || 'Other';
+
   return {
-    id: 4000 + id, type: 'available', category: 'Chemicals',
-    name: row.title, qty: 'See link', condition: 'See link',
-    notes: row.description, exchange: '', inst: row.host,
-    contact: normalizeUrl(row.link)
+    id: 4000 + id, type, category,
+    name: row.title || '', qty, condition,
+    notes, exchange,
+    inst: row.host || '',
+    contact: row.country && /@/.test(row.country) ? row.country : (row.link || '—')
   };
 }
 
