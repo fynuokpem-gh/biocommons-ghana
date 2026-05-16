@@ -2805,6 +2805,176 @@ function fetchSheetJSONP(sheetName) {
   });
 }
 
+// ─── SEO: Per-item JSON-LD structured data ───────────────────────────────────
+// Generates Google-compatible schema for each opportunity so they can appear
+// as rich results in search. Schemas update whenever sheet data loads.
+
+const SITE_URL = 'https://fynuokpem-gh.github.io/biocommons-ghana/';
+
+function _isoDate(str) {
+  // Convert "30 May 2026" → "2026-05-30" for schema.org dates
+  if (!str) return null;
+  const d = (typeof parseDeadline === 'function') ? parseDeadline(str) : new Date(str);
+  if (!d || isNaN(d.getTime())) return null;
+  return d.toISOString().split('T')[0];
+}
+
+function _schemaScholarship(o) {
+  // Schema: EducationalOccupationalProgram (Google's recommended type for scholarships/fellowships)
+  const s = {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOccupationalProgram',
+    'name': o.title,
+    'description': o.desc || (o.title + ' — opportunity for biological scientists in Ghana.'),
+    'url': SITE_URL,
+    'provider': {
+      '@type': 'Organization',
+      'name': o.host || 'Various',
+      'sameAs': (o.link && o.link !== '#') ? o.link : undefined
+    },
+    'educationalProgramMode': 'full-time',
+    'occupationalCategory': 'Biological Sciences',
+    'inLanguage': 'en'
+  };
+  const iso = _isoDate(o.deadline);
+  if (iso) s.applicationDeadline = iso;
+  if (o.degree) s.educationalCredentialAwarded = o.degree;
+  return s;
+}
+
+function _schemaGrant(g) {
+  // Schema: Grant (Google supports this for funding opportunities)
+  const s = {
+    '@context': 'https://schema.org',
+    '@type': 'Grant',
+    'name': g.title,
+    'description': g.desc || (g.title + ' — research funding opportunity.'),
+    'url': SITE_URL,
+    'funder': {
+      '@type': 'Organization',
+      'name': g.host || 'Various',
+      'sameAs': (g.link && g.link !== '#') ? g.link : undefined
+    }
+  };
+  const iso = _isoDate(g.deadline);
+  if (iso) s.applicationDeadline = iso;
+  if (g.amount && g.amount !== 'See link') s.amount = g.amount;
+  return s;
+}
+
+function _schemaJob(j) {
+  // Schema: JobPosting — Google's biggest rich-results boost; appears in Google Jobs
+  const isoPosted = new Date().toISOString().split('T')[0];
+  const s = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    'title': j.title,
+    'description': j.description || (j.title + ' — biological science position in Ghana.'),
+    'datePosted': isoPosted,
+    'hiringOrganization': {
+      '@type': 'Organization',
+      'name': j.host || 'Various'
+    },
+    'jobLocation': {
+      '@type': 'Place',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': j.location || 'Accra',
+        'addressCountry': j.country || 'GH'
+      }
+    },
+    'employmentType': j.type === 'wanted' ? 'CONTRACTOR' : 'FULL_TIME',
+    'industry': 'Biological Sciences',
+    'url': SITE_URL
+  };
+  const iso = _isoDate(j.duration);  // duration field sometimes carries deadline
+  if (iso) s.validThrough = iso;
+  return s;
+}
+
+function _schemaWorkshop(w) {
+  // Schema: Event (workshops/conferences)
+  const s = {
+    '@context': 'https://schema.org',
+    '@type': w.type === 'conference' ? 'EducationalEvent' : 'EducationalEvent',
+    'name': w.title,
+    'description': w.description || (w.title + ' — biology training event.'),
+    'eventAttendanceMode': w.mode === 'virtual' ? 'https://schema.org/OnlineEventAttendanceMode'
+                        : w.mode === 'hybrid'   ? 'https://schema.org/MixedEventAttendanceMode'
+                        : 'https://schema.org/OfflineEventAttendanceMode',
+    'eventStatus': 'https://schema.org/EventScheduled',
+    'location': {
+      '@type': 'Place',
+      'name': w.location || 'Ghana',
+      'address': w.location || 'Ghana'
+    },
+    'organizer': {
+      '@type': 'Organization',
+      'name': w.host || 'Various'
+    },
+    'url': SITE_URL,
+    'isAccessibleForFree': w.cost === 'free'
+  };
+  const iso = _isoDate(w.date);
+  if (iso) s.startDate = iso;
+  return s;
+}
+
+function _schemaProgramme(p) {
+  // Schema: EducationalOccupationalProgram
+  const s = {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOccupationalProgram',
+    'name': p.title,
+    'description': p.description || (p.title + ' — graduate programme in Ghana.'),
+    'url': SITE_URL,
+    'provider': {
+      '@type': 'CollegeOrUniversity',
+      'name': p.host || 'University',
+      'sameAs': (p.link && p.link !== '#') ? p.link : undefined
+    },
+    'educationalCredentialAwarded': p.degree || 'Graduate',
+    'occupationalCategory': 'Biological Sciences',
+    'timeToComplete': p.duration,
+    'inLanguage': 'en'
+  };
+  const iso = _isoDate(p.deadline);
+  if (iso) s.applicationDeadline = iso;
+  return s;
+}
+
+function injectStructuredData() {
+  // Remove any previously-injected per-item schema (keeps the Organization schema in <head>)
+  document.querySelectorAll('script[data-schema-bc="1"]').forEach(s => s.remove());
+
+  const all = [];
+  try {
+    (typeof opportunities !== 'undefined' ? opportunities : []).forEach(o => all.push(_schemaScholarship(o)));
+    (typeof grants        !== 'undefined' ? grants        : []).forEach(g => all.push(_schemaGrant(g)));
+    (typeof internships   !== 'undefined' ? internships   : []).forEach(j => all.push(_schemaJob(j)));
+    (typeof workshops     !== 'undefined' ? workshops     : []).forEach(w => all.push(_schemaWorkshop(w)));
+    (typeof programmes    !== 'undefined' ? programmes    : []).forEach(p => all.push(_schemaProgramme(p)));
+  } catch(err) {
+    console.warn('[Schema] generation error:', err);
+  }
+
+  if (!all.length) return;
+
+  // Inject as a single JSON-LD script tag with @graph (Google's preferred multi-item format)
+  const tag = document.createElement('script');
+  tag.type = 'application/ld+json';
+  tag.dataset.schemaBc = '1';
+  tag.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': all });
+  document.head.appendChild(tag);
+
+  console.log('[SEO] Injected structured data for ' + all.length + ' items');
+}
+
+// Re-inject as data loads from sheet (debounced via setTimeout in loaders)
+setTimeout(injectStructuredData, 1500);
+setTimeout(injectStructuredData, 4000);
+setTimeout(injectStructuredData, 8000);
+
 async function loadApprovedEntries() {
   const sheetConfig = [
     { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),              baseId: 1000 },
