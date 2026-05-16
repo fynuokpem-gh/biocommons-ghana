@@ -420,9 +420,14 @@ textarea{min-height:100px;resize:vertical;}
 .submit-note{font-size:12px;color:var(--muted);line-height:1.6;}
 
 /* EMPTY */
-.empty{text-align:center;padding:64px 20px;display:none;}
-.empty h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);margin-bottom:8px;}
-.empty p{color:var(--muted);font-size:14px;}
+.empty{text-align:center;padding:60px 20px;display:none;background:var(--cream);border:1.5px dashed var(--border);border-radius:var(--radius);max-width:560px;margin:20px auto;}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.5;line-height:1;}
+.empty h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.empty p{color:var(--muted);font-size:14px;line-height:1.6;max-width:380px;margin:0 auto 20px;}
+.empty-cta{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:var(--white);padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;transition:all 0.2s;}
+.empty-cta:hover{background:var(--dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(11,38,24,0.18);}
+.empty-link{display:inline-block;margin-top:14px;color:var(--muted);font-size:13px;text-decoration:none;}
+.empty-link:hover{color:var(--green);text-decoration:underline;}
 
 /* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(11,38,24,0.55);z-index:500;align-items:center;justify-content:center;padding:20px;}
@@ -644,7 +649,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="sort-wrap"><label for="sort-opp">Sort:</label><select id="sort-opp" class="sort-select" onchange="sortOpportunities(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="value">Funding</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="opp-grid"></div>
-  <div class="empty" id="opp-empty"><h3>No results found</h3><p>Try a different filter or <a href="javascript:void(0)" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
+  <div class="empty" id="opp-empty"><div class="empty-icon">🎓</div><h3>No scholarships match those filters</h3><p>Be the first to share one. Know a fellowship, PhD, or MSc programme not listed here?</p><button class="empty-cta" onclick="_jumpToSubmit('sf-scholarship')">+ Submit a Scholarship</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('opportunities')">or clear filters</a></div>
 </div>
 
 <!-- GRANTS -->
@@ -663,7 +668,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="sort-wrap"><label for="sort-grants">Sort:</label><select id="sort-grants" class="sort-select" onchange="sortGrants(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="value">Amount</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="grants-grid"></div>
-  <div class="empty" id="grants-empty"><h3>No results found</h3><p>Try a different filter or <a href="javascript:void(0)" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
+  <div class="empty" id="grants-empty"><div class="empty-icon">💰</div><h3>No grants match those filters</h3><p>Know a research grant, travel award, or equipment grant not listed here? Share it with the community.</p><button class="empty-cta" onclick="_jumpToSubmit('sf-grant')">+ Submit a Grant</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('grants')">or clear filters</a></div>
 </div>
 
 <!-- JOBS & INTERNSHIPS -->
@@ -682,6 +687,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="sort-wrap"><label for="sort-int">Sort:</label><select id="sort-int" class="sort-select" onchange="sortInternships(this.value)"><option value="default">Newest first</option><option value="title">Title (A–Z)</option><option value="value">Compensation</option></select></div>
   </div>
   <div class="grid" id="int-grid"></div>
+  <div class="empty" id="int-empty"><div class="empty-icon">💼</div><h3>No jobs match those filters</h3><p>Hiring biological scientists? Know of an open position or internship? Be the first to list one here.</p><button class="empty-cta" onclick="_jumpToSubmit('sf-internship')">+ Submit a Job</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('internships')">or clear filters</a></div>
 </div>
 
 <!-- REAGENTS -->
@@ -698,6 +704,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="kits" onclick="filterReagents(this)">Kits</button>
   </div>
   <div class="reagent-grid" id="reagent-grid"></div>
+  <div class="empty" id="reagent-empty"><div class="empty-icon">⚗️</div><h3>No reagents match those filters</h3><p>Have reagents to share or seeking some yourself? Help build Ghana's lab exchange.</p><button class="empty-cta" onclick="_jumpToSubmit('sf-reagent')">+ List a Reagent</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('reagents')">or clear filters</a></div>
 </div>
 
 <!-- WORKSHOPS & CONFERENCES -->
@@ -715,6 +722,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="sort-wrap"><label for="sort-wks">Sort:</label><select id="sort-wks" class="sort-select" onchange="sortWorkshops(this.value)"><option value="default">Newest first</option><option value="deadline">Date (soonest)</option><option value="value">Type</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="workshop-grid"></div>
+  <div class="empty" id="wks-empty"><div class="empty-icon">🏛</div><h3>No workshops or conferences match those filters</h3><p>Organising an event? Know one happening soon? Add it to the calendar.</p><button class="empty-cta" onclick="_jumpToSubmit('sf-workshop')">+ Submit an Event</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('workshops')">or clear filters</a></div>
 </div>
 
 <!-- PROGRAMMES -->
@@ -733,6 +741,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="sort-wrap"><label for="sort-prog">Sort:</label><select id="sort-prog" class="sort-select" onchange="sortProgrammes(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="title">Title (A–Z)</option><option value="value">Degree (PhD first)</option></select></div>
   </div>
   <div class="grid" id="prog-grid"></div>
+  <div class="empty" id="prog-empty"><div class="empty-icon">📚</div><h3>No programmes match those filters</h3><p>Know a graduate programme at your university not listed here?</p><button class="empty-cta" onclick="_jumpToSubmit('sf-programme')">+ Submit a Programme</button><br/><a class="empty-link" href="javascript:void(0)" onclick="_clearFilters('programmes')">or clear filters</a></div>
 </div>
 
 <!-- MY LIST -->
@@ -1418,6 +1427,7 @@ function applyOppFilter(q=''){
 
 function renderProgrammes(data){
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
+  document.getElementById('prog-empty').style.display=data.length?'none':'';
   document.getElementById('prog-grid').innerHTML=data.map(p=>{
     const d = String(p.degree||'').toUpperCase();
     const degBadge = d.includes('PHD')   ? 'badge-blue'
@@ -1451,6 +1461,7 @@ function filterProgrammes(btn){
 
 function renderInternships(data){
   document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
+  document.getElementById('int-empty').style.display=data.length?'none':'';
   document.getElementById('int-grid').innerHTML=data.map(i=>{
     const isWanted = i.type === 'wanted';
     const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
@@ -1484,6 +1495,7 @@ function filterInternships(btn){
 }
 
 function renderReagents(data){
+  document.getElementById('reagent-empty').style.display=data.length?'none':'';
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
     const isAvail = r.type==='available';
     return '<div class="reagent-card '+(isAvail?'r-available':'r-seeking')+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
@@ -1515,6 +1527,7 @@ function filterReagents(btn){
 function renderWorkshops(data){
   const cnt = document.getElementById('wks-count');
   if (cnt) cnt.textContent = 'Showing ' + data.length + ' of ' + workshops.length;
+  document.getElementById('wks-empty').style.display=data.length?'none':'';
   document.getElementById('workshop-grid').innerHTML=data.map(w=>{
     const t = (w.type||'').toLowerCase();
     const typeLabel = t.charAt(0).toUpperCase() + t.slice(1);
@@ -2814,6 +2827,38 @@ function fetchSheetJSONP(sheetName) {
     };
     document.head.appendChild(script);
   });
+}
+
+// ─── Empty-state helpers ─────────────────────────────────────────────────────
+function _jumpToSubmit(formId) {
+  showSection('submit');
+  setTimeout(() => {
+    // Click the matching tab button inside the submit section
+    const map = {
+      'sf-scholarship':'Scholarship & Fellowship',
+      'sf-grant':'Grant', 'sf-internship':'Job / Internship',
+      'sf-reagent':'Reagent listing', 'sf-workshop':'Workshop / Conference',
+      'sf-programme':'Programme'
+    };
+    const lbl = map[formId];
+    if (lbl) {
+      const btn = Array.from(document.querySelectorAll('.s-tab')).find(b => b.textContent.includes(lbl));
+      if (btn) btn.click();
+    }
+    const form = document.getElementById(formId);
+    if (form) form.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 300);
+}
+
+function _clearFilters(section) {
+  const sec = document.getElementById('sec-' + section);
+  if (!sec) return;
+  // Click the "All" filter button to reset
+  const allBtn = sec.querySelector('.f-btn[data-f="all"]');
+  if (allBtn) allBtn.click();
+  // Also reset sort dropdown if present
+  const sort = sec.querySelector('.sort-select');
+  if (sort) sort.value = 'default';
 }
 
 // ─── Sortable cards ──────────────────────────────────────────────────────────
