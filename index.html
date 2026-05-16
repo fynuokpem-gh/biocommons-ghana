@@ -159,25 +159,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .modal-share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);}
 
 /* SHARE BUTTONS */
-.share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;border-radius:50px;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--muted);position:relative;line-height:1;}
+/* Wrapper positions both button and menu — menu anchors to button */
+.share-wrap-card{position:absolute;top:12px;right:12px;z-index:5;}
+.share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--muted);line-height:1;}
 .share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,38,24,0.08);}
-.share-btn-card{position:absolute;top:12px;right:12px;z-index:5;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);}
-/* Position the menu to the LEFT on mobile so it doesn't get cut off the right edge */
+/* Menu sits directly below the button (its parent .share-wrap-card) */
 .share-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(11,38,24,0.18);padding:6px;display:none;z-index:1000;min-width:175px;}
 .share-menu.open{display:block;}
 .share-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:none;border:none;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text);text-align:left;font-family:'Plus Jakarta Sans',sans-serif;transition:background 0.15s;}
 .share-menu button:hover, .share-menu button:active{background:var(--cream);}
 .share-menu button .share-ico{font-size:16px;flex-shrink:0;}
-/* Cards must allow the dropdown to escape — was being clipped by overflow:hidden on reagent-card */
+/* Cards must allow the dropdown to escape */
 .reagent-card{overflow:visible!important;}
 @media(max-width:720px){
   .share-btn{font-size:11px;padding:5px 10px;}
-  .share-btn-card{top:10px;right:10px;}
+  .share-wrap-card{top:10px;right:10px;}
   .share-menu{min-width:160px;}
 }
 
 /* GLOBAL SEARCH */
-.search-wrap{position:relative;padding:24px 5% 0;max-width:900px;margin:0 auto;}
+.search-wrap{position:relative;padding:24px 5% 0;max-width:900px;margin:0 auto;z-index:200;}
 .search-bar{display:flex;align-items:center;gap:12px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:14px 22px;box-shadow:0 4px 20px rgba(11,38,24,0.06);transition:all 0.2s;}
 .search-bar:focus-within{border-color:var(--green);box-shadow:0 6px 28px rgba(13,124,62,0.15);}
 .search-icon{font-size:18px;opacity:0.6;flex-shrink:0;}
@@ -186,9 +187,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .search-clear{background:var(--cream);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 .search-clear:hover{background:var(--border);color:var(--text);}
 
-.search-results{position:absolute;top:calc(100% + 8px);left:5%;right:5%;max-width:870px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 12px 40px rgba(11,38,24,0.12);max-height:520px;overflow-y:auto;z-index:99;}
+.search-results{position:absolute;top:calc(100% + 8px);left:5%;right:5%;max-width:870px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 12px 40px rgba(11,38,24,0.12);max-height:520px;overflow-y:auto;z-index:200;}
 .search-section{padding:0;}
-.search-section-hdr{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:12px 20px 10px;background:var(--cream);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;}
+.search-section-hdr{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:12px 20px 10px;background:var(--cream);border-bottom:1px solid var(--border);}
 .search-item{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;}
 .search-item:hover{background:var(--cream);}
 .search-item:last-child{border-bottom:none;}
@@ -2089,14 +2090,16 @@ function modalShareRow(kind, id) {
 }
 
 function shareButton(kind, id) {
-  return '<button class="share-btn share-btn-card" onclick="toggleShareMenu(this,event)" title="Share">↗ Share</button>' +
+  return '<div class="share-wrap-card">' +
+    '<button class="share-btn" onclick="toggleShareMenu(this,event)" title="Share">↗ Share</button>' +
     '<div class="share-menu">' +
       '<button onclick="shareVia(\'whatsapp\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">💬</span>WhatsApp</button>' +
       '<button onclick="shareVia(\'twitter\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">𝕏</span>X (Twitter)</button>' +
       '<button onclick="shareVia(\'linkedin\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">💼</span>LinkedIn</button>' +
       '<button onclick="shareVia(\'email\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">✉️</span>Email</button>' +
       '<button onclick="shareVia(\'copy\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">📋</span>Copy text</button>' +
-    '</div>';
+    '</div>' +
+  '</div>';
 }
 
 // Close share menus on outside click
