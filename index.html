@@ -1977,19 +1977,24 @@ const DEFAULT_ANNOUNCEMENTS = [
 
 // ─── Share Buttons ───────────────────────────────────────────────────────────
 
+// Short link to BioCommons Ghana — created via TinyURL custom alias
+// To regenerate: https://tinyurl.com/app/ → custom alias 'biocommons-gh' pointing to your live site
+const BIOCOMMONS_SHORT_LINK = 'https://tinyurl.com/biocommons-gh';
+
 function buildShareUrl(item, kind) {
   const base = window.location.origin + window.location.pathname;
   return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
 }
 
 function buildShareText(item) {
-  const title = item.title || item.name || 'Opportunity';
-  const host = item.host || item.inst || '';
+  const title    = item.title || item.name || 'Opportunity';
+  const host     = item.host  || item.inst || '';
   const deadline = item.deadline || item.date || '';
   let txt = '🎓 ' + title;
-  if (host) txt += '\n📍 ' + host;
-  if (deadline) txt += '\n📅 ' + deadline;
-  txt += '\n\nFound on BioCommons Ghana — biology opportunities in Ghana';
+  if (host)     txt += '\n📍 ' + host;
+  if (deadline) txt += '\n📅 Application Deadline: ' + deadline;
+  txt += '\n\nFound on BioCommons Ghana — Open Science, Open Doors, Open Ghana.';
+  txt += '\n' + BIOCOMMONS_SHORT_LINK;
   return txt;
 }
 
@@ -2016,10 +2021,12 @@ function shareVia(platform, kind, id, e) {
   const item = items.find(x => String(x.id) === String(id));
   if (!item) return;
 
-  const url = item.link && item.link !== '#' ? item.link : buildShareUrl(item, kind);
+  const appLink = item.link && item.link !== '#' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(item.link) ? item.link : '';
   const text = buildShareText(item);
-  const encodedUrl = encodeURIComponent(url);
-  const encodedText = encodeURIComponent(text + '\n\n' + url);
+  // Append application link only if it's a real URL different from the BioCommons short link
+  const fullText = appLink ? text + '\n\nApply here: ' + appLink : text;
+  const encodedUrl  = encodeURIComponent(appLink || BIOCOMMONS_SHORT_LINK);
+  const encodedText = encodeURIComponent(fullText);
 
   let shareUrl = '';
   if (platform === 'whatsapp') {
@@ -2029,18 +2036,16 @@ function shareVia(platform, kind, id, e) {
   } else if (platform === 'linkedin') {
     shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodedUrl;
   } else if (platform === 'copy') {
-    const fullText = text + '\n\n' + url;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(fullText).then(() => showToast('Link copied!'));
+      navigator.clipboard.writeText(fullText).then(() => showToast('Copied to clipboard!'));
     } else {
-      // Fallback
       const ta = document.createElement('textarea');
       ta.value = fullText;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
-      showToast('Link copied!');
+      showToast('Copied to clipboard!');
     }
     document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
     return;
