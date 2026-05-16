@@ -516,6 +516,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <div class="section" id="sec-workshops">
   <div class="section-hd">
     <div><div class="section-title">Workshops & Conferences</div><div class="section-sub">Training workshops, scientific conferences, and networking events for biological scientists in Ghana</div></div>
+    <span class="result-count" id="wks-count"></span>
   </div>
   <div class="filter-row">
     <button class="f-btn active" data-f="all" onclick="filterWorkshops(this)">All</button>
@@ -904,6 +905,26 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a class="modal-apply" id="jm-link" href="#" target="_blank" rel="noopener">View Position →</a>
   </div>
 </div>
+
+<!-- WORKSHOP / CONFERENCE MODAL -->
+<div class="overlay" id="workshop-overlay" onclick="closeWorkshopModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeWorkshopModal()">✕</button>
+    <div class="modal-flag" id="wm-flag"></div>
+    <h2 id="wm-title"></h2>
+    <div class="modal-host" id="wm-host"></div>
+    <div class="badges" id="wm-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="wm-type"></div></div>
+    <div class="modal-row"><div class="modal-label">Date</div><div class="modal-val" id="wm-date"></div></div>
+    <div class="modal-row"><div class="modal-label">Location</div><div class="modal-val" id="wm-location"></div></div>
+    <div class="modal-row"><div class="modal-label">Mode</div><div class="modal-val" id="wm-mode"></div></div>
+    <div class="modal-row"><div class="modal-label">Cost</div><div class="modal-val" id="wm-cost"></div></div>
+    <hr/>
+    <p class="modal-desc" id="wm-desc"></p>
+    <a class="modal-apply" id="wm-link" href="#" target="_blank" rel="noopener">Register →</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1221,23 +1242,39 @@ function filterReagents(btn){
 }
 
 function renderWorkshops(data){
-  document.getElementById('workshop-grid').innerHTML=data.map(w=>'<div class="card">'+
-    '<div class="card-flag"><span class="card-flag-label">'+(w.location||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
-    '<div class="badges">'+
-      '<span class="badge '+(w.type==='conference'?'badge-blue':'badge-green')+'">'+(w.type==='conference'?'Conference':'Workshop')+'</span>'+
-      (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">Paid</span>')+
-      (w.mode==='virtual'?'<span class="badge badge-gold">Virtual</span>':'<span class="badge badge-muted">In-Person</span>')+
-    '</div>'+
-    '<div><div class="card-title">'+w.title+'</div><div class="card-host">'+w.host+'</div></div>'+
-    '<div class="card-tags">'+w.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
-    '<div class="card-meta"><span>📅 '+w.date+'</span><span>📍 '+w.location+'</span></div>'+
-    '<a class="card-action" href="'+normalizeUrl(w.link)+'" target="_blank" rel="noopener">View Event →</a>'+
-  '</div>').join('');
+  const cnt = document.getElementById('wks-count');
+  if (cnt) cnt.textContent = 'Showing ' + data.length + ' of ' + workshops.length;
+  document.getElementById('workshop-grid').innerHTML=data.map(w=>{
+    const t = (w.type||'').toLowerCase();
+    const typeLabel = t.charAt(0).toUpperCase() + t.slice(1);
+    const typeBadge = t === 'conference' ? 'badge-blue'
+                    : t === 'symposium'  ? 'badge-gold'
+                    : t === 'webinar'    ? 'badge-blue'
+                    : t === 'seminar'    ? 'badge-muted'
+                    : 'badge-green';
+    return '<div class="card" onclick="openWorkshopModal(\''+w.id+'\')">'+
+      '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
+      '<div class="badges">'+
+        '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
+        (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
+        (w.mode==='virtual'?'<span class="badge badge-gold">🌐 Virtual</span>':w.mode==='hybrid'?'<span class="badge badge-blue">Hybrid</span>':'<span class="badge badge-muted">In-Person</span>')+
+      '</div>'+
+      '<div><div class="card-title">'+w.title+'</div><div class="card-host">'+w.host+'</div></div>'+
+      '<div class="card-meta"><span>📅 '+(w.date||'TBA')+'</span><span>📍 '+(w.location||'Ghana')+'</span></div>'+
+      '<a class="card-action" href="'+normalizeUrl(w.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Register →</a>'+
+    '</div>';
+  }).join('');
 }
 function filterWorkshops(btn){
   document.querySelectorAll('#sec-workshops .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f;
-  renderWorkshops(f==='all'?workshops:workshops.filter(w=>w.type===f||w.cost===f||w.mode===f));
+  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
+  renderWorkshops(f==='all'?workshops:workshops.filter(w=>{
+    const t=String(w.type||'').toLowerCase();
+    const c=String(w.cost||'').toLowerCase();
+    const m=String(w.mode||'').toLowerCase();
+    if(f==='workshop')   return t==='workshop' || t==='seminar' || t==='symposium' || t==='webinar';
+    return t===f || c===f || m===f;
+  }));
 }
 
 function renderProfs(data){
@@ -1422,6 +1459,50 @@ function openJobModal(id){
 function closeJobModal(e){
   if(e&&e.target!==document.getElementById('job-overlay'))return;
   document.getElementById('job-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function openWorkshopModal(id){
+  const w=workshops.find(x=>String(x.id)===String(id));if(!w)return;
+  document.getElementById('wm-flag').innerHTML=flagFor(w.country||w.location||'Ghana');
+  document.getElementById('wm-title').textContent=w.title;
+  document.getElementById('wm-host').textContent=w.host;
+  document.getElementById('wm-type').textContent=((w.type||'workshop').charAt(0).toUpperCase()+(w.type||'workshop').slice(1));
+  document.getElementById('wm-date').textContent=w.date||'TBA';
+  document.getElementById('wm-location').textContent=w.location||'Ghana';
+  document.getElementById('wm-mode').textContent=w.mode==='virtual'?'🌐 Virtual':(w.mode==='hybrid'?'Hybrid':'In-Person');
+  document.getElementById('wm-cost').textContent=w.cost==='free'?'Free':(w.cost==='funded'?'Funded (travel & accommodation)':'Paid registration');
+  document.getElementById('wm-desc').textContent=w.description||w.desc||'';
+
+  // Link button — handle email vs URL
+  const linkBtn=document.getElementById('wm-link');
+  const linkVal=w.link||'';
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(linkVal)){
+    linkBtn.href='mailto:'+linkVal+'?subject='+encodeURIComponent('BioCommons Ghana — '+w.title);
+    linkBtn.textContent='Email '+linkVal+' →';
+  } else {
+    linkBtn.href=normalizeUrl(linkVal);
+    linkBtn.textContent='Register →';
+  }
+
+  const t=(w.type||'').toLowerCase();
+  const typeBadge = t === 'conference' ? 'badge-blue'
+                  : t === 'symposium'  ? 'badge-gold'
+                  : t === 'webinar'    ? 'badge-blue'
+                  : t === 'seminar'    ? 'badge-muted'
+                  : 'badge-green';
+  document.getElementById('wm-badges').innerHTML=
+    '<span class="badge '+typeBadge+'">'+((t||'workshop').charAt(0).toUpperCase()+(t||'workshop').slice(1))+'</span>'+
+    (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
+    (w.mode==='virtual'?'<span class="badge badge-gold">🌐 Virtual</span>':w.mode==='hybrid'?'<span class="badge badge-blue">Hybrid</span>':'<span class="badge badge-muted">In-Person</span>');
+
+  document.getElementById('workshop-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeWorkshopModal(e){
+  if(e&&e.target!==document.getElementById('workshop-overlay'))return;
+  document.getElementById('workshop-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
 function showSubmitForm(name,btn){
@@ -1663,11 +1744,43 @@ function sheetToReagent(row, id) {
 }
 
 function sheetToWorkshop(row, id) {
+  // Apps Script encoding for workshops:
+  //   Degree col (row.degree)   → type (Workshop/Conference/Symposium/Seminar/Webinar)
+  //   Funding col (row.funding) → cost (Free/Paid/Funded)
+  //   Description encodes: Location, Mode, Notes
+  const desc = String(row.description || '');
+  const parse = (label) => {
+    const m = desc.match(new RegExp('^' + label + ':\\s*(.+)$', 'mi'));
+    return m ? m[1].trim() : '';
+  };
+
+  const typeRaw = String(row.degree || '').toLowerCase();
+  const type = typeRaw.includes('conference') ? 'conference'
+             : typeRaw.includes('symposium')  ? 'symposium'
+             : typeRaw.includes('webinar')    ? 'webinar'
+             : typeRaw.includes('seminar')    ? 'seminar'
+             : 'workshop';
+
+  const costRaw = String(row.funding || '').toLowerCase();
+  const cost = costRaw.includes('free')      ? 'free'
+             : costRaw.includes('funded')    ? 'funded'
+             : costRaw.includes('paid')      ? 'paid'
+             : 'free';
+
+  const location = parse('Location') || row.country || 'Ghana';
+  const locLow = String(location).toLowerCase();
+  const mode = locLow.includes('virtual') || locLow.includes('online') ? 'virtual'
+             : locLow.includes('hybrid')                                ? 'hybrid'
+             : 'in-person';
+
   return {
-    id: 5000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
-    type: 'workshop', cost: 'free', mode: 'in-person',
-    date: row.deadline, location: row.country || 'Ghana',
-    fields: 'Biological Sciences', link: normalizeUrl(row.link)
+    id: 5000 + id, flag: flagFor(location), title: row.title || '', host: row.host || '',
+    type, cost, mode,
+    date: row.deadline || 'TBA', location,
+    country: row.country || location,
+    fields: 'Biological Sciences',
+    description: parse('Notes') || desc,
+    link: row.link || row.email || '#'
   };
 }
 
