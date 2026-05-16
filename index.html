@@ -127,6 +127,42 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .btn-nav{background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;border:none;padding:14px 32px;border-radius:50px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .btn-nav:hover{background:var(--dark2);transform:translateY(-1px);}
 
+/* HAMBURGER BUTTON — hidden on desktop, visible on mobile */
+.hamburger{display:none;background:none;border:none;cursor:pointer;width:44px;height:44px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;border-radius:10px;transition:background 0.2s;}
+.hamburger:hover{background:var(--surface);}
+.hamburger span{display:block;width:22px;height:2.5px;background:var(--dark);border-radius:2px;transition:all 0.25s ease;}
+.hamburger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.hamburger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+
+/* SLIDE-OUT MENU */
+.mobile-menu-backdrop{display:none;position:fixed;inset:0;background:rgba(11,38,24,0.5);backdrop-filter:blur(2px);z-index:998;opacity:0;transition:opacity 0.25s ease;}
+.mobile-menu-backdrop.open{display:block;opacity:1;}
+
+.mobile-menu{position:fixed;top:0;right:0;bottom:0;width:88%;max-width:340px;background:var(--cream);z-index:999;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(11,38,24,0.16);}
+.mobile-menu.open{transform:translateX(0);}
+
+.mobile-menu-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);}
+.mobile-menu-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--dark);}
+.mobile-menu-close{background:var(--surface);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:14px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.mobile-menu-close:hover{background:var(--dark);color:var(--cream);}
+
+.mobile-menu-nav{display:flex;flex-direction:column;padding:12px 0;flex:1;}
+.mobile-menu-nav a{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);font-weight:600;font-size:15px;padding:14px 24px;border-left:3px solid transparent;transition:all 0.15s;}
+.mobile-menu-nav a:hover{background:var(--surface);border-left-color:var(--green);color:var(--green);}
+.mobile-menu-nav a:active{background:var(--green-dim);}
+.mm-icon{font-size:20px;width:24px;text-align:center;flex-shrink:0;}
+
+.mobile-menu-submit{margin:14px 24px 20px;background:var(--green);color:var(--white);text-align:center;padding:14px 22px;border-radius:50px;font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s;}
+.mobile-menu-submit:hover{background:var(--dark);}
+
+.mobile-menu-footer{display:flex;justify-content:center;gap:14px;padding:18px 24px;border-top:1px solid var(--border);}
+.mobile-menu-footer a{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:var(--surface);color:var(--muted);text-decoration:none;font-weight:700;font-size:15px;transition:all 0.2s;}
+.mobile-menu-footer a:hover{background:var(--dark);color:var(--cream);transform:translateY(-2px);}
+
+/* Prevent body scroll when menu open */
+body.menu-open{overflow:hidden;}
+
 /* HERO */
 .hero{background:var(--dark);padding:96px 5% 0;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
@@ -490,7 +526,10 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 .toast.show{transform:translateY(0);opacity:1;}
 
 @media(max-width:768px){
-  .nav-bar{padding:0 4%;}.nav-links{display:none;}
+  .nav-bar{padding:0 4%;height:72px;}
+  .nav-links{display:none;}
+  .nav-submit-desktop{display:none;}
+  .hamburger{display:flex;}
   .hero{padding:52px 4% 0;}.hero-inner{flex-direction:column;gap:0;}
   .hero-right{display:none;}
   .hero-left{padding-bottom:40px;}
@@ -537,8 +576,35 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <li><a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('programmes')">Graduate Programs-GH</a></li>
   </ul>
-  <a href="#" class="btn-nav" onclick="showSection('submit')">+ Submit</a>
+  <a href="#" class="btn-nav nav-submit-desktop" onclick="showSection('submit')">+ Submit</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE SLIDE-OUT MENU -->
+<div class="mobile-menu-backdrop" id="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
+<aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu-header">
+    <span class="mobile-menu-title">Menu</span>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="mobile-menu-nav">
+    <a href="javascript:void(0)" onclick="_navMobile('opportunities')"><span class="mm-icon">🎓</span><span>Scholarships &amp; Fellowships</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('grants')"><span class="mm-icon">💰</span><span>Grants</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('reagents')"><span class="mm-icon">⚗️</span><span>Reagents</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('internships')"><span class="mm-icon">💼</span><span>Jobs &amp; Internships</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('workshops')"><span class="mm-icon">🏛</span><span>Workshops &amp; Conferences</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('programmes')"><span class="mm-icon">📚</span><span>Graduate Programmes</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('mylist')"><span class="mm-icon">⭐</span><span>My List</span></a>
+  </nav>
+  <a href="javascript:void(0)" class="mobile-menu-submit" onclick="_navMobile('submit')">+ Submit an Opportunity</a>
+  <div class="mobile-menu-footer">
+    <a href="https://x.com/BioCommons_GH" target="_blank" rel="noopener" aria-label="Twitter / X">𝕏</a>
+    <a href="https://www.linkedin.com/in/biocommons-ghana-9949a4409/" target="_blank" rel="noopener" aria-label="LinkedIn">in</a>
+    <a href="mailto:biocommonsghana@gmail.com" aria-label="Email">✉</a>
+  </div>
+</aside>
 
 <!-- HERO -->
 <section class="hero" id="top">
@@ -2927,6 +2993,49 @@ document.addEventListener('click', function(e) {
       link_text: (a.textContent || '').trim().slice(0,60)
     });
   }
+});
+
+// ─── Mobile menu ─────────────────────────────────────────────────────────────
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+  const hb = document.getElementById('hamburger');
+  if (menu.classList.contains('open')) { closeMobileMenu(); return; }
+  menu.classList.add('open');
+  backdrop.classList.add('open');
+  hb.classList.add('open');
+  hb.setAttribute('aria-label', 'Close menu');
+  menu.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('menu-open');
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+  const hb = document.getElementById('hamburger');
+  if (!menu) return;
+  menu.classList.remove('open');
+  backdrop.classList.remove('open');
+  hb.classList.remove('open');
+  hb.setAttribute('aria-label', 'Open menu');
+  menu.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('menu-open');
+}
+
+function _navMobile(section) {
+  closeMobileMenu();
+  // Slight delay lets the menu close animation finish before scrolling
+  setTimeout(() => showSection(section), 280);
+}
+
+// Close menu when window resizes above mobile breakpoint
+window.addEventListener('resize', function() {
+  if (window.innerWidth > 768) closeMobileMenu();
+});
+
+// Close menu on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeMobileMenu();
 });
 
 // ─── Empty-state helpers ─────────────────────────────────────────────────────
