@@ -127,6 +127,23 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .btn-nav{background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;border:none;padding:14px 32px;border-radius:50px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .btn-nav:hover{background:var(--dark2);transform:translateY(-1px);}
 
+/* LOADING SKELETONS */
+.skeleton-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;}
+.skeleton-card::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.7) 50%,transparent 100%);transform:translateX(-100%);animation:shimmer 1.6s infinite;}
+.skel-bar{background:var(--surface);border-radius:6px;height:14px;}
+.skel-bar.w-30{width:30%;}.skel-bar.w-40{width:40%;}.skel-bar.w-50{width:50%;}
+.skel-bar.w-60{width:60%;}.skel-bar.w-70{width:70%;}.skel-bar.w-80{width:80%;}
+.skel-bar.w-90{width:90%;}.skel-bar.w-100{width:100%;}
+.skel-bar.tall{height:22px;}
+.skel-bar.short{height:10px;}
+.skel-flag{width:40px;height:30px;background:var(--surface);border-radius:4px;align-self:flex-end;}
+.skel-row{display:flex;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid var(--border);}
+.skel-pill{height:22px;background:var(--surface);border-radius:50px;}
+.skel-pill.s{width:60px;}
+.skel-pill.m{width:80px;}
+.skel-pill.l{width:100px;}
+@keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+
 /* HAMBURGER BUTTON — hidden on desktop, visible on mobile */
 .hamburger{display:none;background:none;border:none;cursor:pointer;width:44px;height:44px;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;border-radius:10px;transition:background 0.2s;}
 .hamburger:hover{background:var(--surface);}
@@ -2994,6 +3011,61 @@ document.addEventListener('click', function(e) {
     });
   }
 });
+
+// ─── Loading skeletons ───────────────────────────────────────────────────────
+// Show shimmer placeholders while the sheet data loads via JSONP.
+// Card skeletons mimic the real card layout so the page doesn't visibly reflow.
+
+function _skeletonCard() {
+  return '<div class="skeleton-card">' +
+    '<div class="skel-flag"></div>' +
+    '<div class="skel-row" style="border:none;padding:0;margin:0;">' +
+      '<div class="skel-pill m"></div>' +
+      '<div class="skel-pill s"></div>' +
+    '</div>' +
+    '<div class="skel-bar tall w-80"></div>' +
+    '<div class="skel-bar w-50"></div>' +
+    '<div class="skel-row">' +
+      '<div class="skel-bar short w-30"></div>' +
+      '<div class="skel-bar short w-40" style="margin-left:auto"></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function _skeletonReagent() {
+  return '<div class="skeleton-card">' +
+    '<div class="skel-row" style="border:none;padding:0;margin:0;justify-content:space-between;">' +
+      '<div class="skel-pill m"></div>' +
+      '<div class="skel-pill s"></div>' +
+    '</div>' +
+    '<div class="skel-bar tall w-90"></div>' +
+    '<div class="skel-bar w-60"></div>' +
+    '<div class="skel-row">' +
+      '<div class="skel-bar short w-50"></div>' +
+      '<div class="skel-pill s" style="margin-left:auto;width:50px"></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function showLoadingSkeletons() {
+  const cardGridIds = ['opp-grid','grants-grid','int-grid','workshop-grid','prog-grid'];
+  const cards = Array(6).fill(0).map(_skeletonCard).join('');
+  cardGridIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.innerHTML.trim()) el.innerHTML = cards;
+  });
+  const reagentGrid = document.getElementById('reagent-grid');
+  if (reagentGrid && !reagentGrid.innerHTML.trim()) {
+    reagentGrid.innerHTML = Array(6).fill(0).map(_skeletonReagent).join('');
+  }
+}
+
+// Render skeletons as soon as the page paints — before sheet data arrives
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', showLoadingSkeletons);
+} else {
+  showLoadingSkeletons();
+}
 
 // ─── Mobile menu ─────────────────────────────────────────────────────────────
 function toggleMobileMenu() {
