@@ -925,6 +925,26 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a class="modal-apply" id="wm-link" href="#" target="_blank" rel="noopener">Register →</a>
   </div>
 </div>
+
+<!-- PROGRAMME MODAL -->
+<div class="overlay" id="programme-overlay" onclick="closeProgrammeModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeProgrammeModal()">✕</button>
+    <div class="modal-flag" id="pm-flag"></div>
+    <h2 id="pm-title"></h2>
+    <div class="modal-host" id="pm-host"></div>
+    <div class="badges" id="pm-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Degree</div><div class="modal-val" id="pm-degree"></div></div>
+    <div class="modal-row"><div class="modal-label">University</div><div class="modal-val" id="pm-uni"></div></div>
+    <div class="modal-row"><div class="modal-label">Duration</div><div class="modal-val" id="pm-duration"></div></div>
+    <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="pm-fields"></div></div>
+    <div class="modal-row" id="pm-deadline-row"><div class="modal-label">Deadline</div><div class="modal-val" id="pm-deadline"></div></div>
+    <hr/>
+    <p class="modal-desc" id="pm-desc"></p>
+    <a class="modal-apply" id="pm-link" href="#" target="_blank" rel="noopener">View Programme →</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1165,19 +1185,34 @@ function applyOppFilter(q=''){
 
 function renderProgrammes(data){
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
-  document.getElementById('prog-grid').innerHTML=data.map(p=>'<div class="card">'+
-    '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
-    '<div class="badges"><span class="badge '+(p.degree==="PhD"?'badge-blue':'badge-green')+'">'+(p.degree)+'</span><span class="badge badge-muted">'+p.duration+'</span></div>'+
-    '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
-    '<div class="card-tags">'+p.fields.split(', ').map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
-    '<div class="card-meta"><span>📅 Apply by '+p.deadline+'</span></div>'+
-    '<a class="card-action" href="'+normalizeUrl(p.link)+'" target="_blank" rel="noopener">Programme Details →</a>'+
-  '</div>').join('');
+  document.getElementById('prog-grid').innerHTML=data.map(p=>{
+    const d = String(p.degree||'').toUpperCase();
+    const degBadge = d.includes('PHD')   ? 'badge-blue'
+                   : d.includes('MPHIL') ? 'badge-gold'
+                   : d.includes('MSC')   ? 'badge-green'
+                   : 'badge-muted';
+    return '<div class="card" onclick="openProgrammeModal(\''+p.id+'\')">'+
+      '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
+      '<div class="badges">'+
+        '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
+        '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>'+
+      '</div>'+
+      '<div><div class="card-title">'+p.title+'</div><div class="card-host">'+p.host+'</div></div>'+
+      '<div class="card-meta"><span>📅 '+(p.deadline?'Apply by '+p.deadline:'Rolling admissions')+'</span></div>'+
+      '<a class="card-action" href="'+normalizeUrl(p.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Programme Details →</a>'+
+    '</div>';
+  }).join('');
 }
 function filterProgrammes(btn){
   document.querySelectorAll('#sec-programmes .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f;
-  renderProgrammes(f==='all'?programmes:programmes.filter(p=>p.uni===f||p.degree.toLowerCase().includes(f)));
+  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
+  renderProgrammes(f==='all'?programmes:programmes.filter(p=>{
+    const uni=String(p.uni||'').toLowerCase();
+    const deg=String(p.degree||'').toLowerCase();
+    // "msc" filter should also match MPhil (commonly grouped)
+    if(f==='msc') return deg.includes('msc') || deg.includes('mphil');
+    return uni===f || deg.includes(f);
+  }));
 }
 
 function renderInternships(data){
@@ -1505,6 +1540,52 @@ function closeWorkshopModal(e){
   document.getElementById('workshop-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
+
+function openProgrammeModal(id){
+  const p=programmes.find(x=>String(x.id)===String(id));if(!p)return;
+  document.getElementById('pm-flag').innerHTML=flagFor(p.country||'Ghana');
+  document.getElementById('pm-title').textContent=p.title;
+  document.getElementById('pm-host').textContent=p.host;
+  document.getElementById('pm-degree').textContent=p.degree||'Graduate Programme';
+  document.getElementById('pm-uni').textContent=p.host||p.country||'Ghana';
+  document.getElementById('pm-duration').textContent=p.duration||'See link';
+  document.getElementById('pm-fields').textContent=p.fields||'Biological Sciences';
+
+  const dlRow=document.getElementById('pm-deadline-row');
+  if(p.deadline){document.getElementById('pm-deadline').textContent=p.deadline;dlRow.style.display='';}
+  else dlRow.style.display='none';
+
+  document.getElementById('pm-desc').textContent=p.description||p.requirements||'';
+
+  // Link button — handle email vs URL
+  const linkBtn=document.getElementById('pm-link');
+  const linkVal=p.link||'';
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(linkVal)){
+    linkBtn.href='mailto:'+linkVal+'?subject='+encodeURIComponent('BioCommons Ghana — '+p.title);
+    linkBtn.textContent='Email '+linkVal+' →';
+  } else {
+    linkBtn.href=normalizeUrl(linkVal);
+    linkBtn.textContent='View Programme →';
+  }
+
+  const d=String(p.degree||'').toUpperCase();
+  const degBadge = d.includes('PHD')   ? 'badge-blue'
+                 : d.includes('MPHIL') ? 'badge-gold'
+                 : d.includes('MSC')   ? 'badge-green'
+                 : 'badge-muted';
+  document.getElementById('pm-badges').innerHTML=
+    '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
+    '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>';
+
+  document.getElementById('programme-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeProgrammeModal(e){
+  if(e&&e.target!==document.getElementById('programme-overlay'))return;
+  document.getElementById('programme-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 function showSubmitForm(name,btn){
   document.querySelectorAll('.s-form').forEach(f=>f.classList.remove('active'));
   document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
@@ -1785,12 +1866,35 @@ function sheetToWorkshop(row, id) {
 }
 
 function sheetToProgramme(row, id) {
+  // Apps Script encoding for programmes:
+  //   Degree col (row.degree)   → degree type (MSc/MPhil/PhD/PGDip)
+  //   Funding col (row.funding) → duration (e.g. '2 years')
+  //   Description encodes: admission requirements
+  const degRaw = String(row.degree || '').toUpperCase().trim();
+  const degree = degRaw.includes('PHD')   ? 'PhD'
+               : degRaw.includes('MPHIL') ? 'MPhil'
+               : degRaw.includes('MSC')   ? 'MSc'
+               : degRaw.includes('PGDIP') ? 'PGDip'
+               : degRaw || 'Graduate';
+
+  // Detect university for filter (UG / KNUST / UCC / UDS / Other)
+  const hostLow = String(row.host || '').toLowerCase();
+  const uni = hostLow.includes('knust')      ? 'knust'
+            : hostLow.includes('university of ghana') || /\bug\b/.test(hostLow) ? 'ug'
+            : hostLow.includes('cape coast') || hostLow.includes('ucc') ? 'ucc'
+            : hostLow.includes('development studies') || hostLow.includes('uds') ? 'uds'
+            : 'other';
+
   return {
-    id: 6000 + id, uni: 'other', flag: flagFor(row.country),
-    title: row.title, host: row.host,
-    degree: 'MSc', duration: 'See link',
+    id: 6000 + id, uni, flag: flagFor(row.country || 'Ghana'),
+    title: row.title || '', host: row.host || '',
+    country: row.country || 'Ghana',
+    degree, duration: row.funding || 'See link',
     fields: 'Biological Sciences',
-    deadline: row.deadline, link: normalizeUrl(row.link)
+    deadline: row.deadline || '',
+    description: row.description || '',
+    requirements: row.description || '',
+    link: row.link || row.email || '#'
   };
 }
 
