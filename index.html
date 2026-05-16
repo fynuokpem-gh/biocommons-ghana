@@ -54,6 +54,18 @@
 }
 </script>
 
+<!-- ─── GOOGLE ANALYTICS 4 ─────────────────────────────────────────────────── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8HY6P0PZML"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8HY6P0PZML', {
+    'anonymize_ip': true,
+    'page_title': 'BioCommons Ghana'
+  });
+</script>
+
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230B2618'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23F5A623' stroke-width='5'/%3E%3Cline x1='32' y1='14' x2='18' y2='42' stroke='%230D7C3E' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='18' y1='42' x2='46' y2='42' stroke='%230D7C3E' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='32' y1='14' x2='46' y2='42' stroke='%230D7C3E' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='14' r='4' fill='%230D7C3E'/%3E%3Ccircle cx='18' cy='42' r='4' fill='%230D7C3E'/%3E%3Ccircle cx='46' cy='42' r='4' fill='%230D7C3E'/%3E%3C/svg%3E"/>
 <meta name="description" content="BioCommons Ghana connects biological scientists across Ghana to scholarships, fellowships, jobs, reagent exchange, workshops, and more."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -2828,6 +2840,94 @@ function fetchSheetJSONP(sheetName) {
     document.head.appendChild(script);
   });
 }
+
+// ─── Google Analytics — custom event tracking ────────────────────────────────
+function trackEvent(action, params) {
+  if (typeof gtag === 'undefined') return;
+  try { gtag('event', action, params || {}); } catch(e) {}
+}
+
+// Wrap existing functions so we don't duplicate logic — capture key user actions
+
+// 1. Section navigation
+const _gaOrigShowSection = window.showSection;
+window.showSection = function(name) {
+  trackEvent('view_section', { section: name });
+  return _gaOrigShowSection.apply(this, arguments);
+};
+
+// 2. Modal opens — listen to each opener
+['openModal','openGrantModal','openJobModal','openReagentModal','openWorkshopModal','openProgrammeModal'].forEach(fn => {
+  if (typeof window[fn] !== 'function') return;
+  const original = window[fn];
+  window[fn] = function(id) {
+    const kind = fn.replace('open','').replace('Modal','').toLowerCase() || 'scholarship';
+    trackEvent('view_opportunity', { kind: kind, opportunity_id: String(id) });
+    return original.apply(this, arguments);
+  };
+});
+
+// 3. Bookmark toggle
+const _gaOrigToggleBookmark = window.toggleBookmark;
+if (typeof _gaOrigToggleBookmark === 'function') {
+  window.toggleBookmark = function(kind, id, e) {
+    const wasSet = isBookmarked(kind, id);
+    const r = _gaOrigToggleBookmark.apply(this, arguments);
+    trackEvent(wasSet ? 'unbookmark' : 'bookmark', { kind: kind, opportunity_id: String(id) });
+    return r;
+  };
+}
+
+// 4. Share clicks
+const _gaOrigShareVia = window.shareVia;
+if (typeof _gaOrigShareVia === 'function') {
+  window.shareVia = function(platform, kind, id, e) {
+    trackEvent('share', { method: platform, kind: kind, opportunity_id: String(id) });
+    return _gaOrigShareVia.apply(this, arguments);
+  };
+}
+
+// 5. Reminder set
+const _gaOrigSubmitReminder = window.submitReminder;
+if (typeof _gaOrigSubmitReminder === 'function') {
+  window.submitReminder = function() {
+    if (_currentReminderItem) {
+      trackEvent('set_reminder', { kind: _currentReminderItem.kind, opportunity_id: String(_currentReminderItem.id) });
+    }
+    return _gaOrigSubmitReminder.apply(this, arguments);
+  };
+}
+
+// 6. Form submissions
+const _gaOrigSubmitForm = window.submitForm;
+if (typeof _gaOrigSubmitForm === 'function') {
+  window.submitForm = function(type) {
+    trackEvent('submit_listing', { type: type });
+    return _gaOrigSubmitForm.apply(this, arguments);
+  };
+}
+
+// 7. Closing-this-week alert click
+const _gaOrigOpenClosingList = window.openClosingList;
+if (typeof _gaOrigOpenClosingList === 'function') {
+  window.openClosingList = function() {
+    trackEvent('view_closing_alert', {});
+    return _gaOrigOpenClosingList.apply(this, arguments);
+  };
+}
+
+// 8. Outbound clicks on Apply / View buttons inside cards (links to external sites)
+document.addEventListener('click', function(e) {
+  const a = e.target.closest('a');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (href.startsWith('http') && !href.includes(location.hostname)) {
+    trackEvent('outbound_click', {
+      url: href,
+      link_text: (a.textContent || '').trim().slice(0,60)
+    });
+  }
+});
 
 // ─── Empty-state helpers ─────────────────────────────────────────────────────
 function _jumpToSubmit(formId) {
