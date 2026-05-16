@@ -152,6 +152,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 /* TABS */
 .tabs-wrap{position:sticky;top:88px;z-index:100;background:rgba(255,251,244,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;overflow-x:auto;}
 
+/* MODAL SHARE ROW */
+.modal-share{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.modal-share-label{font-size:12px;color:var(--muted);margin-right:auto;}
+.modal-share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:50px;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--text);}
+.modal-share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);}
+
 /* SHARE BUTTONS */
 .share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;border-radius:50px;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--muted);position:relative;line-height:1;}
 .share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,38,24,0.08);}
@@ -181,8 +187,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .search-clear:hover{background:var(--border);color:var(--text);}
 
 .search-results{position:absolute;top:calc(100% + 8px);left:5%;right:5%;max-width:870px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 12px 40px rgba(11,38,24,0.12);max-height:520px;overflow-y:auto;z-index:99;}
-.search-section{padding:8px 0;}
-.search-section-hdr{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:10px 20px 6px;background:var(--cream);border-bottom:1px solid var(--border);}
+.search-section{padding:0;}
+.search-section-hdr{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:12px 20px 10px;background:var(--cream);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;}
 .search-item{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;}
 .search-item:hover{background:var(--cream);}
 .search-item:last-child{border-bottom:none;}
@@ -904,6 +910,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="m-desc"></p>
     <a class="modal-apply" id="m-link" href="#" target="_blank" rel="noopener">Apply Now →</a>
+    <div id="m-share-row"></div>
   </div>
 </div>
 
@@ -924,6 +931,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="gm-desc"></p>
     <a class="modal-apply" id="gm-link" href="#" target="_blank" rel="noopener">View Grant →</a>
+    <div id="gm-share-row"></div>
   </div>
 </div>
 
@@ -943,6 +951,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="rm-notes"></p>
     <a class="modal-apply" id="rm-contact" href="#">Contact →</a>
+    <div id="rm-share-row"></div>
   </div>
 </div>
 
@@ -964,6 +973,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="jm-desc"></p>
     <a class="modal-apply" id="jm-link" href="#" target="_blank" rel="noopener">View Position →</a>
+    <div id="jm-share-row"></div>
   </div>
 </div>
 
@@ -984,6 +994,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="wm-desc"></p>
     <a class="modal-apply" id="wm-link" href="#" target="_blank" rel="noopener">Register →</a>
+    <div id="wm-share-row"></div>
   </div>
 </div>
 
@@ -1004,6 +1015,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <hr/>
     <p class="modal-desc" id="pm-desc"></p>
     <a class="modal-apply" id="pm-link" href="#" target="_blank" rel="noopener">View Programme →</a>
+    <div id="pm-share-row"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1422,6 +1434,7 @@ function openModal(id){
   document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
   document.getElementById('m-desc').textContent=o.desc;
   document.getElementById('m-link').href=normalizeUrl(o.link);
+  document.getElementById('m-share-row').innerHTML=modalShareRow('scholarship',o.id);
   document.getElementById('m-badges').innerHTML=
     (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
     (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
@@ -1449,6 +1462,7 @@ function openGrantModal(id){
   document.getElementById('gm-deadline').textContent=g.deadline+(g.soon?' ⏰ Closing soon!':'');
   document.getElementById('gm-desc').textContent=g.desc||'';
   document.getElementById('gm-link').href=normalizeUrl(g.link);
+  document.getElementById('gm-share-row').innerHTML=modalShareRow('grant',g.id);
   document.getElementById('gm-badges').innerHTML=
     '<span class="badge badge-green">'+(g.amount||'See link')+'</span>'+
     (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
@@ -1495,6 +1509,7 @@ function openReagentModal(id){
     contactBtn.onclick=function(e){e.preventDefault();showToast('Contact: '+r.contact);};
   }
 
+  document.getElementById('rm-share-row').innerHTML=modalShareRow('reagent',r.id);
   document.getElementById('rm-badges').innerHTML=
     '<span class="badge '+(r.type==='available'?'badge-green':'badge-gold')+'">'+(r.type==='available'?'Available':'Seeking')+'</span>'+
     '<span class="badge badge-blue">'+r.category+'</span>';
@@ -1549,6 +1564,7 @@ function openJobModal(id){
     linkBtn.textContent=isWanted?'Contact Candidate →':'View Position →';
   }
 
+  document.getElementById('jm-share-row').innerHTML=modalShareRow('job',j.id);
   document.getElementById('jm-badges').innerHTML=
     (isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' :
       ((j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
@@ -1593,6 +1609,7 @@ function openWorkshopModal(id){
                   : t === 'webinar'    ? 'badge-blue'
                   : t === 'seminar'    ? 'badge-muted'
                   : 'badge-green';
+  document.getElementById('wm-share-row').innerHTML=modalShareRow('workshop',w.id);
   document.getElementById('wm-badges').innerHTML=
     '<span class="badge '+typeBadge+'">'+((t||'workshop').charAt(0).toUpperCase()+(t||'workshop').slice(1))+'</span>'+
     (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
@@ -1640,6 +1657,7 @@ function openProgrammeModal(id){
                  : d.includes('MPHIL') ? 'badge-gold'
                  : d.includes('MSC')   ? 'badge-green'
                  : 'badge-muted';
+  document.getElementById('pm-share-row').innerHTML=modalShareRow('programme',p.id);
   document.getElementById('pm-badges').innerHTML=
     '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
     '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>';
@@ -2058,6 +2076,16 @@ function shareVia(platform, kind, id, e) {
     else window.open(shareUrl, '_blank', 'noopener,width=600,height=500');
   }
   document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
+}
+
+function modalShareRow(kind, id) {
+  return '<div class="modal-share">' +
+    '<span class="modal-share-label">Share this opportunity:</span>' +
+    '<button class="modal-share-btn" onclick="shareVia(\'whatsapp\',\'' + kind + '\',\'' + id + '\',event)" title="WhatsApp">💬 WhatsApp</button>' +
+    '<button class="modal-share-btn" onclick="shareVia(\'twitter\',\'' + kind + '\',\'' + id + '\',event)" title="X">𝕏</button>' +
+    '<button class="modal-share-btn" onclick="shareVia(\'linkedin\',\'' + kind + '\',\'' + id + '\',event)" title="LinkedIn">💼</button>' +
+    '<button class="modal-share-btn" onclick="shareVia(\'copy\',\'' + kind + '\',\'' + id + '\',event)" title="Copy">📋</button>' +
+  '</div>';
 }
 
 function shareButton(kind, id) {
