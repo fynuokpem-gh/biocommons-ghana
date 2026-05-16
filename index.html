@@ -506,7 +506,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="available" onclick="filterReagents(this)">Available</button>
     <button class="f-btn" data-f="seeking" onclick="filterReagents(this)">Seeking</button>
     <button class="f-btn" data-f="equipment" onclick="filterReagents(this)">Equipment</button>
-    <button class="f-btn" data-f="chemicals" onclick="filterReagents(this)">Chemicals</button>
+    <button class="f-btn" data-f="chemicals/biologics" onclick="filterReagents(this)">Chemicals/Biologics</button>
     <button class="f-btn" data-f="kits" onclick="filterReagents(this)">Kits</button>
   </div>
   <div class="reagent-grid" id="reagent-grid"></div>
@@ -657,7 +657,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="s-form" id="sf-reagent">
       <div class="form-row">
         <div class="form-group"><label>Listing Type</label><select><option>I have it (Available)</option><option>I need it (Seeking)</option></select></div>
-        <div class="form-group"><label>Category</label><select><option>Chemicals</option><option>Kits</option><option>Equipment</option><option>Consumables</option><option>Biological Materials</option></select></div>
+        <div class="form-group"><label>Category</label><select><option>Chemicals/Biologics</option><option>Kits</option><option>Equipment</option><option>Consumables</option></select></div>
       </div>
       <div class="form-group"><label>Reagent / Item Name</label><input type="text" placeholder="e.g. Taq DNA Polymerase 500U"/></div>
       <div class="form-row">
@@ -917,7 +917,7 @@ const programmes=[{id:1,uni:"ug",flag:"🇬🇭",title:"MPhil Biochemistry, Cell
 
 const internships=[{id:1,flag:"🇬🇭",title:"Research Assistant — Malaria Genomics",host:"Noguchi Memorial Institute",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"6 months",fields:"Genomics, Malaria, Parasitology",link:"https://www.noguchi.ug.edu.gh"},{id:2,flag:"🇬🇭",title:"Lab Intern — Plant Biotechnology",host:"CSIR — Plant Genetic Resources Research Institute",location:"Bunso, Ghana",type:"research",paid:true,compensation:"Paid",duration:"3 months",fields:"Plant Biology, Biotechnology, Agriculture",link:"https://www.csir.org.gh"},{id:3,flag:"🇬🇭",title:"Field Research Assistant — Wildlife Ecology",host:"Wildlife Division, Forestry Commission",location:"Mole National Park",type:"research",paid:false,compensation:"Accommodation provided",duration:"4 months",fields:"Ecology, Wildlife, Conservation",link:"https://www.fcghana.org"},{id:4,flag:"🇺🇸",title:"Summer Research Fellow — Infectious Disease",host:"NIH — NIAID",location:"Bethesda, USA",type:"international",paid:true,compensation:"Fully Paid",duration:"10 weeks",fields:"Infectious Disease, Immunology, Virology",link:"https://www.niaid.nih.gov"},{id:5,flag:"🇬🇭",title:"Quality Assurance Intern — Pharmaceuticals",host:"Dannex Ayrton Starwin Pharmaceuticals",location:"Accra, Ghana",type:"industry",paid:true,compensation:"Paid",duration:"3 months",fields:"Pharmacology, Quality Assurance, Biochemistry",link:"https://www.das-pharma.com"},{id:6,flag:"🇿🇦",title:"Research Intern — African Academy of Sciences",host:"African Academy of Sciences",location:"Nairobi / Remote",type:"research",paid:true,compensation:"Stipend",duration:"3 months",fields:"Science Policy, Research Management",link:"https://www.aasciences.africa"},{id:7,flag:"🇬🇭",title:"Microbiology Intern",host:"Ghana Standards Authority",location:"Accra, Ghana",type:"industry",paid:false,compensation:"Certificate",duration:"2 months",fields:"Microbiology, Food Safety, Standards",link:"https://www.gsa.gov.gh"},{id:8,flag:"🇬🇧",title:"Computational Biology Internship",host:"Wellcome Sanger Institute",location:"Cambridge, UK",type:"international",paid:true,compensation:"Fully Paid",duration:"12 weeks",fields:"Bioinformatics, Genomics, Computing",link:"https://www.sanger.ac.uk"},{id:9,flag:"🇬🇭",title:"Research Assistant — Aquatic Biology",host:"Water Research Institute, CSIR",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"4 months",fields:"Aquatic Biology, Water Quality, Ecology",link:"https://www.csir.org.gh"}];
 
-const reagents=[{id:1,type:"available",category:"chemicals",name:"Taq DNA Polymerase",qty:"500U (200µl remaining)",condition:"Partially Used",inst:"KNUST Biochemistry Dept.",notes:"Stored at -20°C. Valid until March 2026.",contact:"reagents@knust.edu.gh",exchange:""},{id:2,type:"seeking",category:"chemicals",name:"Ethidium Bromide",qty:"10mg needed",condition:"New preferred",inst:"UG Molecular Biology Lab",notes:"For gel electrophoresis.",contact:"molbio@ug.edu.gh",exchange:"Agarose powder (100g), PCR tubes"},{id:3,type:"available",category:"kits",name:"DNA Extraction Kit (Qiagen DNeasy)",qty:"3 kits (25 preps each)",condition:"New / Unopened",inst:"Noguchi Institute — NMIMR",notes:"Excess from a completed project.",contact:"labmanager@noguchi.ug.edu.gh",exchange:""},{id:4,type:"seeking",category:"equipment",name:"Microcentrifuge (benchtop)",qty:"1 unit needed",condition:"Working condition",inst:"UCC Life Sciences Dept.",notes:"Borrowing preferred — grant pending.",contact:"lifesci@ucc.edu.gh",exchange:"Bradford assay kits, lab glassware"},{id:5,type:"available",category:"chemicals",name:"Agarose Powder (Molecular Grade)",qty:"100g",condition:"New / Unopened",inst:"UDS Biological Sciences",notes:"Free to any Ghanaian institution.",contact:"biolab@uds.edu.gh",exchange:""},{id:6,type:"available",category:"kits",name:"Bradford Protein Assay Kit",qty:"200 assays",condition:"New / Unopened",inst:"CSIR-Food Research Institute",notes:"Expires Dec 2026.",contact:"fri@csir.org.gh",exchange:""},{id:7,type:"seeking",category:"chemicals",name:"Restriction Enzymes (EcoRI, HindIII)",qty:"1,000U each",condition:"Any",inst:"University of Ghana — Biotechnology Dept.",notes:"For cloning project.",contact:"biotech@ug.edu.gh",exchange:"Co-authorship or Taq polymerase"},{id:8,type:"available",category:"equipment",name:"UV Transilluminator",qty:"1 unit",condition:"Working — minor cosmetic wear",inst:"KNUST Molecular Lab",notes:"Available for long-term loan.",contact:"mollab@knust.edu.gh",exchange:""},{id:9,type:"seeking",category:"kits",name:"ELISA Kit — Malaria Antigen (PfHRP2)",qty:"1–2 kits",condition:"New only",inst:"Ghana Health Service — Research Dept.",notes:"For validation study.",contact:"research@ghs.gov.gh",exchange:"ELISA reader access, co-authorship"},{id:10,type:"available",category:"chemicals",name:"Liquid Nitrogen (for transport)",qty:"20L available",condition:"N/A — cryogenic",inst:"UGMS Biobank",notes:"Available for collection by Accra-based labs.",contact:"biobank@ugmedical.edu.gh",exchange:""}];
+const reagents=[{id:1,type:"available",category:"chemicals/biologics",name:"Taq DNA Polymerase",qty:"500U (200µl remaining)",condition:"Partially Used",inst:"KNUST Biochemistry Dept.",notes:"Stored at -20°C. Valid until March 2026.",contact:"reagents@knust.edu.gh",exchange:""},{id:2,type:"seeking",category:"chemicals/biologics",name:"Ethidium Bromide",qty:"10mg needed",condition:"New preferred",inst:"UG Molecular Biology Lab",notes:"For gel electrophoresis.",contact:"molbio@ug.edu.gh",exchange:"Agarose powder (100g), PCR tubes"},{id:3,type:"available",category:"kits",name:"DNA Extraction Kit (Qiagen DNeasy)",qty:"3 kits (25 preps each)",condition:"New / Unopened",inst:"Noguchi Institute — NMIMR",notes:"Excess from a completed project.",contact:"labmanager@noguchi.ug.edu.gh",exchange:""},{id:4,type:"seeking",category:"equipment",name:"Microcentrifuge (benchtop)",qty:"1 unit needed",condition:"Working condition",inst:"UCC Life Sciences Dept.",notes:"Borrowing preferred — grant pending.",contact:"lifesci@ucc.edu.gh",exchange:"Bradford assay kits, lab glassware"},{id:5,type:"available",category:"chemicals/biologics",name:"Agarose Powder (Molecular Grade)",qty:"100g",condition:"New / Unopened",inst:"UDS Biological Sciences",notes:"Free to any Ghanaian institution.",contact:"biolab@uds.edu.gh",exchange:""},{id:6,type:"available",category:"kits",name:"Bradford Protein Assay Kit",qty:"200 assays",condition:"New / Unopened",inst:"CSIR-Food Research Institute",notes:"Expires Dec 2026.",contact:"fri@csir.org.gh",exchange:""},{id:7,type:"seeking",category:"chemicals/biologics",name:"Restriction Enzymes (EcoRI, HindIII)",qty:"1,000U each",condition:"Any",inst:"University of Ghana — Biotechnology Dept.",notes:"For cloning project.",contact:"biotech@ug.edu.gh",exchange:"Co-authorship or Taq polymerase"},{id:8,type:"available",category:"equipment",name:"UV Transilluminator",qty:"1 unit",condition:"Working — minor cosmetic wear",inst:"KNUST Molecular Lab",notes:"Available for long-term loan.",contact:"mollab@knust.edu.gh",exchange:""},{id:9,type:"seeking",category:"kits",name:"ELISA Kit — Malaria Antigen (PfHRP2)",qty:"1–2 kits",condition:"New only",inst:"Ghana Health Service — Research Dept.",notes:"For validation study.",contact:"research@ghs.gov.gh",exchange:"ELISA reader access, co-authorship"},{id:10,type:"available",category:"chemicals/biologics",name:"Liquid Nitrogen (for transport)",qty:"20L available",condition:"N/A — cryogenic",inst:"UGMS Biobank",notes:"Available for collection by Accra-based labs.",contact:"biobank@ugmedical.edu.gh",exchange:""}];
 
 const workshops=[{id:1,flag:"🇬🇭",title:"Bioinformatics & Genomics Boot Camp",host:"H3ABioNet / University of Ghana",date:"10–14 March 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Bioinformatics, Genomics, Data Analysis",desc:"Intensive hands-on training in bioinformatics tools for African researchers. Covers sequence analysis, variant calling, and data visualisation.",link:"https://www.h3abionet.org"},{id:2,flag:"🇬🇭",title:"West Africa Microbiology Conference",host:"Ghana Society for Microbiology",date:"22–24 April 2026",location:"KNUST, Kumasi",type:"conference",cost:"paid",mode:"in-person",fields:"Microbiology, Infectious Disease, AMR",desc:"Annual gathering of microbiologists from West Africa. Keynotes, oral presentations, poster sessions, and networking.",link:"https://www.knust.edu.gh"},{id:3,flag:"🌐",title:"One Health Africa Symposium",host:"African Union / WHO",date:"5–7 May 2026",location:"Virtual",type:"conference",cost:"free",mode:"virtual",fields:"Public Health, Zoonosis, Ecology",desc:"Interdisciplinary symposium on the intersection of human, animal, and environmental health. Open to all researchers.",link:"https://www.who.int"},{id:4,flag:"🇬🇭",title:"PCR & Molecular Techniques Workshop",host:"CSIR — Water Research Institute",date:"20–21 February 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Molecular Biology, PCR, Lab Techniques",desc:"Practical training workshop on PCR techniques, gel electrophoresis, and basic molecular biology. Limited spaces.",link:"https://www.csir.org.gh"},{id:5,flag:"🇳🇬",title:"African Society for Biochemistry Conference",host:"ASBMB",date:"15–18 June 2026",location:"Lagos, Nigeria",type:"conference",cost:"paid",mode:"in-person",fields:"Biochemistry, Molecular Biology, Enzymology",desc:"Premier biochemistry conference for African researchers. Travel grants available for Ghanaian participants.",link:"https://www.asbmb.org"},{id:6,flag:"🌐",title:"Science Communication for African Researchers",host:"SciDev.Net / AESA",date:"Rolling — Online",location:"Virtual",type:"workshop",cost:"free",mode:"virtual",fields:"Science Communication, Writing, Media",desc:"Self-paced online workshop on communicating science to policymakers and the public. Certificate on completion.",link:"https://www.scidev.net"}];
 
@@ -1002,49 +1002,39 @@ const COUNTRY_CODES = {
   'nairobi':'ke','accra':'gh','kumasi':'gh','legon':'gh'
 };
 
-// Inline SVG flags for regional/organisational entities (not in flag-icons library by default).
-// Sized 28x20 to match flag-icons proportions.
-const REGION_FLAGS = {
-  // African Union — green field with gold Africa silhouette and ring of gold stars
-  'au': '<svg viewBox="0 0 28 20" style="height:14px;width:21px;border-radius:2px;vertical-align:middle;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.08);"><rect width="28" height="20" fill="#0D7C3E"/><circle cx="14" cy="10" r="6" fill="none" stroke="#F5C518" stroke-width="0.5"/><g fill="#F5C518"><circle cx="14" cy="4.5" r="0.4"/><circle cx="17" cy="5.5" r="0.4"/><circle cx="19.2" cy="8" r="0.4"/><circle cx="20" cy="10" r="0.4"/><circle cx="19.2" cy="12" r="0.4"/><circle cx="17" cy="14.5" r="0.4"/><circle cx="14" cy="15.5" r="0.4"/><circle cx="11" cy="14.5" r="0.4"/><circle cx="8.8" cy="12" r="0.4"/><circle cx="8" cy="10" r="0.4"/><circle cx="8.8" cy="8" r="0.4"/><circle cx="11" cy="5.5" r="0.4"/></g><path d="M13 7 L15 7 L15.5 9 L15 11 L14 12.5 L13.5 11.5 L13 10 L12.5 8.5 Z" fill="#F5C518"/></svg>',
-  // ASEAN-style generic Asia (red field with gold circle) — neutral pan-Asian
-  'asia': '<svg viewBox="0 0 28 20" style="height:14px;width:21px;border-radius:2px;vertical-align:middle;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.08);"><rect width="28" height="20" fill="#C8102E"/><circle cx="14" cy="10" r="4" fill="#FFD700"/></svg>',
-  // Pan-American (light blue + sun motif)
-  'americas': '<svg viewBox="0 0 28 20" style="height:14px;width:21px;border-radius:2px;vertical-align:middle;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.08);"><rect width="28" height="20" fill="#4A90E2"/><circle cx="14" cy="10" r="3.5" fill="#FFD700"/><g stroke="#FFD700" stroke-width="0.6"><line x1="14" y1="3" x2="14" y2="5"/><line x1="14" y1="15" x2="14" y2="17"/><line x1="6" y1="10" x2="8" y2="10"/><line x1="20" y1="10" x2="22" y2="10"/></g></svg>'
-};
+// African Union flag — green field with gold star ring and Africa silhouette
+const AU_FLAG = '<svg viewBox="0 0 28 20" style="height:14px;width:21px;border-radius:2px;vertical-align:middle;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.08);"><rect width="28" height="20" fill="#0D7C3E"/><circle cx="14" cy="10" r="6" fill="none" stroke="#F5C518" stroke-width="0.5"/><g fill="#F5C518"><circle cx="14" cy="4.5" r="0.4"/><circle cx="17" cy="5.5" r="0.4"/><circle cx="19.2" cy="8" r="0.4"/><circle cx="20" cy="10" r="0.4"/><circle cx="19.2" cy="12" r="0.4"/><circle cx="17" cy="14.5" r="0.4"/><circle cx="14" cy="15.5" r="0.4"/><circle cx="11" cy="14.5" r="0.4"/><circle cx="8.8" cy="12" r="0.4"/><circle cx="8" cy="10" r="0.4"/><circle cx="8.8" cy="8" r="0.4"/><circle cx="11" cy="5.5" r="0.4"/></g><path d="M13 7 L15 7 L15.5 9 L15 11 L14 12.5 L13.5 11.5 L13 10 L12.5 8.5 Z" fill="#F5C518"/></svg>';
 
 function flagFor(country) {
-  if (!country) return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+  const globe = '<span style="font-size:20px;vertical-align:middle;display:inline-block;">🌐</span>';
+  const empty = '';
+  if (!country) return empty;
   const key = String(country).toLowerCase().trim();
 
-  // Region mappings → use actual organisational flags (EU, UN) from library, or inline SVG
+  // Region mappings
   const REGION = {
     'africa':'au', 'africa-based':'au', 'sub-saharan africa':'au', 'african union':'au',
-    'europe':'eu-flag', 'european union':'eu-flag', 'eu':'eu-flag',
-    'asia':'asia', 'asia-pacific':'asia', 'south asia':'asia', 'southeast asia':'asia',
-    'americas':'americas', 'north america':'americas', 'latin america':'americas', 'south america':'americas',
-    'global':'un-flag', 'international':'un-flag', 'worldwide':'un-flag',
-    'various':'un-flag', 'multiple':'un-flag', 'any':'un-flag'
+    'europe':'eu', 'european union':'eu',
+    'global':'globe', 'international':'globe', 'worldwide':'globe',
+    'various':'globe', 'multiple':'globe', 'any':'globe', '—':'globe'
   };
-  if (REGION[key]) {
-    const tag = REGION[key];
-    if (tag === 'eu-flag') return '<span class="fi fi-eu fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
-    if (tag === 'un-flag') return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
-    if (REGION_FLAGS[tag])  return REGION_FLAGS[tag];
+  if (REGION.hasOwnProperty(key)) {
+    if (REGION[key] === 'globe') return globe;
+    if (REGION[key] === 'au')    return AU_FLAG;
+    return '<span class="fi fi-' + REGION[key] + ' fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
   }
 
   let code = COUNTRY_CODES[key];
   if (!code) {
     for (const k in COUNTRY_CODES) {
-      // Exact match only — prevents 'africa' matching 'south africa'
       if (key === k) { code = COUNTRY_CODES[k]; break; }
     }
   }
   if (code) {
     return '<span class="fi fi-' + code + ' fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
   }
-  // Fallback for unknown locations — UN flag (neutral, no globe emoji)
-  return '<span class="fi fi-un fis" style="font-size:20px;border-radius:3px;vertical-align:middle;display:inline-block;"></span>';
+  // Unknown → show nothing
+  return empty;
 }
 
 
@@ -1505,11 +1495,10 @@ function sheetToReagent(row, id) {
   // Form options: Chemicals, Kits, Equipment, Consumables, Biological Materials
   const catRaw = String(row.degree || '').toLowerCase().trim();
   let category = 'other';
-  if (catRaw.includes('chemical'))          category = 'chemicals';
+  if (catRaw.includes('chemical') || catRaw.includes('biolog')) category = 'chemicals/biologics';
   else if (catRaw.includes('kit'))          category = 'kits';
   else if (catRaw.includes('equipment'))    category = 'equipment';
   else if (catRaw.includes('consumable'))   category = 'consumables';
-  else if (catRaw.includes('biological'))   category = 'biological materials';
   else if (catRaw)                          category = catRaw;
 
   return {
