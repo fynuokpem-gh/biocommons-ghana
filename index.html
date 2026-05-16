@@ -153,10 +153,35 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .tabs-wrap{position:sticky;top:88px;z-index:100;background:rgba(255,251,244,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;overflow-x:auto;}
 
 /* MODAL SHARE ROW */
-.modal-share{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.modal-share{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
 .modal-share-label{font-size:12px;color:var(--muted);margin-right:auto;}
 .modal-share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:50px;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--text);}
 .modal-share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);}
+
+/* BOOKMARK / MY LIST */
+.bookmark-btn{position:absolute;top:14px;right:14px;z-index:6;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);border:1px solid var(--border);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;color:var(--muted);line-height:1;padding:0;}
+.bookmark-btn:hover{border-color:var(--gold);color:var(--gold);transform:scale(1.1);}
+.bookmark-btn.saved{background:var(--gold);border-color:var(--gold);color:var(--dark);box-shadow:0 4px 12px rgba(245,166,35,0.4);}
+.bookmark-btn.saved:hover{background:#FFB733;color:var(--dark);}
+.modal-bookmark{margin-right:auto;background:var(--cream);border:1px solid var(--border);padding:7px 14px;border-radius:50px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;color:var(--muted);}
+.modal-bookmark:hover{border-color:var(--gold);color:var(--gold);}
+.modal-bookmark.saved{background:var(--gold);border-color:var(--gold);color:var(--dark);}
+
+#tc-mylist{background:var(--gold)!important;color:var(--dark)!important;}
+
+/* My List section layout */
+.mylist-group{margin-bottom:36px;}
+.mylist-group-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.mylist-group-hdr-icon{font-size:22px;}
+.mylist-group-hdr-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text);}
+.mylist-group-hdr-count{margin-left:auto;font-size:12px;color:var(--muted);background:var(--cream);padding:4px 12px;border-radius:50px;font-weight:600;}
+
+.mylist-empty{text-align:center;padding:80px 5%;}
+.mylist-empty-icon{font-size:64px;margin-bottom:20px;opacity:0.4;}
+.mylist-empty h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.mylist-empty p{font-size:15px;color:var(--muted);max-width:480px;margin:0 auto 24px;line-height:1.6;}
+.mylist-empty-cta{display:inline-block;background:var(--green);color:var(--white);padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;transition:all 0.2s;}
+.mylist-empty-cta:hover{background:var(--dark);transform:translateY(-2px);}
 
 /* CLOSING THIS WEEK ALERT */
 .closing-alert{display:flex;align-items:center;justify-content:center;gap:14px;max-width:900px;margin:18px auto 0;padding:14px 24px;background:linear-gradient(135deg,#FFF5E6 0%,#FFE8D0 100%);border:1.5px solid #F5A623;border-radius:50px;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(245,166,35,0.18);}
@@ -541,6 +566,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="tab-btn" onclick="showSection('internships')" id="tab-internships">💼 Jobs & Internships <span class="tab-count" id="tc-int">9</span></button>
     <button class="tab-btn" onclick="showSection('workshops')" id="tab-workshops">🏛 Workshops & Conferences <span class="tab-count" id="tc-workshops">6</span></button>
     <button class="tab-btn" onclick="showSection('programmes')" id="tab-programmes">📚 Graduate Programs-GH <span class="tab-count" id="tc-prog">8</span></button>
+    <button class="tab-btn" onclick="showSection('mylist')" id="tab-mylist">⭐ My List <span class="tab-count" id="tc-mylist">0</span></button>
     <button class="tab-btn" onclick="showSection('submit')" id="tab-submit">➕ Submit</button>
   </div>
 </div>
@@ -646,6 +672,15 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="ucc" onclick="filterProgrammes(this)">UCC</button>
   </div>
   <div class="grid" id="prog-grid"></div>
+</div>
+
+<!-- MY LIST -->
+<div class="section" id="sec-mylist">
+  <div class="section-hd">
+    <div><div class="section-title">⭐ My List</div><div class="section-sub">Opportunities you've saved. Stored locally in your browser — nothing leaves your device.</div></div>
+    <span class="result-count" id="mylist-count"></span>
+  </div>
+  <div id="mylist-content"></div>
 </div>
 
 <!-- SUBMIT -->
@@ -1249,6 +1284,7 @@ function renderGrants(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card" onclick="openGrantModal(\''+g.id+'\')">'+
+    bookmarkButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
@@ -1276,6 +1312,7 @@ function renderOpportunities(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
+    bookmarkButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
@@ -1311,6 +1348,7 @@ function renderProgrammes(data){
                    : d.includes('MSC')   ? 'badge-green'
                    : 'badge-muted';
     return '<div class="card" onclick="openProgrammeModal(\''+p.id+'\')">'+
+      bookmarkButton('programme', p.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
@@ -1341,6 +1379,7 @@ function renderInternships(data){
     const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
     return '<div class="card" onclick="openJobModal(\''+i.id+'\')">'+
+      bookmarkButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
@@ -1371,6 +1410,7 @@ function renderReagents(data){
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
     const isAvail = r.type==='available';
     return '<div class="reagent-card '+(isAvail?'r-available':'r-seeking')+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
+      bookmarkButton('reagent', r.id)+
       '<div class="reagent-head">'+
         '<span class="reagent-pill reagent-pill-status">'+(isAvail?'✅ Available':'🔍 Seeking')+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
@@ -1407,6 +1447,7 @@ function renderWorkshops(data){
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
     return '<div class="card" onclick="openWorkshopModal(\''+w.id+'\')">'+
+      bookmarkButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
@@ -1474,7 +1515,7 @@ function openModal(id){
   document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
   document.getElementById('m-desc').textContent=o.desc;
   document.getElementById('m-link').href=normalizeUrl(o.link);
-  document.getElementById('m-share-row').innerHTML=modalShareRow('scholarship',o.id);
+  document.getElementById('m-share-row').innerHTML=modalBookmarkButton('scholarship',o.id)+modalShareRow('scholarship',o.id);
   document.getElementById('m-badges').innerHTML=
     (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
     (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
@@ -1502,7 +1543,7 @@ function openGrantModal(id){
   document.getElementById('gm-deadline').textContent=g.deadline+(g.soon?' ⏰ Closing soon!':'');
   document.getElementById('gm-desc').textContent=g.desc||'';
   document.getElementById('gm-link').href=normalizeUrl(g.link);
-  document.getElementById('gm-share-row').innerHTML=modalShareRow('grant',g.id);
+  document.getElementById('gm-share-row').innerHTML=modalBookmarkButton('grant',g.id)+modalShareRow('grant',g.id);
   document.getElementById('gm-badges').innerHTML=
     '<span class="badge badge-green">'+(g.amount||'See link')+'</span>'+
     (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
@@ -1549,7 +1590,7 @@ function openReagentModal(id){
     contactBtn.onclick=function(e){e.preventDefault();showToast('Contact: '+r.contact);};
   }
 
-  document.getElementById('rm-share-row').innerHTML=modalShareRow('reagent',r.id);
+  document.getElementById('rm-share-row').innerHTML=modalBookmarkButton('reagent',r.id)+modalShareRow('reagent',r.id);
   document.getElementById('rm-badges').innerHTML=
     '<span class="badge '+(r.type==='available'?'badge-green':'badge-gold')+'">'+(r.type==='available'?'Available':'Seeking')+'</span>'+
     '<span class="badge badge-blue">'+r.category+'</span>';
@@ -1604,7 +1645,7 @@ function openJobModal(id){
     linkBtn.textContent=isWanted?'Contact Candidate →':'View Position →';
   }
 
-  document.getElementById('jm-share-row').innerHTML=modalShareRow('job',j.id);
+  document.getElementById('jm-share-row').innerHTML=modalBookmarkButton('job',j.id)+modalShareRow('job',j.id);
   document.getElementById('jm-badges').innerHTML=
     (isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' :
       ((j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
@@ -1649,7 +1690,7 @@ function openWorkshopModal(id){
                   : t === 'webinar'    ? 'badge-blue'
                   : t === 'seminar'    ? 'badge-muted'
                   : 'badge-green';
-  document.getElementById('wm-share-row').innerHTML=modalShareRow('workshop',w.id);
+  document.getElementById('wm-share-row').innerHTML=modalBookmarkButton('workshop',w.id)+modalShareRow('workshop',w.id);
   document.getElementById('wm-badges').innerHTML=
     '<span class="badge '+typeBadge+'">'+((t||'workshop').charAt(0).toUpperCase()+(t||'workshop').slice(1))+'</span>'+
     (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
@@ -1697,7 +1738,7 @@ function openProgrammeModal(id){
                  : d.includes('MPHIL') ? 'badge-gold'
                  : d.includes('MSC')   ? 'badge-green'
                  : 'badge-muted';
-  document.getElementById('pm-share-row').innerHTML=modalShareRow('programme',p.id);
+  document.getElementById('pm-share-row').innerHTML=modalBookmarkButton('programme',p.id)+modalShareRow('programme',p.id);
   document.getElementById('pm-badges').innerHTML=
     '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
     '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>';
@@ -2032,6 +2073,170 @@ const DEFAULT_ANNOUNCEMENTS = [
   '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
+
+// ─── Bookmarks (localStorage) ────────────────────────────────────────────────
+
+const BOOKMARK_KEY = 'bc_gh_bookmarks_v1';
+
+function getBookmarks() {
+  try {
+    const raw = localStorage.getItem(BOOKMARK_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch(e) {
+    return {};
+  }
+}
+
+function saveBookmarks(bm) {
+  try { localStorage.setItem(BOOKMARK_KEY, JSON.stringify(bm)); }
+  catch(e) { console.warn('localStorage save failed:', e); }
+}
+
+function isBookmarked(kind, id) {
+  const bm = getBookmarks();
+  return !!(bm[kind] && bm[kind][String(id)]);
+}
+
+function toggleBookmark(kind, id, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const bm = getBookmarks();
+  if (!bm[kind]) bm[kind] = {};
+  const sid = String(id);
+  const wasSet = !!bm[kind][sid];
+  if (wasSet) {
+    delete bm[kind][sid];
+    showToast('Removed from My List');
+  } else {
+    bm[kind][sid] = true;
+    showToast('⭐ Saved to My List');
+  }
+  saveBookmarks(bm);
+
+  // Update all bookmark buttons for this item across the page
+  document.querySelectorAll('[data-bm-kind="' + kind + '"][data-bm-id="' + sid + '"]').forEach(btn => {
+    btn.classList.toggle('saved', !wasSet);
+    btn.innerHTML = !wasSet ? (btn.classList.contains('modal-bookmark') ? '★ Saved' : '★') : (btn.classList.contains('modal-bookmark') ? '☆ Save' : '☆');
+  });
+
+  updateMyListCount();
+  // If currently viewing My List, re-render to reflect change
+  if (document.getElementById('sec-mylist').classList.contains('active')) renderMyList();
+}
+
+function bookmarkButton(kind, id) {
+  const saved = isBookmarked(kind, id);
+  return '<button class="bookmark-btn' + (saved ? ' saved' : '') + '"' +
+         ' data-bm-kind="' + kind + '" data-bm-id="' + id + '"' +
+         ' onclick="toggleBookmark(\'' + kind + '\',\'' + id + '\',event)"' +
+         ' title="' + (saved ? 'Remove from My List' : 'Save to My List') + '">' +
+         (saved ? '★' : '☆') +
+         '</button>';
+}
+
+function modalBookmarkButton(kind, id) {
+  const saved = isBookmarked(kind, id);
+  return '<button class="modal-bookmark' + (saved ? ' saved' : '') + '"' +
+         ' data-bm-kind="' + kind + '" data-bm-id="' + id + '"' +
+         ' onclick="toggleBookmark(\'' + kind + '\',\'' + id + '\',event)">' +
+         (saved ? '★ Saved' : '☆ Save') +
+         '</button>';
+}
+
+const BOOKMARK_SOURCES = [
+  { kind: 'scholarship', name: 'Scholarships & Fellowships', icon: '🎓', section: 'opportunities', store: () => opportunities, openFn: it => openModal(it.id) },
+  { kind: 'grant',       name: 'Grants',                     icon: '💰', section: 'grants',        store: () => grants,         openFn: it => openGrantModal(it.id) },
+  { kind: 'job',         name: 'Jobs & Internships',         icon: '💼', section: 'internships',   store: () => internships,    openFn: it => openJobModal(it.id) },
+  { kind: 'reagent',     name: 'Reagents',                   icon: '⚗️', section: 'reagents',      store: () => reagents,       openFn: it => openReagentModal(it.id) },
+  { kind: 'workshop',    name: 'Workshops & Conferences',    icon: '🏛',  section: 'workshops',     store: () => workshops,      openFn: it => openWorkshopModal(it.id) },
+  { kind: 'programme',   name: 'Graduate Programmes',        icon: '📚', section: 'programmes',    store: () => programmes,     openFn: it => openProgrammeModal(it.id) }
+];
+
+function getAllBookmarkedItems() {
+  const bm = getBookmarks();
+  const groups = [];
+  BOOKMARK_SOURCES.forEach(src => {
+    const ids = bm[src.kind] ? Object.keys(bm[src.kind]) : [];
+    if (!ids.length) return;
+    const items = (src.store() || []).filter(it => bm[src.kind][String(it.id)]);
+    if (items.length) groups.push({ ...src, items });
+  });
+  return groups;
+}
+
+function updateMyListCount() {
+  const bm = getBookmarks();
+  let n = 0;
+  Object.keys(bm).forEach(k => { n += Object.keys(bm[k]).length; });
+  const tc = document.getElementById('tc-mylist');
+  if (tc) tc.textContent = n;
+}
+
+function renderMyList() {
+  const groups = getAllBookmarkedItems();
+  const container = document.getElementById('mylist-content');
+  const countEl = document.getElementById('mylist-count');
+  if (!container) return;
+
+  let total = 0;
+  groups.forEach(g => total += g.items.length);
+  if (countEl) countEl.textContent = total ? total + ' saved' : '';
+
+  if (groups.length === 0) {
+    container.innerHTML = '<div class="mylist-empty">' +
+      '<div class="mylist-empty-icon">⭐</div>' +
+      '<h3>Your list is empty</h3>' +
+      '<p>Click the ☆ on any opportunity to save it here. Saved items stay in your browser — no account needed.</p>' +
+      '<button class="mylist-empty-cta" onclick="showSection(\'opportunities\')">Browse opportunities →</button>' +
+    '</div>';
+    return;
+  }
+
+  container.innerHTML = groups.map(g => {
+    const itemsHtml = g.items.map((it, idx) => {
+      const title = it.title || it.name || 'Untitled';
+      const host  = it.host || it.inst || '';
+      const meta  = [host, it.location || it.country, it.deadline || it.date].filter(Boolean).join(' · ');
+      return '<div class="closing-list-item" onclick="_openMyListItem(\'' + g.kind + '\',\'' + it.id + '\')">' +
+        '<span class="closing-list-icon">' + g.icon + '</span>' +
+        '<div class="closing-list-content">' +
+          '<div class="closing-list-title">' + title + '</div>' +
+          (meta ? '<div class="closing-list-meta">' + meta + '</div>' : '') +
+        '</div>' +
+        '<button class="bookmark-btn saved" style="position:static;width:30px;height:30px;font-size:14px;" onclick="toggleBookmark(\'' + g.kind + '\',\'' + it.id + '\',event)" title="Remove">★</button>' +
+      '</div>';
+    }).join('');
+    return '<div class="mylist-group">' +
+      '<div class="mylist-group-hdr">' +
+        '<span class="mylist-group-hdr-icon">' + g.icon + '</span>' +
+        '<span class="mylist-group-hdr-title">' + g.name + '</span>' +
+        '<span class="mylist-group-hdr-count">' + g.items.length + '</span>' +
+      '</div>' +
+      itemsHtml +
+    '</div>';
+  }).join('');
+}
+
+function _openMyListItem(kind, id) {
+  const src = BOOKMARK_SOURCES.find(s => s.kind === kind);
+  if (!src) return;
+  const items = src.store() || [];
+  const it = items.find(x => String(x.id) === String(id));
+  if (!it) return;
+  showSection(src.section);
+  setTimeout(() => { try { src.openFn(it); } catch(e) { console.error(e); } }, 350);
+}
+
+// Hook into showSection — re-render My List when entering that tab
+const _origShowSection = window.showSection;
+window.showSection = function(name) {
+  const r = _origShowSection.apply(this, arguments);
+  if (name === 'mylist') renderMyList();
+  return r;
+};
+
+// Initialise count after data loads
+setTimeout(updateMyListCount, 800);
+setTimeout(updateMyListCount, 3000);
 
 // ─── Closing This Week Alert ─────────────────────────────────────────────────
 
