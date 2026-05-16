@@ -127,6 +127,51 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .btn-nav{background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;border:none;padding:14px 32px;border-radius:50px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .btn-nav:hover{background:var(--dark2);transform:translateY(-1px);}
 
+/* SUPPORT / DONATION */
+.support-section{background:linear-gradient(135deg,var(--dark) 0%,var(--dark2) 100%);color:var(--cream);padding:80px 5%;position:relative;overflow:hidden;}
+.support-section::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border:2px solid rgba(245,166,35,0.12);border-radius:50%;}
+.support-section::after{content:'';position:absolute;bottom:-150px;left:-80px;width:300px;height:300px;border:2px solid rgba(13,124,62,0.18);border-radius:50%;}
+.support-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;text-align:center;}
+.support-badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:0.18em;color:var(--gold);background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);padding:8px 18px;border-radius:50px;margin-bottom:24px;}
+.support-title{font-family:'Playfair Display',serif;font-size:42px;line-height:1.15;font-weight:700;color:var(--cream);margin-bottom:18px;}
+.support-sub{font-size:16px;line-height:1.7;color:rgba(255,251,244,0.78);max-width:680px;margin:0 auto 56px;}
+
+.support-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;max-width:1000px;margin:0 auto;text-align:left;}
+.support-card{background:var(--cream);color:var(--text);border-radius:20px;padding:36px 32px 32px;position:relative;transition:transform 0.3s ease,box-shadow 0.3s ease;display:flex;flex-direction:column;gap:16px;}
+.support-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.25);}
+.support-card-local{border-top:5px solid var(--green);}
+.support-card-intl{border-top:5px solid var(--gold);}
+.support-card-flag{font-size:42px;line-height:1;}
+.support-card-tag{font-size:10px;font-weight:800;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;}
+.support-card h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text);line-height:1.25;}
+.support-card>p{font-size:14px;color:var(--muted);line-height:1.65;}
+.support-features{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:8px 0 4px;}
+.support-features li{font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:8px;}
+.support-cta{display:flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:50px;font-weight:700;font-size:15px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;margin-top:6px;}
+.support-cta-green{background:var(--green);color:var(--white);box-shadow:0 6px 20px rgba(13,124,62,0.25);}
+.support-cta-green:hover{background:var(--dark);transform:translateY(-2px);box-shadow:0 10px 28px rgba(13,124,62,0.4);}
+.support-cta-gold{background:var(--gold);color:var(--dark);box-shadow:0 6px 20px rgba(245,166,35,0.3);}
+.support-cta-gold:hover{background:#FFB733;transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,166,35,0.45);}
+.support-amounts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted);}
+.support-amounts span{font-weight:600;color:var(--muted);}
+.support-amounts a{background:var(--surface);border:1px solid var(--border);padding:6px 14px;border-radius:50px;font-weight:700;color:var(--text);text-decoration:none;font-size:13px;transition:all 0.2s;}
+.support-amounts a:hover{background:var(--green);color:var(--white);border-color:var(--green);transform:translateY(-1px);}
+.support-card-intl .support-amounts a:hover{background:var(--gold);color:var(--dark);border-color:var(--gold);}
+
+.support-trust{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-top:48px;font-size:13px;color:rgba(255,251,244,0.55);}
+.support-trust span{display:inline-flex;align-items:center;gap:6px;}
+
+@media(max-width:720px){
+  .support-section{padding:56px 4%;}
+  .support-title{font-size:30px;}
+  .support-sub{font-size:14.5px;margin-bottom:40px;}
+  .support-card{padding:28px 24px;}
+  .support-card h3{font-size:20px;}
+  .support-trust{flex-direction:column;gap:10px;margin-top:32px;}
+  .support-amounts{font-size:12px;}
+  .support-amounts a{padding:5px 12px;font-size:12px;}
+}
+
 /* LOADING SKELETONS */
 .skeleton-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;}
 .skeleton-card::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.7) 50%,transparent 100%);transform:translateX(-100%);animation:shimmer 1.6s infinite;}
@@ -614,6 +659,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a href="javascript:void(0)" onclick="_navMobile('workshops')"><span class="mm-icon">🏛</span><span>Workshops &amp; Conferences</span></a>
     <a href="javascript:void(0)" onclick="_navMobile('programmes')"><span class="mm-icon">📚</span><span>Graduate Programmes</span></a>
     <a href="javascript:void(0)" onclick="_navMobile('mylist')"><span class="mm-icon">⭐</span><span>My List</span></a>
+    <a href="#support" onclick="closeMobileMenu()"><span class="mm-icon">💚</span><span>Support Us</span></a>
   </nav>
   <a href="javascript:void(0)" class="mobile-menu-submit" onclick="_navMobile('submit')">+ Submit an Opportunity</a>
   <div class="mobile-menu-footer">
@@ -1048,6 +1094,72 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <p style="font-size:12px;color:rgba(255,251,244,0.25);margin-top:14px;">By subscribing you agree to receive the BioCommons Ghana monthly newsletter. Unsubscribe anytime.</p>
   </div>
 </div>
+
+<!-- SUPPORT / DONATION -->
+<section class="support-section" id="support">
+  <div class="support-inner">
+    <div class="support-badge">🌱 SUPPORT THE MISSION</div>
+    <h2 class="support-title">Help us keep this open.<br/>Free for every Ghanaian scientist.</h2>
+    <p class="support-sub">BioCommons Ghana is built and maintained by volunteers. Hosting, domain, and Apps Script quotas have small but real costs. Any contribution — large or small, one-time or recurring — keeps the platform free for the next student looking for their first scholarship.</p>
+
+    <div class="support-cards">
+
+      <!-- LOCAL CARD - Paystack -->
+      <div class="support-card support-card-local">
+        <div class="support-card-flag">🇬🇭</div>
+        <div class="support-card-tag">For supporters in Ghana</div>
+        <h3>Mobile Money &amp; Cards</h3>
+        <p>Donate via MTN, Vodafone, AirtelTigo Money, or any Visa/Mastercard. Secure checkout powered by Paystack — funds settle directly to BioCommons Ghana.</p>
+        <ul class="support-features">
+          <li>📱 All Ghanaian mobile networks</li>
+          <li>💳 Local &amp; international cards</li>
+          <li>🇬🇭 Receive in Ghana Cedis (GHS)</li>
+          <li>⚡ Instant confirmation</li>
+        </ul>
+        <a href="https://paystack.com/pay/biocommons-ghana" target="_blank" rel="noopener" class="support-cta support-cta-green">
+          Donate via Paystack →
+        </a>
+        <div class="support-amounts">
+          <span>Suggested:</span>
+          <a href="https://paystack.com/pay/biocommons-ghana?amount=2000" target="_blank" rel="noopener">GH¢ 20</a>
+          <a href="https://paystack.com/pay/biocommons-ghana?amount=5000" target="_blank" rel="noopener">GH¢ 50</a>
+          <a href="https://paystack.com/pay/biocommons-ghana?amount=10000" target="_blank" rel="noopener">GH¢ 100</a>
+          <a href="https://paystack.com/pay/biocommons-ghana?amount=25000" target="_blank" rel="noopener">GH¢ 250</a>
+        </div>
+      </div>
+
+      <!-- INTERNATIONAL CARD - Buy Me a Coffee -->
+      <div class="support-card support-card-intl">
+        <div class="support-card-flag">🌍</div>
+        <div class="support-card-tag">For international supporters</div>
+        <h3>Diaspora &amp; Global Donors</h3>
+        <p>Supporting from outside Ghana? Buy us a coffee. One-time tips or monthly support, paid via card from anywhere in the world. Goes directly to platform costs.</p>
+        <ul class="support-features">
+          <li>🌐 Donate from anywhere globally</li>
+          <li>💳 Visa, Mastercard, Amex, PayPal</li>
+          <li>☕ Tip once or sponsor monthly</li>
+          <li>📩 Optional message of support</li>
+        </ul>
+        <a href="https://buymeacoffee.com/biocommonsghana" target="_blank" rel="noopener" class="support-cta support-cta-gold">
+          Buy us a coffee ☕
+        </a>
+        <div class="support-amounts">
+          <span>Suggested:</span>
+          <a href="https://buymeacoffee.com/biocommonsghana" target="_blank" rel="noopener">$3</a>
+          <a href="https://buymeacoffee.com/biocommonsghana" target="_blank" rel="noopener">$10</a>
+          <a href="https://buymeacoffee.com/biocommonsghana" target="_blank" rel="noopener">$25</a>
+          <a href="https://buymeacoffee.com/biocommonsghana" target="_blank" rel="noopener">$50</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="support-trust">
+      <span>🔒 Both platforms are PCI-compliant and never share your payment details with us.</span>
+      <span>💯 100% goes to platform costs — no salaries, no overhead.</span>
+    </div>
+  </div>
+</section>
 
 <!-- CONTACT BAR -->
 <div class="contact-bar">
