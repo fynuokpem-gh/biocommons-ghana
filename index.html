@@ -883,6 +883,27 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a class="modal-apply" id="rm-contact" href="#">Contact →</a>
   </div>
 </div>
+
+<!-- JOB / INTERNSHIP MODAL -->
+<div class="overlay" id="job-overlay" onclick="closeJobModal(event)">
+  <div class="modal">
+    <button class="modal-x" onclick="closeJobModal()">✕</button>
+    <div class="modal-flag" id="jm-flag"></div>
+    <h2 id="jm-title"></h2>
+    <div class="modal-host" id="jm-host"></div>
+    <div class="badges" id="jm-badges" style="margin-bottom:14px"></div>
+    <hr/>
+    <div class="modal-row"><div class="modal-label">Location</div><div class="modal-val" id="jm-location"></div></div>
+    <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="jm-type"></div></div>
+    <div class="modal-row" id="jm-duration-row"><div class="modal-label">Duration</div><div class="modal-val" id="jm-duration"></div></div>
+    <div class="modal-row"><div class="modal-label">Compensation</div><div class="modal-val" id="jm-comp"></div></div>
+    <div class="modal-row" id="jm-qual-row"><div class="modal-label">Qualification</div><div class="modal-val" id="jm-qual"></div></div>
+    <div class="modal-row" id="jm-avail-row"><div class="modal-label">Availability</div><div class="modal-val" id="jm-avail"></div></div>
+    <hr/>
+    <p class="modal-desc" id="jm-desc"></p>
+    <a class="modal-apply" id="jm-link" href="#" target="_blank" rel="noopener">View Position →</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1117,22 +1138,35 @@ function filterProgrammes(btn){
 
 function renderInternships(data){
   document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
-  document.getElementById('int-grid').innerHTML=data.map(i=>'<div class="card">'+
-    '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
-    '<div class="badges">'+
-      (i.paid?'<span class="badge badge-green">'+i.compensation+'</span>':'<span class="badge badge-muted">'+i.compensation+'</span>')+
-      '<span class="badge badge-blue">'+i.type.charAt(0).toUpperCase()+i.type.slice(1)+'</span>'+
-    '</div>'+
-    '<div><div class="card-title">'+i.title+'</div><div class="card-host">'+i.host+'</div></div>'+
-    '<div class="card-tags">'+i.fields.split(', ').slice(0,3).map(f=>'<span class="tag">'+f+'</span>').join('')+'</div>'+
-    '<div class="card-meta"><span>📍 '+i.location+'</span><span>⏱ '+i.duration+'</span></div>'+
-    '<a class="card-action" href="'+normalizeUrl(i.link)+'" target="_blank" rel="noopener">View Position →</a>'+
-  '</div>').join('');
+  document.getElementById('int-grid').innerHTML=data.map(i=>{
+    const isWanted = i.type === 'wanted';
+    const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
+    const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
+    return '<div class="card" onclick="openJobModal(\''+i.id+'\')">'+
+      '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
+      '<div class="badges">'+
+        wantedBadge+
+        (!isWanted && i.paid ? '<span class="badge badge-green">'+(i.compensation||'Paid')+'</span>' : '')+
+        (!isWanted && !i.paid ? '<span class="badge badge-muted">'+(i.compensation||'Unpaid')+'</span>' : '')+
+        (typeLabel && !isWanted ? '<span class="badge badge-blue">'+typeLabel+'</span>' : '')+
+      '</div>'+
+      '<div><div class="card-title">'+i.title+'</div><div class="card-host">'+i.host+'</div></div>'+
+      '<div class="card-meta"><span>📍 '+(i.location||'Ghana')+'</span><span>⏱ '+(i.duration||'See link')+'</span></div>'+
+      '<a class="card-action" href="'+normalizeUrl(i.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(isWanted?'View Profile →':'View Position →')+'</a>'+
+    '</div>';
+  }).join('');
 }
 function filterInternships(btn){
   document.querySelectorAll('#sec-internships .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f;
-  renderInternships(f==='all'?internships:internships.filter(i=>i.type===f||(f==='paid'&&i.paid)||(f==='wanted'&&i.type==='wanted')));
+  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
+  renderInternships(f==='all'?internships:internships.filter(i=>{
+    const t=String(i.type||'').toLowerCase();
+    const loc=String(i.location||i.country||'').toLowerCase();
+    if(f==='paid')          return i.paid && i.type!=='wanted';
+    if(f==='wanted')        return t==='wanted';
+    if(f==='international') return !loc.includes('ghana') && i.type!=='wanted';
+    return t===f;
+  }));
 }
 
 function renderReagents(data){
@@ -1312,6 +1346,61 @@ function closeReagentModal(e){
   document.getElementById('reagent-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
+
+function openJobModal(id){
+  const j=internships.find(x=>String(x.id)===String(id));if(!j)return;
+  const isWanted = j.type === 'wanted';
+  document.getElementById('jm-flag').innerHTML=flagFor(j.country||j.location||'Ghana');
+  document.getElementById('jm-title').textContent=j.title;
+  document.getElementById('jm-host').textContent=j.host;
+  document.getElementById('jm-location').textContent=j.location||'Ghana';
+  document.getElementById('jm-type').textContent=isWanted ? '🙋 Job Wanted' : ((j.type||'').charAt(0).toUpperCase()+(j.type||'').slice(1));
+  document.getElementById('jm-comp').textContent=j.compensation||(j.paid?'Paid':'Not specified');
+
+  // Conditional fields — duration hidden for "wanted", qual/avail shown for "wanted"
+  const durRow=document.getElementById('jm-duration-row');
+  const qualRow=document.getElementById('jm-qual-row');
+  const availRow=document.getElementById('jm-avail-row');
+  if(isWanted){
+    durRow.style.display='none';
+    if(j.qualification){document.getElementById('jm-qual').textContent=j.qualification;qualRow.style.display='';}
+    else qualRow.style.display='none';
+    if(j.availability){document.getElementById('jm-avail').textContent=j.availability;availRow.style.display='';}
+    else availRow.style.display='none';
+  } else {
+    document.getElementById('jm-duration').textContent=j.duration||'See link';
+    durRow.style.display='';
+    qualRow.style.display='none';
+    availRow.style.display='none';
+  }
+
+  document.getElementById('jm-desc').textContent=j.description||j.notes||'';
+
+  // Link button — handle email vs URL
+  const linkBtn=document.getElementById('jm-link');
+  const linkVal=j.link||'';
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(linkVal)){
+    linkBtn.href='mailto:'+linkVal+'?subject='+encodeURIComponent('BioCommons Ghana — '+j.title);
+    linkBtn.textContent='Email '+linkVal+' →';
+  } else {
+    linkBtn.href=normalizeUrl(linkVal);
+    linkBtn.textContent=isWanted?'Contact Candidate →':'View Position →';
+  }
+
+  document.getElementById('jm-badges').innerHTML=
+    (isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' :
+      ((j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
+       '<span class="badge badge-blue">'+((j.type||'').charAt(0).toUpperCase()+(j.type||'').slice(1))+'</span>'));
+
+  document.getElementById('job-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeJobModal(e){
+  if(e&&e.target!==document.getElementById('job-overlay'))return;
+  document.getElementById('job-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 function showSubmitForm(name,btn){
   document.querySelectorAll('.s-form').forEach(f=>f.classList.remove('active'));
   document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
@@ -1466,11 +1555,49 @@ function sheetToGrant(row, id) {
 }
 
 function sheetToInternship(row, id) {
+  // Two submission paths feed this sheet:
+  //   Job/Internship form  → Degree col holds 'type', Funding col holds 'compensation'
+  //   Job Wanted form      → row stored with funding starting 'WANTED:'
+  // Apps Script also includes 'qualification'/'availability' encoded in the description if Job Wanted
+  const desc = String(row.description || '');
+  const parse = (label) => {
+    const m = desc.match(new RegExp('^' + label + ':\\s*(.+)$', 'mi'));
+    return m ? m[1].trim() : '';
+  };
+
+  const fundingRaw = String(row.funding || '');
+  const isWanted   = /^wanted/i.test(fundingRaw);
+
+  if (isWanted) {
+    return {
+      id: 3000 + id, flag: flagFor(row.country), title: row.title || 'Job Wanted',
+      host: row.host || '', location: row.country || 'Ghana',
+      type: 'wanted', paid: false,
+      compensation: fundingRaw.replace(/^wanted:?\s*/i, '') || 'Open',
+      duration: '', qualification: parse('Qualification') || row.degree || '',
+      availability: parse('Availability'),
+      fields: 'Biological Sciences', description: desc,
+      link: row.email || row.link || '#'
+    };
+  }
+
+  // Regular Job/Internship — Degree col holds type (Research/Industry/etc.), Funding holds compensation
+  const typeRaw = String(row.degree || '').toLowerCase();
+  const type = typeRaw.includes('industry')  ? 'industry'
+             : typeRaw.includes('field')     ? 'fieldwork'
+             : typeRaw.includes('clinical')  ? 'clinical'
+             : typeRaw.includes('research')  ? 'research'
+             : 'research';
+  const compRaw = fundingRaw.toLowerCase();
+  const paid = compRaw.includes('paid') || compRaw.includes('stipend') || compRaw.includes('accommodation');
+
   return {
-    id: 3000 + id, flag: flagFor(row.country), title: row.title, host: row.host,
-    location: row.country || 'Ghana', type: 'research',
-    paid: true, compensation: 'See link', duration: 'See link',
-    fields: 'Biological Sciences', link: normalizeUrl(row.link)
+    id: 3000 + id, flag: flagFor(row.country), title: row.title || '',
+    host: row.host || '', location: row.country || 'Ghana',
+    type, paid, compensation: fundingRaw || 'Not specified',
+    duration: parse('Duration') || row.deadline || 'See link',
+    fields: 'Biological Sciences', description: desc,
+    link: row.link || row.email || '#'
   };
 }
 
