@@ -327,7 +327,13 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .section-sub{font-size:13px;color:var(--muted);margin-top:4px;}
 .result-count{font-size:13px;color:var(--muted);padding-top:8px;}
 
-.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;align-items:center;}
+.sort-wrap{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.sort-wrap label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0.03em;}
+.sort-select{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--white);border:1px solid var(--border);border-radius:50px;padding:6px 32px 6px 14px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23556' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:border-color 0.2s;}
+.sort-select:hover{border-color:var(--green);}
+.sort-select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(13,124,62,0.15);}
+@media(max-width:720px){.sort-wrap{margin-left:0;width:100%;justify-content:flex-end;margin-top:8px;}}
 .f-btn{padding:7px 16px;border-radius:50px;border:1px solid var(--border);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;}
 .f-btn:hover{border-color:var(--dark);color:var(--dark);}
 .f-btn.active{background:var(--dark);color:var(--cream);border-color:var(--dark);}
@@ -635,6 +641,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="phd" onclick="filterOpportunities(this)">PhD</button>
     <button class="f-btn" data-f="msc" onclick="filterOpportunities(this)">MSc</button>
     <button class="f-btn" data-f="deadline-soon" onclick="filterOpportunities(this)">Closing Soon</button>
+    <div class="sort-wrap"><label for="sort-opp">Sort:</label><select id="sort-opp" class="sort-select" onchange="sortOpportunities(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="value">Funding</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="opp-grid"></div>
   <div class="empty" id="opp-empty"><h3>No results found</h3><p>Try a different filter or <a href="javascript:void(0)" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
@@ -653,6 +660,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="equipment" onclick="filterGrants(this)">Equipment</button>
     <button class="f-btn" data-f="africa" onclick="filterGrants(this)">Africa-Based</button>
     <button class="f-btn" data-f="deadline-soon" onclick="filterGrants(this)">Closing Soon</button>
+    <div class="sort-wrap"><label for="sort-grants">Sort:</label><select id="sort-grants" class="sort-select" onchange="sortGrants(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="value">Amount</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="grants-grid"></div>
   <div class="empty" id="grants-empty"><h3>No results found</h3><p>Try a different filter or <a href="javascript:void(0)" onclick="showSection('submit')" style="color:var(--dark);font-weight:600">submit one</a>.</p></div>
@@ -671,6 +679,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="industry" onclick="filterInternships(this)">Industry</button>
     <button class="f-btn" data-f="international" onclick="filterInternships(this)">International</button>
     <button class="f-btn" data-f="wanted" onclick="filterInternships(this)" style="border-color:rgba(206,17,38,0.3);color:var(--red)">🙋 Job Wanted</button>
+    <div class="sort-wrap"><label for="sort-int">Sort:</label><select id="sort-int" class="sort-select" onchange="sortInternships(this.value)"><option value="default">Newest first</option><option value="title">Title (A–Z)</option><option value="value">Compensation</option></select></div>
   </div>
   <div class="grid" id="int-grid"></div>
 </div>
@@ -703,6 +712,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="conference" onclick="filterWorkshops(this)">Conferences</button>
     <button class="f-btn" data-f="free" onclick="filterWorkshops(this)">Free</button>
     <button class="f-btn" data-f="virtual" onclick="filterWorkshops(this)">Virtual</button>
+    <div class="sort-wrap"><label for="sort-wks">Sort:</label><select id="sort-wks" class="sort-select" onchange="sortWorkshops(this.value)"><option value="default">Newest first</option><option value="deadline">Date (soonest)</option><option value="value">Type</option><option value="title">Title (A–Z)</option></select></div>
   </div>
   <div class="grid" id="workshop-grid"></div>
 </div>
@@ -720,6 +730,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="f-btn" data-f="ug" onclick="filterProgrammes(this)">Univ. of Ghana</button>
     <button class="f-btn" data-f="knust" onclick="filterProgrammes(this)">KNUST</button>
     <button class="f-btn" data-f="ucc" onclick="filterProgrammes(this)">UCC</button>
+    <div class="sort-wrap"><label for="sort-prog">Sort:</label><select id="sort-prog" class="sort-select" onchange="sortProgrammes(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="title">Title (A–Z)</option><option value="value">Degree (PhD first)</option></select></div>
   </div>
   <div class="grid" id="prog-grid"></div>
 </div>
@@ -2803,6 +2814,130 @@ function fetchSheetJSONP(sheetName) {
     };
     document.head.appendChild(script);
   });
+}
+
+// ─── Sortable cards ──────────────────────────────────────────────────────────
+
+// Parse a money-like string into a comparable number (just for sort ordering).
+// "$50,000" → 50000;  "Up to £5,000" → 5000;  "GH¢ 20,000" → 20000;  "Fully Funded" → 0 (kept distinct)
+function _parseAmount(str) {
+  if (!str) return 0;
+  const s = String(str).toLowerCase();
+  if (s.includes('fully funded'))  return 999999;
+  if (s.includes('see link'))      return 0;
+  // Pull the largest run of digits (treating commas as thousands separators)
+  const m = s.match(/[\d][\d,]*/g);
+  if (!m) return 0;
+  let max = 0;
+  m.forEach(n => { const v = parseInt(n.replace(/,/g,'')); if (v > max) max = v; });
+  return max;
+}
+
+function _byDeadline(items) {
+  return items.slice().sort((a, b) => {
+    const da = parseDeadline(a.deadline || a.date);
+    const db = parseDeadline(b.deadline || b.date);
+    if (!da && !db) return 0;
+    if (!da) return 1;   // items without dates go to the end
+    if (!db) return -1;
+    return da - db;
+  });
+}
+
+function _byTitle(items) {
+  return items.slice().sort((a, b) => {
+    const ta = String(a.title || a.name || '').toLowerCase();
+    const tb = String(b.title || b.name || '').toLowerCase();
+    return ta.localeCompare(tb);
+  });
+}
+
+function _byNewest(items) {
+  // Sheet-loaded items have higher ids (1000+, 2000+ etc.) — newer == later in array
+  return items.slice().sort((a, b) => {
+    // Numeric ids sort numerically (descending = newest first); string ids fall back to original order
+    const ia = typeof a.id === 'number' ? a.id : 0;
+    const ib = typeof b.id === 'number' ? b.id : 0;
+    return ib - ia;
+  });
+}
+
+function _byAmount(items, field) {
+  return items.slice().sort((a, b) => _parseAmount(b[field]) - _parseAmount(a[field]));
+}
+
+// ─── Per-section sort handlers ────────────────────────────────────────────────
+
+function sortOpportunities(mode) {
+  let sorted = opportunities;
+  if (mode === 'deadline') sorted = _byDeadline(opportunities);
+  else if (mode === 'title')    sorted = _byTitle(opportunities);
+  else if (mode === 'value')    sorted = _byAmount(opportunities, 'funding');
+  else                          sorted = _byNewest(opportunities);
+  renderOpportunities(sorted);
+  // Reset filter to "All" so user sees the full sorted set
+  document.querySelectorAll('#sec-opportunities .f-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('#sec-opportunities .f-btn[data-f="all"]');
+  if (allBtn) allBtn.classList.add('active');
+}
+
+function sortGrants(mode) {
+  let sorted = grants;
+  if (mode === 'deadline')      sorted = _byDeadline(grants);
+  else if (mode === 'title')    sorted = _byTitle(grants);
+  else if (mode === 'value')    sorted = _byAmount(grants, 'amount');
+  else                          sorted = _byNewest(grants);
+  renderGrants(sorted);
+  document.querySelectorAll('#sec-grants .f-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('#sec-grants .f-btn[data-f="all"]');
+  if (allBtn) allBtn.classList.add('active');
+}
+
+function sortInternships(mode) {
+  let sorted = internships;
+  if (mode === 'deadline')      sorted = _byNewest(internships);   // jobs don't have deadlines; reuse newest
+  else if (mode === 'title')    sorted = _byTitle(internships);
+  else if (mode === 'value')    sorted = _byAmount(internships, 'compensation');
+  else                          sorted = _byNewest(internships);
+  renderInternships(sorted);
+  document.querySelectorAll('#sec-internships .f-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('#sec-internships .f-btn[data-f="all"]');
+  if (allBtn) allBtn.classList.add('active');
+}
+
+function sortWorkshops(mode) {
+  let sorted = workshops;
+  if (mode === 'deadline')      sorted = _byDeadline(workshops);   // 'date' is the event date
+  else if (mode === 'title')    sorted = _byTitle(workshops);
+  else if (mode === 'value') {
+    // Sort by type: workshops first then conferences (alphabetical within)
+    sorted = workshops.slice().sort((a, b) => String(a.type||'').localeCompare(String(b.type||'')));
+  }
+  else                          sorted = _byNewest(workshops);
+  renderWorkshops(sorted);
+  document.querySelectorAll('#sec-workshops .f-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('#sec-workshops .f-btn[data-f="all"]');
+  if (allBtn) allBtn.classList.add('active');
+}
+
+function sortProgrammes(mode) {
+  let sorted = programmes;
+  if (mode === 'deadline')      sorted = _byDeadline(programmes);
+  else if (mode === 'title')    sorted = _byTitle(programmes);
+  else if (mode === 'value') {
+    // Order: PhD → MPhil → MSc → other
+    const rank = { 'phd':1, 'mphil':2, 'msc':3 };
+    sorted = programmes.slice().sort((a, b) => {
+      const ra = rank[String(a.degree||'').toLowerCase()] || 9;
+      const rb = rank[String(b.degree||'').toLowerCase()] || 9;
+      return ra - rb;
+    });
+  }
+  else                          sorted = _byNewest(programmes);
+  renderProgrammes(sorted);
+  document.querySelectorAll('#sec-programmes .f-btn').forEach(b => b.classList.remove('active'));
+  const allBtn = document.querySelector('#sec-programmes .f-btn[data-f="all"]');
+  if (allBtn) allBtn.classList.add('active');
 }
 
 // ─── SEO: Per-item JSON-LD structured data ───────────────────────────────────
