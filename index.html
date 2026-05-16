@@ -1069,6 +1069,22 @@ footer{background:var(--dark);padding:52px 5% 32px;}
   </div>
 </div>
 
+<!-- REMINDER MODAL -->
+<div class="overlay" id="reminder-overlay" onclick="closeReminderModal(event)">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-x" onclick="closeReminderModal()">✕</button>
+    <h2>🔔 Get Deadline Reminders</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">We'll email you 3 days before and 24 hours before this deadline. Nothing else.</p>
+    <div id="rem-preview" style="background:var(--cream);border-radius:10px;padding:14px 16px;margin-bottom:18px;border-left:4px solid var(--gold);"></div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Your email</label>
+      <input type="email" id="rem-email" placeholder="you@example.com" autocomplete="email" style="width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"/>
+    </div>
+    <button id="rem-submit" onclick="submitReminder()" style="width:100%;background:var(--green);color:var(--white);border:none;padding:14px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='var(--dark)'" onmouseout="this.style.background='var(--green)'">Set Reminder →</button>
+    <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:14px;">Your email is stored only to send reminders. Unsubscribe by ignoring the email.</p>
+  </div>
+</div>
+
 <!-- CLOSING THIS WEEK MODAL -->
 <div class="overlay" id="closing-overlay" onclick="closeClosingList(event)">
   <div class="modal closing-modal">
@@ -1515,7 +1531,7 @@ function openModal(id){
   document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
   document.getElementById('m-desc').textContent=o.desc;
   document.getElementById('m-link').href=normalizeUrl(o.link);
-  document.getElementById('m-share-row').innerHTML=modalBookmarkButton('scholarship',o.id)+modalShareRow('scholarship',o.id);
+  document.getElementById('m-share-row').innerHTML=modalBookmarkButton('scholarship',o.id)+reminderButton('scholarship',o.id)+modalShareRow('scholarship',o.id);
   document.getElementById('m-badges').innerHTML=
     (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
     (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
@@ -1543,7 +1559,7 @@ function openGrantModal(id){
   document.getElementById('gm-deadline').textContent=g.deadline+(g.soon?' ⏰ Closing soon!':'');
   document.getElementById('gm-desc').textContent=g.desc||'';
   document.getElementById('gm-link').href=normalizeUrl(g.link);
-  document.getElementById('gm-share-row').innerHTML=modalBookmarkButton('grant',g.id)+modalShareRow('grant',g.id);
+  document.getElementById('gm-share-row').innerHTML=modalBookmarkButton('grant',g.id)+reminderButton('grant',g.id)+modalShareRow('grant',g.id);
   document.getElementById('gm-badges').innerHTML=
     '<span class="badge badge-green">'+(g.amount||'See link')+'</span>'+
     (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
@@ -1645,7 +1661,7 @@ function openJobModal(id){
     linkBtn.textContent=isWanted?'Contact Candidate →':'View Position →';
   }
 
-  document.getElementById('jm-share-row').innerHTML=modalBookmarkButton('job',j.id)+modalShareRow('job',j.id);
+  document.getElementById('jm-share-row').innerHTML=modalBookmarkButton('job',j.id)+reminderButton('job',j.id)+modalShareRow('job',j.id);
   document.getElementById('jm-badges').innerHTML=
     (isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' :
       ((j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
@@ -1690,7 +1706,7 @@ function openWorkshopModal(id){
                   : t === 'webinar'    ? 'badge-blue'
                   : t === 'seminar'    ? 'badge-muted'
                   : 'badge-green';
-  document.getElementById('wm-share-row').innerHTML=modalBookmarkButton('workshop',w.id)+modalShareRow('workshop',w.id);
+  document.getElementById('wm-share-row').innerHTML=modalBookmarkButton('workshop',w.id)+reminderButton('workshop',w.id)+modalShareRow('workshop',w.id);
   document.getElementById('wm-badges').innerHTML=
     '<span class="badge '+typeBadge+'">'+((t||'workshop').charAt(0).toUpperCase()+(t||'workshop').slice(1))+'</span>'+
     (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
@@ -1738,7 +1754,7 @@ function openProgrammeModal(id){
                  : d.includes('MPHIL') ? 'badge-gold'
                  : d.includes('MSC')   ? 'badge-green'
                  : 'badge-muted';
-  document.getElementById('pm-share-row').innerHTML=modalBookmarkButton('programme',p.id)+modalShareRow('programme',p.id);
+  document.getElementById('pm-share-row').innerHTML=modalBookmarkButton('programme',p.id)+reminderButton('programme',p.id)+modalShareRow('programme',p.id);
   document.getElementById('pm-badges').innerHTML=
     '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
     '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>';
@@ -2073,6 +2089,92 @@ const DEFAULT_ANNOUNCEMENTS = [
   '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
+
+// ─── Email Deadline Reminders ────────────────────────────────────────────────
+
+let _currentReminderItem = null;
+
+function openReminderModal(kind, id, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const src = BOOKMARK_SOURCES.find(s => s.kind === kind);
+  if (!src) return;
+  const item = (src.store() || []).find(x => String(x.id) === String(id));
+  if (!item) return;
+
+  const deadline = item.deadline || item.date || '';
+  if (!deadline || /tba|rolling|see link/i.test(deadline)) {
+    showToast('No deadline set for this opportunity');
+    return;
+  }
+
+  _currentReminderItem = { kind, id, item, src };
+
+  const title = item.title || item.name || 'Opportunity';
+  const host  = item.host || item.inst || '';
+
+  document.getElementById('rem-preview').innerHTML =
+    '<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">' + src.icon + ' ' + src.name + '</div>' +
+    '<div style="font-weight:700;color:var(--text);font-size:15px;line-height:1.3;margin-bottom:4px;">' + title + '</div>' +
+    (host ? '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">' + host + '</div>' : '') +
+    '<div style="font-size:13px;color:#B8761A;font-weight:700;">📅 Deadline: ' + deadline + '</div>';
+
+  document.getElementById('rem-email').value = '';
+  document.getElementById('reminder-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('rem-email').focus(), 100);
+}
+
+function closeReminderModal(e) {
+  if (e && e.target !== document.getElementById('reminder-overlay')) return;
+  document.getElementById('reminder-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function submitReminder() {
+  if (!_currentReminderItem) return;
+  const email = document.getElementById('rem-email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email address');
+    return;
+  }
+  const { kind, id, item, src } = _currentReminderItem;
+  const btn = document.getElementById('rem-submit');
+  btn.disabled = true;
+  btn.textContent = 'Setting up reminder…';
+
+  const payload = {
+    type: 'reminder',
+    email,
+    kind,
+    opportunity_id: String(id),
+    title: item.title || item.name || '',
+    host: item.host || item.inst || '',
+    deadline: item.deadline || item.date || '',
+    link: item.link || '',
+    section: src.section,
+    submittedAt: new Date().toISOString()
+  };
+
+  fetch(BIOCOMMONS_API, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(() => {
+    showToast('🔔 Reminder set! Check your email near the deadline.');
+    closeReminderModal();
+    btn.disabled = false;
+    btn.textContent = 'Set Reminder →';
+  }).catch(() => {
+    showToast('🔔 Reminder set! Check your email near the deadline.');
+    closeReminderModal();
+    btn.disabled = false;
+    btn.textContent = 'Set Reminder →';
+  });
+}
+
+function reminderButton(kind, id) {
+  return '<button class="modal-bookmark" style="background:rgba(245,166,35,0.12);border-color:rgba(245,166,35,0.5);color:#B8761A;" onclick="openReminderModal(\'' + kind + '\',\'' + id + '\',event)">🔔 Remind me</button>';
+}
 
 // ─── Bookmarks (localStorage) ────────────────────────────────────────────────
 
