@@ -152,6 +152,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 /* TABS */
 .tabs-wrap{position:sticky;top:88px;z-index:100;background:rgba(255,251,244,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;overflow-x:auto;}
 
+/* SHARE BUTTONS */
+.share-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:14px;transition:all 0.2s;color:var(--muted);position:relative;}
+.share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,38,24,0.08);}
+.share-btn-card{position:absolute;top:14px;right:14px;z-index:2;background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);}
+.share-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(11,38,24,0.15);padding:6px;display:none;z-index:1000;min-width:170px;}
+.share-menu.open{display:block;}
+.share-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;border:none;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text);text-align:left;font-family:'Plus Jakarta Sans',sans-serif;transition:background 0.15s;}
+.share-menu button:hover{background:var(--cream);}
+.share-menu button .share-ico{font-size:16px;flex-shrink:0;}
+
 /* GLOBAL SEARCH */
 .search-wrap{position:relative;padding:24px 5% 0;max-width:900px;margin:0 auto;}
 .search-bar{display:flex;align-items:center;gap:12px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:14px 22px;box-shadow:0 4px 20px rgba(11,38,24,0.06);transition:all 0.2s;}
@@ -1173,6 +1183,7 @@ function renderGrants(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card" onclick="openGrantModal(\''+g.id+'\')">'+
+    shareButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
@@ -1200,6 +1211,7 @@ function renderOpportunities(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
+    shareButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
@@ -1235,6 +1247,7 @@ function renderProgrammes(data){
                    : d.includes('MSC')   ? 'badge-green'
                    : 'badge-muted';
     return '<div class="card" onclick="openProgrammeModal(\''+p.id+'\')">'+
+      shareButton('programme', p.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
@@ -1265,6 +1278,7 @@ function renderInternships(data){
     const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
     return '<div class="card" onclick="openJobModal(\''+i.id+'\')">'+
+      shareButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
@@ -1295,6 +1309,7 @@ function renderReagents(data){
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
     const isAvail = r.type==='available';
     return '<div class="reagent-card '+(isAvail?'r-available':'r-seeking')+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
+      shareButton('reagent', r.id)+
       '<div class="reagent-head">'+
         '<span class="reagent-pill reagent-pill-status">'+(isAvail?'✅ Available':'🔍 Seeking')+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
@@ -1331,6 +1346,7 @@ function renderWorkshops(data){
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
     return '<div class="card" onclick="openWorkshopModal(\''+w.id+'\')">'+
+      shareButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
@@ -1951,6 +1967,104 @@ const DEFAULT_ANNOUNCEMENTS = [
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
 
+// ─── Share Buttons ───────────────────────────────────────────────────────────
+
+function buildShareUrl(item, kind) {
+  const base = window.location.origin + window.location.pathname;
+  return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
+}
+
+function buildShareText(item) {
+  const title = item.title || item.name || 'Opportunity';
+  const host = item.host || item.inst || '';
+  const deadline = item.deadline || item.date || '';
+  let txt = '🎓 ' + title;
+  if (host) txt += '\n📍 ' + host;
+  if (deadline) txt += '\n📅 ' + deadline;
+  txt += '\n\nFound on BioCommons Ghana — biology opportunities in Ghana';
+  return txt;
+}
+
+function toggleShareMenu(btn, e) {
+  e.stopPropagation();
+  e.preventDefault();
+  document.querySelectorAll('.share-menu.open').forEach(m => { if (m !== btn.nextElementSibling) m.classList.remove('open'); });
+  const menu = btn.nextElementSibling;
+  if (menu) menu.classList.toggle('open');
+}
+
+function shareVia(platform, kind, id, e) {
+  e.stopPropagation();
+  e.preventDefault();
+  const stores = {
+    'scholarship': () => opportunities,
+    'grant': () => grants,
+    'job': () => internships,
+    'reagent': () => reagents,
+    'workshop': () => workshops,
+    'programme': () => programmes
+  };
+  const items = (stores[kind] || (() => []))();
+  const item = items.find(x => String(x.id) === String(id));
+  if (!item) return;
+
+  const url = item.link && item.link !== '#' ? item.link : buildShareUrl(item, kind);
+  const text = buildShareText(item);
+  const encodedUrl = encodeURIComponent(url);
+  const encodedText = encodeURIComponent(text + '\n\n' + url);
+
+  let shareUrl = '';
+  if (platform === 'whatsapp') {
+    shareUrl = 'https://wa.me/?text=' + encodedText;
+  } else if (platform === 'twitter') {
+    shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodedUrl;
+  } else if (platform === 'linkedin') {
+    shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodedUrl;
+  } else if (platform === 'copy') {
+    const fullText = text + '\n\n' + url;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullText).then(() => showToast('Link copied!'));
+    } else {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = fullText;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Link copied!');
+    }
+    document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
+    return;
+  } else if (platform === 'email') {
+    shareUrl = 'mailto:?subject=' + encodeURIComponent(item.title || 'BioCommons Ghana') + '&body=' + encodedText;
+  }
+
+  if (shareUrl) {
+    if (platform === 'email') window.location.href = shareUrl;
+    else window.open(shareUrl, '_blank', 'noopener,width=600,height=500');
+  }
+  document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
+}
+
+function shareButton(kind, id) {
+  return '<button class="share-btn share-btn-card" onclick="toggleShareMenu(this,event)" title="Share">↗</button>' +
+    '<div class="share-menu">' +
+      '<button onclick="shareVia(\'whatsapp\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">💬</span>WhatsApp</button>' +
+      '<button onclick="shareVia(\'twitter\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">𝕏</span>X (Twitter)</button>' +
+      '<button onclick="shareVia(\'linkedin\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">💼</span>LinkedIn</button>' +
+      '<button onclick="shareVia(\'email\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">✉️</span>Email</button>' +
+      '<button onclick="shareVia(\'copy\',\'' + kind + '\',\'' + id + '\',event)"><span class="share-ico">📋</span>Copy text</button>' +
+    '</div>';
+}
+
+// Close share menus on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.share-btn') && !e.target.closest('.share-menu')) {
+    document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
 // ─── Global Search ───────────────────────────────────────────────────────────
 
 function _highlight(text, query) {
@@ -2015,7 +2129,7 @@ function runGlobalSearch(query) {
         const title = it.title || it.name || 'Untitled';
         const meta  = [it.host || it.inst, it.location || it.country, it.deadline || it.date]
                        .filter(Boolean).join(' · ');
-        html += '<div class="search-item" onclick="openSearchResult(\'' + cat.section + '\',' + JSON.stringify(String(it.id)) + ')">';
+        html += '<div class="search-item" onclick="openSearchResult(\'' + cat.section + '\',\'' + it.id + '\')">';
         html += '<span class="search-item-icon">' + cat.icon + '</span>';
         html += '<div class="search-item-content">';
         html += '<div class="search-item-title">' + _highlight(title, q) + '</div>';
@@ -2038,15 +2152,13 @@ function runGlobalSearch(query) {
 function openSearchResult(section, id) {
   clearGlobalSearch();
   showSection(section);
-  // Find the right category and open its modal
   const cat = SEARCH_CATEGORIES.find(c => c.section === section);
   if (!cat) return;
   const items = cat.store() || [];
   const item = items.find(x => String(x.id) === String(id));
-  if (item && cat.openFn) {
-    // Slight delay so the section renders first
-    setTimeout(() => cat.openFn(item), 100);
-  }
+  if (!item) { console.warn('Search item not found:', section, id); return; }
+  // Open the modal after the section has scrolled into view
+  setTimeout(() => { try { cat.openFn(item); } catch(e) { console.error(e); } }, 350);
 }
 
 function clearGlobalSearch() {
