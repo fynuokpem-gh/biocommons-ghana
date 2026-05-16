@@ -151,6 +151,39 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 
 /* TABS */
 .tabs-wrap{position:sticky;top:88px;z-index:100;background:rgba(255,251,244,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;overflow-x:auto;}
+
+/* GLOBAL SEARCH */
+.search-wrap{position:relative;padding:24px 5% 0;max-width:900px;margin:0 auto;}
+.search-bar{display:flex;align-items:center;gap:12px;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:14px 22px;box-shadow:0 4px 20px rgba(11,38,24,0.06);transition:all 0.2s;}
+.search-bar:focus-within{border-color:var(--green);box-shadow:0 6px 28px rgba(13,124,62,0.15);}
+.search-icon{font-size:18px;opacity:0.6;flex-shrink:0;}
+.search-bar input{flex:1;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;background:transparent;color:var(--text);}
+.search-bar input::placeholder{color:var(--muted);}
+.search-clear{background:var(--cream);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.search-clear:hover{background:var(--border);color:var(--text);}
+
+.search-results{position:absolute;top:calc(100% + 8px);left:5%;right:5%;max-width:870px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 12px 40px rgba(11,38,24,0.12);max-height:520px;overflow-y:auto;z-index:99;}
+.search-section{padding:8px 0;}
+.search-section-hdr{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);padding:10px 20px 6px;background:var(--cream);border-bottom:1px solid var(--border);}
+.search-item{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s;}
+.search-item:hover{background:var(--cream);}
+.search-item:last-child{border-bottom:none;}
+.search-item-icon{font-size:20px;flex-shrink:0;}
+.search-item-content{flex:1;min-width:0;}
+.search-item-title{font-weight:600;color:var(--text);font-size:14px;line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-item-meta{font-size:12px;color:var(--muted);}
+.search-item-tag{font-size:10px;font-weight:700;color:var(--green);background:rgba(13,124,62,0.1);padding:3px 8px;border-radius:50px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.05em;}
+.search-empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px;}
+.search-empty strong{display:block;font-size:15px;color:var(--text);margin-bottom:4px;}
+mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radius:2px;}
+
+@media(max-width:720px){
+  .search-wrap{padding:20px 4% 0;}
+  .search-bar{padding:12px 18px;}
+  .search-bar input{font-size:14px;}
+  .search-results{left:4%;right:4%;}
+}
+
 .tabs{display:flex;white-space:nowrap;}
 .tab-btn{padding:15px 18px;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
 .tab-btn:hover{color:var(--text);}
@@ -428,6 +461,16 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="stat-item"><div class="stat-num">Free</div><div class="stat-label">Always & forever</div></div>
   </div>
 </section>
+
+<!-- GLOBAL SEARCH -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="global-search" placeholder="Search scholarships, grants, jobs, programmes…" autocomplete="off" oninput="runGlobalSearch(this.value)" onfocus="if(this.value)runGlobalSearch(this.value)"/>
+    <button class="search-clear" id="search-clear" onclick="clearGlobalSearch()" style="display:none">✕</button>
+  </div>
+  <div class="search-results" id="search-results" style="display:none"></div>
+</div>
 
 <!-- TABS -->
 <div class="tabs-wrap">
@@ -1907,6 +1950,122 @@ const DEFAULT_ANNOUNCEMENTS = [
   '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
+
+// ─── Global Search ───────────────────────────────────────────────────────────
+
+function _highlight(text, query) {
+  if (!query || !text) return text || '';
+  const safe = String(text);
+  const q = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return safe.replace(new RegExp('(' + q + ')', 'gi'), '<mark>$1</mark>');
+}
+
+function _matchesQuery(item, query) {
+  const haystack = [
+    item.title, item.host, item.country, item.location,
+    item.fields, item.description, item.desc, item.degree, item.amount,
+    item.name, item.category, item.notes
+  ].filter(Boolean).join(' ').toLowerCase();
+  return haystack.indexOf(query.toLowerCase()) !== -1;
+}
+
+const SEARCH_CATEGORIES = [
+  { name: 'Scholarships & Fellowships', icon: '🎓', section: 'opportunities', store: () => opportunities,
+    openFn: (it) => openModal(it.id) },
+  { name: 'Grants',                    icon: '💰', section: 'grants',        store: () => grants,
+    openFn: (it) => openGrantModal(it.id) },
+  { name: 'Jobs & Internships',        icon: '💼', section: 'internships',   store: () => internships,
+    openFn: (it) => openJobModal(it.id) },
+  { name: 'Reagents',                  icon: '⚗️', section: 'reagents',      store: () => reagents,
+    openFn: (it) => openReagentModal(it.id) },
+  { name: 'Workshops & Conferences',   icon: '🏛', section: 'workshops',     store: () => workshops,
+    openFn: (it) => openWorkshopModal(it.id) },
+  { name: 'Graduate Programmes',       icon: '📚', section: 'programmes',    store: () => programmes,
+    openFn: (it) => openProgrammeModal(it.id) }
+];
+
+let _searchTimer = null;
+function runGlobalSearch(query) {
+  const clearBtn = document.getElementById('search-clear');
+  const results  = document.getElementById('search-results');
+  if (clearBtn) clearBtn.style.display = query ? 'flex' : 'none';
+
+  if (!query || query.trim().length < 2) {
+    results.style.display = 'none';
+    results.innerHTML = '';
+    return;
+  }
+
+  // Debounce
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => {
+    const q = query.trim();
+    let html = '';
+    let totalMatches = 0;
+
+    SEARCH_CATEGORIES.forEach(cat => {
+      const items = cat.store() || [];
+      const matches = items.filter(it => _matchesQuery(it, q)).slice(0, 4);
+      if (matches.length === 0) return;
+      totalMatches += matches.length;
+
+      html += '<div class="search-section">';
+      html += '<div class="search-section-hdr">' + cat.icon + ' ' + cat.name + ' (' + matches.length + ')</div>';
+      matches.forEach((it, i) => {
+        const title = it.title || it.name || 'Untitled';
+        const meta  = [it.host || it.inst, it.location || it.country, it.deadline || it.date]
+                       .filter(Boolean).join(' · ');
+        html += '<div class="search-item" onclick="openSearchResult(\'' + cat.section + '\',' + JSON.stringify(String(it.id)) + ')">';
+        html += '<span class="search-item-icon">' + cat.icon + '</span>';
+        html += '<div class="search-item-content">';
+        html += '<div class="search-item-title">' + _highlight(title, q) + '</div>';
+        if (meta) html += '<div class="search-item-meta">' + _highlight(meta, q) + '</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+
+    if (totalMatches === 0) {
+      html = '<div class="search-empty"><strong>No matches for "' + q + '"</strong>Try a different keyword, or submit it yourself →</div>';
+    }
+
+    results.innerHTML = html;
+    results.style.display = 'block';
+  }, 150);
+}
+
+function openSearchResult(section, id) {
+  clearGlobalSearch();
+  showSection(section);
+  // Find the right category and open its modal
+  const cat = SEARCH_CATEGORIES.find(c => c.section === section);
+  if (!cat) return;
+  const items = cat.store() || [];
+  const item = items.find(x => String(x.id) === String(id));
+  if (item && cat.openFn) {
+    // Slight delay so the section renders first
+    setTimeout(() => cat.openFn(item), 100);
+  }
+}
+
+function clearGlobalSearch() {
+  const input = document.getElementById('global-search');
+  const clearBtn = document.getElementById('search-clear');
+  const results = document.getElementById('search-results');
+  if (input) input.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+  if (results) { results.style.display = 'none'; results.innerHTML = ''; }
+}
+
+// Close search results when clicking outside
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.search-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const results = document.getElementById('search-results');
+    if (results) results.style.display = 'none';
+  }
+});
 
 function renderTicker(items) {
   const ticker = document.getElementById('announce-ticker');
