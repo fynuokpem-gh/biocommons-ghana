@@ -1068,8 +1068,12 @@ function renderGrants(data){
 }
 function filterGrants(btn){
   document.querySelectorAll('#sec-grants .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f;
-  renderGrants(f==='all'?grants:grants.filter(g=>g.type===f||g.tags.includes(f)||(f==='deadline-soon'&&g.soon)));
+  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
+  renderGrants(f==='all'?grants:grants.filter(g=>{
+    const t=String(g.type||'').toLowerCase();
+    const tags=(g.tags||[]).map(x=>String(x).toLowerCase());
+    return t===f || tags.indexOf(f)!==-1 || (f==='deadline-soon'&&g.soon);
+  }));
 }
 
 function renderOpportunities(data){
@@ -1161,8 +1165,12 @@ function renderReagents(data){
 }
 function filterReagents(btn){
   document.querySelectorAll('#sec-reagents .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f;
-  renderReagents(f==='all'?reagents:reagents.filter(r=>r.type===f||r.category===f));
+  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
+  renderReagents(f==='all'?reagents:reagents.filter(r=>{
+    const t=String(r.type||'').toLowerCase();
+    const c=String(r.category||'').toLowerCase();
+    return t===f || c===f || c.includes(f);
+  }));
 }
 
 function renderWorkshops(data){
@@ -1455,11 +1463,15 @@ function sheetToGrant(row, id) {
                 : gtype.includes('seed')   ? 'research'
                 : gtype.includes('fellow') ? 'research'
                 : 'research';
+  // Auto-detect Africa-based by country
+  const AFRICAN_COUNTRIES = ['africa','africa-based','ghana','nigeria','kenya','south africa','egypt','ethiopia','tanzania','uganda','rwanda','senegal','morocco','tunisia','cameroon','zambia','zimbabwe','botswana','namibia','mozambique','algeria','sudan','ivory coast',"côte d'ivoire",'mali','burkina faso','benin','togo','niger','sierra leone','liberia','gambia','guinea'];
+  const tags = [tag];
+  if (AFRICAN_COUNTRIES.indexOf(String(country).toLowerCase().trim()) !== -1) tags.push('africa');
   return {
     id: 2000 + id, flag: flagFor(country), title, host, country,
     type: tag, amount, deadline: dead, soon: false,
     fields: 'Biological Sciences', desc,
-    link: normalizeUrl(link), tags: [tag]
+    link: normalizeUrl(link), tags: tags
   };
 }
 
@@ -1489,7 +1501,16 @@ function sheetToReagent(row, id) {
 
   const lt = String(row.funding || '').toLowerCase();
   const type = lt.includes('seek') || lt.includes('need') ? 'seeking' : 'available';
-  const category = row.degree || 'Other';
+  // Normalise category to one of the filter values
+  // Form options: Chemicals, Kits, Equipment, Consumables, Biological Materials
+  const catRaw = String(row.degree || '').toLowerCase().trim();
+  let category = 'other';
+  if (catRaw.includes('chemical'))          category = 'chemicals';
+  else if (catRaw.includes('kit'))          category = 'kits';
+  else if (catRaw.includes('equipment'))    category = 'equipment';
+  else if (catRaw.includes('consumable'))   category = 'consumables';
+  else if (catRaw.includes('biological'))   category = 'biological materials';
+  else if (catRaw)                          category = catRaw;
 
   return {
     id: 4000 + id, type, category,
