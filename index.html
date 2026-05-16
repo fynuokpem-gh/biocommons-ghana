@@ -158,6 +158,34 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .modal-share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:50px;background:var(--cream);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--text);}
 .modal-share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);}
 
+/* CLOSING THIS WEEK ALERT */
+.closing-alert{display:flex;align-items:center;justify-content:center;gap:14px;max-width:900px;margin:18px auto 0;padding:14px 24px;background:linear-gradient(135deg,#FFF5E6 0%,#FFE8D0 100%);border:1.5px solid #F5A623;border-radius:50px;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(245,166,35,0.18);}
+.closing-alert:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,0.3);}
+.closing-pulse{font-size:18px;animation:cls-pulse 1.8s ease-in-out infinite;display:inline-block;}
+@keyframes cls-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+.closing-text{font-size:14px;color:#7A4A0F;font-weight:500;}
+.closing-text strong{font-size:18px;font-weight:800;color:#B8761A;margin-right:4px;}
+.closing-cta{font-size:13px;font-weight:700;color:#B8761A;padding:6px 14px;background:rgba(255,255,255,0.7);border-radius:50px;border:1px solid rgba(184,118,26,0.25);}
+
+/* Closing list modal */
+.closing-modal{max-width:640px;}
+.closing-modal h2{margin-bottom:8px;}
+.closing-modal-sub{color:var(--muted);font-size:14px;margin-bottom:18px;}
+.closing-list-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--cream);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;}
+.closing-list-item:hover{background:var(--white);border-color:var(--gold);transform:translateX(4px);}
+.closing-list-icon{font-size:24px;flex-shrink:0;}
+.closing-list-content{flex:1;min-width:0;}
+.closing-list-title{font-weight:700;color:var(--text);font-size:14px;line-height:1.3;margin-bottom:3px;}
+.closing-list-meta{font-size:12px;color:var(--muted);}
+.closing-list-days{font-size:11px;font-weight:800;color:#B8761A;background:#FFF5E6;padding:5px 10px;border-radius:50px;border:1px solid #F5A623;white-space:nowrap;flex-shrink:0;letter-spacing:0.02em;}
+
+@media(max-width:720px){
+  .closing-alert{margin:14px 4% 0;padding:12px 16px;gap:10px;flex-wrap:wrap;}
+  .closing-text{font-size:13px;}
+  .closing-text strong{font-size:16px;}
+  .closing-cta{font-size:12px;padding:5px 10px;}
+}
+
 /* SHARE BUTTONS */
 /* Wrapper positions both button and menu — menu anchors to button */
 .share-wrap-card{position:absolute;top:12px;right:12px;z-index:5;}
@@ -495,6 +523,13 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="search-clear" id="search-clear" onclick="clearGlobalSearch()" style="display:none">✕</button>
   </div>
   <div class="search-results" id="search-results" style="display:none"></div>
+</div>
+
+<!-- CLOSING THIS WEEK ALERT -->
+<div id="closing-alert" class="closing-alert" style="display:none" onclick="openClosingList()">
+  <span class="closing-pulse">⏰</span>
+  <span class="closing-text"><strong id="closing-count">0</strong> <span id="closing-label">opportunities closing this week</span></span>
+  <span class="closing-cta">View →</span>
 </div>
 
 <!-- TABS -->
@@ -999,6 +1034,16 @@ footer{background:var(--dark);padding:52px 5% 32px;}
   </div>
 </div>
 
+<!-- CLOSING THIS WEEK MODAL -->
+<div class="overlay" id="closing-overlay" onclick="closeClosingList(event)">
+  <div class="modal closing-modal">
+    <button class="modal-x" onclick="closeClosingList()">✕</button>
+    <h2>⏰ Closing This Week</h2>
+    <p class="closing-modal-sub" id="closing-modal-sub">Opportunities with deadlines in the next 7 days.</p>
+    <div id="closing-list"></div>
+  </div>
+</div>
+
 <!-- PROGRAMME MODAL -->
 <div class="overlay" id="programme-overlay" onclick="closeProgrammeModal(event)">
   <div class="modal">
@@ -1204,7 +1249,6 @@ function renderGrants(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card" onclick="openGrantModal(\''+g.id+'\')">'+
-    shareButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       '<span class="badge badge-green">'+g.amount+'</span>'+
@@ -1232,7 +1276,6 @@ function renderOpportunities(data){
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
-    shareButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
@@ -1268,7 +1311,6 @@ function renderProgrammes(data){
                    : d.includes('MSC')   ? 'badge-green'
                    : 'badge-muted';
     return '<div class="card" onclick="openProgrammeModal(\''+p.id+'\')">'+
-      shareButton('programme', p.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
@@ -1299,7 +1341,6 @@ function renderInternships(data){
     const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
     return '<div class="card" onclick="openJobModal(\''+i.id+'\')">'+
-      shareButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
@@ -1330,7 +1371,6 @@ function renderReagents(data){
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
     const isAvail = r.type==='available';
     return '<div class="reagent-card '+(isAvail?'r-available':'r-seeking')+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
-      shareButton('reagent', r.id)+
       '<div class="reagent-head">'+
         '<span class="reagent-pill reagent-pill-status">'+(isAvail?'✅ Available':'🔍 Seeking')+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
@@ -1367,7 +1407,6 @@ function renderWorkshops(data){
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
     return '<div class="card" onclick="openWorkshopModal(\''+w.id+'\')">'+
-      shareButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
@@ -1993,6 +2032,146 @@ const DEFAULT_ANNOUNCEMENTS = [
   '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
   '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
 ];
+
+// ─── Closing This Week Alert ─────────────────────────────────────────────────
+
+const _MONTH = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,sept:8,oct:9,nov:10,dec:11,
+                 january:0,february:1,march:2,april:3,june:5,july:6,august:7,september:8,october:9,november:10,december:11 };
+
+function parseDeadline(str) {
+  if (!str) return null;
+  const s = String(str).trim();
+  if (!s || s === '—' || /tba|rolling|ongoing|see link/i.test(s)) return null;
+
+  // Try ISO-ish formats first
+  let d = new Date(s);
+  if (!isNaN(d.getTime()) && d.getFullYear() > 2000) return d;
+
+  // Patterns:  "30 May 2026", "30th May 2026", "May 30 2026", "30/05/2026"
+  // 1. day-month-year:  "30 May 2026" / "30th April 2027"
+  let m = s.match(/^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\.?\s+(\d{4})$/i);
+  if (m) {
+    const month = _MONTH[m[2].toLowerCase()];
+    if (month != null) return new Date(parseInt(m[3]), month, parseInt(m[1]));
+  }
+  // 2. month-day-year:  "May 30 2026"
+  m = s.match(/^([A-Za-z]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})$/i);
+  if (m) {
+    const month = _MONTH[m[1].toLowerCase()];
+    if (month != null) return new Date(parseInt(m[3]), month, parseInt(m[2]));
+  }
+  // 3. numeric:  "30/05/2026" or "30-05-2026"
+  m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2]) - 1, parseInt(m[1]));
+
+  return null;
+}
+
+function daysUntil(date) {
+  if (!date) return null;
+  const now = new Date(); now.setHours(0,0,0,0);
+  const tgt = new Date(date); tgt.setHours(0,0,0,0);
+  return Math.round((tgt - now) / (1000 * 60 * 60 * 24));
+}
+
+const CLOSING_SOURCES = [
+  { name: 'Scholarship',  icon: '🎓', section: 'opportunities', store: () => opportunities, openFn: it => openModal(it.id) },
+  { name: 'Grant',        icon: '💰', section: 'grants',        store: () => grants,         openFn: it => openGrantModal(it.id) },
+  { name: 'Job',          icon: '💼', section: 'internships',   store: () => internships,    openFn: it => openJobModal(it.id) },
+  { name: 'Workshop',     icon: '🏛',  section: 'workshops',     store: () => workshops,      openFn: it => openWorkshopModal(it.id) },
+  { name: 'Programme',    icon: '📚', section: 'programmes',    store: () => programmes,     openFn: it => openProgrammeModal(it.id) }
+];
+
+function getClosingItems() {
+  const items = [];
+  CLOSING_SOURCES.forEach(src => {
+    const arr = src.store() || [];
+    arr.forEach(it => {
+      const d = parseDeadline(it.deadline || it.date);
+      if (!d) return;
+      const days = daysUntil(d);
+      if (days >= 0 && days <= 7) {
+        items.push({ ...it, _kind: src.name, _icon: src.icon, _section: src.section, _openFn: src.openFn, _days: days, _date: d });
+      }
+    });
+  });
+  return items.sort((a, b) => a._days - b._days);
+}
+
+function refreshClosingAlert() {
+  const banner = document.getElementById('closing-alert');
+  if (!banner) { console.warn('[Closing] banner element not found'); return; }
+  const items = getClosingItems();
+  console.log('[Closing] refresh check — found', items.length, 'items closing within 7 days');
+  if (items.length === 0) { banner.style.display = 'none'; return; }
+  document.getElementById('closing-count').textContent = items.length;
+  document.getElementById('closing-label').textContent = items.length === 1
+    ? 'opportunity closing this week'
+    : 'opportunities closing this week';
+  banner.style.display = 'flex';
+}
+
+function openClosingList() {
+  const items = getClosingItems();
+  if (items.length === 0) return;
+  const sub = document.getElementById('closing-modal-sub');
+  sub.textContent = items.length + (items.length === 1
+    ? ' opportunity with a deadline in the next 7 days. Click to view details.'
+    : ' opportunities with deadlines in the next 7 days. Click any to view details.');
+
+  const list = document.getElementById('closing-list');
+  list.innerHTML = items.map((it, idx) => {
+    const title = it.title || it.name || 'Opportunity';
+    const host  = it.host || it.inst || '';
+    const dayLabel = it._days === 0 ? 'TODAY'
+                   : it._days === 1 ? 'TOMORROW'
+                   : it._days + ' DAYS LEFT';
+    return '<div class="closing-list-item" onclick="openClosingItem(' + idx + ')">' +
+      '<span class="closing-list-icon">' + it._icon + '</span>' +
+      '<div class="closing-list-content">' +
+        '<div class="closing-list-title">' + title + '</div>' +
+        '<div class="closing-list-meta">' + (host ? host + ' · ' : '') + it._kind + '</div>' +
+      '</div>' +
+      '<span class="closing-list-days">' + dayLabel + '</span>' +
+    '</div>';
+  }).join('');
+
+  // Store for click handler
+  window._closingItems = items;
+  document.getElementById('closing-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openClosingItem(idx) {
+  const items = window._closingItems || [];
+  const it = items[idx];
+  if (!it) return;
+  closeClosingList();
+  showSection(it._section);
+  setTimeout(() => { try { it._openFn(it); } catch(e) { console.error(e); } }, 350);
+}
+
+function closeClosingList(e) {
+  if (e && e.target !== document.getElementById('closing-overlay')) return;
+  document.getElementById('closing-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Refresh banner periodically as sheet data loads in (every second for 10s)
+function _startClosingRefresh() {
+  let ticks = 0;
+  const iv = setInterval(() => {
+    refreshClosingAlert();
+    if (++ticks >= 12) clearInterval(iv);
+  }, 1000);
+  refreshClosingAlert();
+}
+// Run after DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _startClosingRefresh);
+} else {
+  _startClosingRefresh();
+}
 
 // ─── Share Buttons ───────────────────────────────────────────────────────────
 
