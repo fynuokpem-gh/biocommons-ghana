@@ -438,6 +438,9 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .badge-red{background:var(--red-dim);color:var(--red);}
 .badge-blue{background:var(--blue-dim);color:var(--blue);}
 .badge-muted{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+.badge-closed{background:#EDEDED;color:#8A8A8A;border:1px solid #D5D5D5;}
+.card.is-closed{opacity:0.62;}
+.card.is-closed .card-action{background:#B0B0B0;pointer-events:none;}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap;}
 .tag{font-size:11px;color:var(--muted);background:var(--surface);padding:3px 9px;border-radius:6px;border:1px solid var(--border);}
 .card-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:auto;}
@@ -1500,14 +1503,16 @@ function renderGrants(data){
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
+  data=dropExpired(data,'deadline');
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  grid.innerHTML=data.map(g=>'<div class="card" onclick="openGrantModal(\''+g.id+'\')">'+
+  grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline)+'" onclick="openGrantModal(\''+g.id+'\')">'+
     bookmarkButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
+      closedBadge(g.deadline)+
       '<span class="badge badge-green">'+g.amount+'</span>'+
-      (g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (deadlineState(g.deadline)==='open'&&g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
       (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+'</div></div>'+
@@ -1528,16 +1533,18 @@ function filterGrants(btn){
 function renderOpportunities(data){
   const grid=document.getElementById('opp-grid'),empty=document.getElementById('opp-empty');
   document.getElementById('opp-count').textContent='Showing '+data.length+' of '+opportunities.length;
+  data=dropExpired(data,'deadline');
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  grid.innerHTML=data.map(o=>'<div class="card" onclick="openModal('+o.id+')">'+
+  grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline)+'" onclick="openModal('+o.id+')">'+
     bookmarkButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
+      closedBadge(o.deadline)+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
       (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
-      (o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (deadlineState(o.deadline)==='open'&&o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+o.title+'</div><div class="card-host">'+o.host+'</div></div>'+
     '<div class="card-meta"><span>📅 '+o.deadline+'</span><span>🎓 '+o.degree+'</span></div>'+
@@ -1560,6 +1567,7 @@ function applyOppFilter(q=''){
 
 function renderProgrammes(data){
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
+  data=dropExpired(data,'deadline');
   document.getElementById('prog-empty').style.display=data.length?'none':'';
   document.getElementById('prog-grid').innerHTML=data.map(p=>{
     const d = String(p.degree||'').toUpperCase();
@@ -1567,10 +1575,11 @@ function renderProgrammes(data){
                    : d.includes('MPHIL') ? 'badge-gold'
                    : d.includes('MSC')   ? 'badge-green'
                    : 'badge-muted';
-    return '<div class="card" onclick="openProgrammeModal(\''+p.id+'\')">'+
+    return '<div class="card'+isClosedCls(p.deadline)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
+        closedBadge(p.deadline)+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
         '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>'+
       '</div>'+
@@ -1660,6 +1669,7 @@ function filterReagents(btn){
 function renderWorkshops(data){
   const cnt = document.getElementById('wks-count');
   if (cnt) cnt.textContent = 'Showing ' + data.length + ' of ' + workshops.length;
+  data=dropExpired(data,'date');
   document.getElementById('wks-empty').style.display=data.length?'none':'';
   document.getElementById('workshop-grid').innerHTML=data.map(w=>{
     const t = (w.type||'').toLowerCase();
@@ -1669,10 +1679,11 @@ function renderWorkshops(data){
                     : t === 'webinar'    ? 'badge-blue'
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
-    return '<div class="card" onclick="openWorkshopModal(\''+w.id+'\')">'+
+    return '<div class="card'+isClosedCls(w.date)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
       bookmarkButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
+        closedBadge(w.date)+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
         (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
         (w.mode==='virtual'?'<span class="badge badge-gold">🌐 Virtual</span>':w.mode==='hybrid'?'<span class="badge badge-blue">Hybrid</span>':'<span class="badge badge-muted">In-Person</span>')+
@@ -2586,6 +2597,26 @@ function daysUntil(date) {
   const now = new Date(); now.setHours(0,0,0,0);
   const tgt = new Date(date); tgt.setHours(0,0,0,0);
   return Math.round((tgt - now) / (1000 * 60 * 60 * 24));
+}
+
+// ─── Deadline expiry: show "Closed" badge for 3 days, then auto-hide ─────────
+function deadlineState(raw) {
+  const d = parseDeadline(raw);
+  if (!d) return 'open';              // no/unparseable deadline (e.g. rolling) → always show
+  const days = daysUntil(d);
+  if (days >= 0)  return 'open';      // deadline today or future
+  if (days >= -3) return 'closed';    // passed within last 3 days → show with Closed badge
+  return 'expired';                   // more than 3 days past → auto-hide
+}
+function closedBadge(raw) {
+  return deadlineState(raw) === 'closed' ? '<span class="badge badge-closed">Closed</span>' : '';
+}
+function isClosedCls(raw) {
+  return deadlineState(raw) === 'closed' ? ' is-closed' : '';
+}
+function dropExpired(arr, field) {
+  field = field || 'deadline';
+  return (arr || []).filter(it => deadlineState(it[field] || it.date) !== 'expired');
 }
 
 const CLOSING_SOURCES = [
