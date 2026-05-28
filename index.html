@@ -1512,7 +1512,7 @@ function renderGrants(data){
     '<div class="badges">'+
       closedBadge(g.deadline)+
       '<span class="badge badge-green">'+g.amount+'</span>'+
-      (deadlineState(g.deadline)==='open'&&g.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (isClosingSoon(g.deadline,g.soon)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
       (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+'</div></div>'+
@@ -1544,7 +1544,7 @@ function renderOpportunities(data){
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
       (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
-      (deadlineState(o.deadline)==='open'&&o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (isClosingSoon(o.deadline,o.soon)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+o.title+'</div><div class="card-host">'+o.host+'</div></div>'+
     '<div class="card-meta"><span>📅 '+o.deadline+'</span><span>🎓 '+o.degree+'</span></div>'+
@@ -2617,6 +2617,14 @@ function isClosedCls(raw) {
 function dropExpired(arr, field) {
   field = field || 'deadline';
   return (arr || []).filter(it => deadlineState(it[field] || it.date) !== 'expired');
+}
+// "Closing Soon" computed from the real deadline (within 14 days). Falls back to the
+// manual `soon` flag only when the deadline can't be parsed (e.g. "Rolling", "TBA").
+function isClosingSoon(raw, soonFlag) {
+  if (deadlineState(raw) !== 'open') return false;   // expired/closed are never "soon"
+  const d = parseDeadline(raw);
+  if (d) { const days = daysUntil(d); return days >= 0 && days <= 14; }
+  return !!soonFlag;
 }
 
 const CLOSING_SOURCES = [
