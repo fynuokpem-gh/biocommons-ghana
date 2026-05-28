@@ -2702,9 +2702,9 @@ function buildShareText(item) {
   const host     = item.host  || item.inst || '';
   const deadline = item.deadline || item.date || '';
   let txt = '🎓 ' + title;
-  if (host)     txt += '\n📍 ' + host;
-  if (deadline) txt += '\n📅 Application Deadline: ' + deadline;
-  txt += '\n\nFound on BioCommons Ghana — Open Science, Open Doors, Open Ghana.';
+  if (host)     txt += '\n🏛️ ' + host;
+  if (deadline) txt += '\n⏰ Deadline: ' + deadline;
+  txt += '\n\nFound on BioCommons Ghana — Open Science. Open Doors. Open Ghana. 🇬🇭';
   txt += '\n' + BIOCOMMONS_SHORT_LINK;
   return txt;
 }
