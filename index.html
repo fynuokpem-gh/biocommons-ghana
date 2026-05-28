@@ -496,6 +496,7 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .s-form{display:none;flex-direction:column;gap:14px;}
 .s-form.active{display:flex;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
+.date-input{font-family:'Plus Jakarta Sans',sans-serif;}
 .form-row{display:flex;gap:12px;flex-wrap:wrap;}
 .form-row .form-group{flex:1;min-width:180px;}
 label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;}
@@ -894,7 +895,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       </div>
       <div class="form-row">
         <div class="form-group"><label>Country</label><input type="text" placeholder="e.g. United Kingdom"/></div>
-        <div class="form-group"><label>Deadline</label><input type="text" placeholder="e.g. 15 Jan 2026"/></div>
+        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>Degree Level</label><select><option>MSc</option><option>PhD</option><option>Both MSc & PhD</option><option>Postdoc</option></select></div>
@@ -927,7 +928,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       </div>
       <div class="form-row">
         <div class="form-group"><label>Amount / Value</label><input type="text" placeholder="e.g. Up to $50,000 or GH¢ 20,000"/></div>
-        <div class="form-group"><label>Deadline</label><input type="text" placeholder="e.g. 30 Apr 2026"/></div>
+        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
       </div>
       <div class="form-group"><label>Eligibility</label><input type="text" placeholder="e.g. Early-career African researchers, PhD holders..."/></div>
       <div class="form-group"><label>Official Link</label><input type="url" placeholder="https://..."/></div>
@@ -1006,7 +1007,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       </div>
       <div class="form-row">
         <div class="form-group"><label>Organiser</label><input type="text" placeholder="e.g. CSIR, University of Ghana"/></div>
-        <div class="form-group"><label>Date</label><input type="text" placeholder="e.g. 15–17 March 2026"/></div>
+        <div class="form-group"><label>Date</label><input type="date" class="date-input"/></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>Location / Mode</label><input type="text" placeholder="e.g. Accra / Virtual / Hybrid"/></div>
@@ -2014,6 +2015,13 @@ function subscribeNewsletter(){
   .catch(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();});
 }
 
+const _MONTH_ABBR=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatPickedDate(iso){
+  // Converts a native date-input value "2026-05-28" → "28 May 2026" (uniform, parseable, readable)
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if(!m)return iso;
+  return parseInt(m[3],10)+' '+_MONTH_ABBR[parseInt(m[2],10)-1]+' '+m[1];
+}
 function collectFormData(formId){
   const form=document.getElementById(formId);
   if(!form)return{};
@@ -2025,7 +2033,9 @@ function collectFormData(formId){
       // Strip parenthetical hints like "(optional)" then convert to snake_case key
       const cleanLabel = label.textContent.trim().replace(/\s*\([^)]*\)/g,'');
       const key=cleanLabel.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-      data[key]=input.value.trim();
+      let val=input.value.trim();
+      if(input.type==='date'&&val) val=formatPickedDate(val);  // uniform date format
+      data[key]=val;
     }
   });
   return data;
@@ -2985,6 +2995,12 @@ async function loadAnnouncements() {
 }
 
 loadAnnouncements();
+
+// Prevent selecting past dates in submission date pickers (deadline must be today or later)
+(function(){
+  const today=new Date().toISOString().split('T')[0];
+  document.querySelectorAll('input.date-input').forEach(el=>el.setAttribute('min',today));
+})();
 
 // ─── Load approved entries via JSONP (bypasses CORS on Apps Script) ────────────
 
