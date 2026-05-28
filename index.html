@@ -2522,19 +2522,23 @@ function toggleBookmark(kind, id, e) {
 
 function bookmarkButton(kind, id) {
   const saved = isBookmarked(kind, id);
+  const label = saved ? 'Remove from My List' : 'Save to My List';
   return '<button class="bookmark-btn' + (saved ? ' saved' : '') + '"' +
          ' data-bm-kind="' + kind + '" data-bm-id="' + id + '"' +
          ' onclick="toggleBookmark(\'' + kind + '\',\'' + id + '\',event)"' +
-         ' title="' + (saved ? 'Remove from My List' : 'Save to My List') + '">' +
+         ' aria-label="' + label + '" aria-pressed="' + saved + '"' +
+         ' title="' + label + '">' +
          (saved ? '★' : '☆') +
          '</button>';
 }
 
 function modalBookmarkButton(kind, id) {
   const saved = isBookmarked(kind, id);
+  const label = saved ? 'Remove from My List' : 'Save to My List';
   return '<button class="modal-bookmark' + (saved ? ' saved' : '') + '"' +
          ' data-bm-kind="' + kind + '" data-bm-id="' + id + '"' +
-         ' onclick="toggleBookmark(\'' + kind + '\',\'' + id + '\',event)">' +
+         ' onclick="toggleBookmark(\'' + kind + '\',\'' + id + '\',event)"' +
+         ' aria-label="' + label + '" aria-pressed="' + saved + '">' +
          (saved ? '★ Saved' : '☆ Save') +
          '</button>';
 }
@@ -2599,7 +2603,7 @@ function renderMyList() {
           '<div class="closing-list-title">' + title + '</div>' +
           (meta ? '<div class="closing-list-meta">' + meta + '</div>' : '') +
         '</div>' +
-        '<button class="bookmark-btn saved" style="position:static;width:30px;height:30px;font-size:14px;" onclick="toggleBookmark(\'' + g.kind + '\',\'' + it.id + '\',event)" title="Remove">★</button>' +
+        '<button class="bookmark-btn saved" style="position:static;width:30px;height:30px;font-size:14px;" onclick="toggleBookmark(\'' + g.kind + '\',\'' + it.id + '\',event)" aria-label="Remove from My List" aria-pressed="true" title="Remove">★</button>' +
       '</div>';
     }).join('');
     return '<div class="mylist-group">' +
@@ -3613,10 +3617,13 @@ async function loadApprovedEntries() {
     { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes),  baseId: 6000 },
   ];
 
-  for (const s of sheetConfig) {
+  // Fire all sheet requests in parallel. Each one re-renders its own section as it returns,
+  // so users see content fill in progressively rather than waiting for the slowest sheet.
+  // Promise.allSettled means one failing sheet never blocks the others.
+  await Promise.allSettled(sheetConfig.map(async (s) => {
     try {
       const rows = await fetchSheetJSONP(s.name);
-      if (!rows.length) { console.log('[BioCommons] ' + s.name + ': no approved data'); continue; }
+      if (!rows.length) { console.log('[BioCommons] ' + s.name + ': no approved data'); return; }
       console.log('[BioCommons] ✅ ' + s.name + ': ' + rows.length + ' approved entries loaded');
       const existing = s.store.filter(e => typeof e.id !== 'number' || e.id < s.baseId);
       const newEntries = rows.map((row, i) => s.mapper(row, i));
@@ -3628,7 +3635,10 @@ async function loadApprovedEntries() {
     } catch(err) {
       console.warn('[BioCommons] ' + s.name + ' error:', err.message);
     }
-  }
+  }));
+  // Final pass once everything has settled — ensures counts and schema reflect the full payload
+  updateAllCounts();
+  if (typeof injectStructuredData === 'function') injectStructuredData();
 }
 
 loadApprovedEntries();
