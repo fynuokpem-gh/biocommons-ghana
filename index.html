@@ -2739,6 +2739,14 @@ function shareVia(platform, kind, id, e) {
   const encodedUrl  = encodeURIComponent(appLink || BIOCOMMONS_SHORT_LINK);
   const encodedText = encodeURIComponent(fullText);
 
+  // Native share (Web Share API) — renders emojis correctly on phone AND desktop.
+  // Used for WhatsApp button when available; falls back to wa.me otherwise.
+  if (platform === 'whatsapp' && navigator.share) {
+    navigator.share({ text: fullText }).catch(() => {});
+    document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
+    return;
+  }
+
   let shareUrl = '';
   if (platform === 'whatsapp') {
     shareUrl = 'https://wa.me/?text=' + encodedText;
