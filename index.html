@@ -1394,13 +1394,16 @@ function setText(id, val) {
 }
 
 function updateAllCounts() {
+  // Count only items currently visible on the page (i.e. not expired).
+  // `dropExpired` may not be defined yet on first call — fall back to raw length until it is.
+  const _dropExp = (typeof dropExpired === 'function') ? dropExpired : (arr) => arr;
   const counts = {
-    opp:       opportunities.length,
-    grants:    grants.length,
-    reagents:  reagents.length,
-    int:       internships.length,
-    workshops: workshops.length,
-    prog:      programmes.length
+    opp:       _dropExp(opportunities, 'deadline').length,
+    grants:    _dropExp(grants,        'deadline').length,
+    reagents:  reagents.length,        // reagents have no deadline
+    int:       internships.length,     // jobs have no deadline (duration only)
+    workshops: _dropExp(workshops,     'date').length,
+    prog:      _dropExp(programmes,    'deadline').length
   };
   // Tab counts (just the number)
   setText('tc-opp',       counts.opp);
@@ -1501,10 +1504,11 @@ function flagFor(country) {
 
 
 function renderGrants(data){
-  document.getElementById('grants-count').textContent='Showing '+data.length+' of '+grants.length;
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
   data=dropExpired(data,'deadline');
+  const total=dropExpired(grants,'deadline').length;
+  document.getElementById('grants-count').textContent='Showing '+data.length+' of '+total;
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline)+'" onclick="openGrantModal(\''+g.id+'\')">'+
@@ -1533,8 +1537,9 @@ function filterGrants(btn){
 
 function renderOpportunities(data){
   const grid=document.getElementById('opp-grid'),empty=document.getElementById('opp-empty');
-  document.getElementById('opp-count').textContent='Showing '+data.length+' of '+opportunities.length;
   data=dropExpired(data,'deadline');
+  const total=dropExpired(opportunities,'deadline').length;
+  document.getElementById('opp-count').textContent='Showing '+data.length+' of '+total;
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline)+'" onclick="openModal('+o.id+')">'+
@@ -1567,8 +1572,9 @@ function applyOppFilter(q=''){
 }
 
 function renderProgrammes(data){
-  document.getElementById('prog-count').textContent='Showing '+data.length+' of '+programmes.length;
   data=dropExpired(data,'deadline');
+  const total=dropExpired(programmes,'deadline').length;
+  document.getElementById('prog-count').textContent='Showing '+data.length+' of '+total;
   document.getElementById('prog-empty').style.display=data.length?'none':'';
   document.getElementById('prog-grid').innerHTML=data.map(p=>{
     const d = String(p.degree||'').toUpperCase();
@@ -1668,9 +1674,10 @@ function filterReagents(btn){
 }
 
 function renderWorkshops(data){
-  const cnt = document.getElementById('wks-count');
-  if (cnt) cnt.textContent = 'Showing ' + data.length + ' of ' + workshops.length;
   data=dropExpired(data,'date');
+  const cnt = document.getElementById('wks-count');
+  const total = dropExpired(workshops,'date').length;
+  if (cnt) cnt.textContent = 'Showing ' + data.length + ' of ' + total;
   document.getElementById('wks-empty').style.display=data.length?'none':'';
   document.getElementById('workshop-grid').innerHTML=data.map(w=>{
     const t = (w.type||'').toLowerCase();
