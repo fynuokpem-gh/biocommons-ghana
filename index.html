@@ -2694,7 +2694,7 @@ if (document.readyState === 'loading') {
 const BIOCOMMONS_SHORT_LINK = 'https://tinyurl.com/biocommons-gh';
 
 function buildShareUrl(item, kind) {
-  const base = window.location.origin + window.location.pathname;
+  const base = 'https://biocommonsghana.org/';
   return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
 }
 
