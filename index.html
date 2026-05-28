@@ -452,20 +452,25 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .reagent-card{position:relative;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px 18px;display:flex;flex-direction:column;gap:12px;transition:all 0.25s;overflow:hidden;}
 .reagent-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);transition:width 0.2s;}
 .reagent-card.r-seeking::before{background:var(--gold);}
+.reagent-card.r-for-sale::before{background:var(--blue);}
 .reagent-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(11,38,24,0.1);border-color:transparent;}
 .reagent-card:hover::before{width:6px;}
 .reagent-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;}
 .reagent-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:4px 10px;border-radius:50px;white-space:nowrap;}
 .reagent-pill-status{background:rgba(13,124,62,0.12);color:var(--green);}
 .reagent-card.r-seeking .reagent-pill-status{background:rgba(245,166,35,0.15);color:#B8761A;}
+.reagent-card.r-for-sale .reagent-pill-status{background:rgba(26,74,122,0.12);color:var(--blue);}
 .reagent-pill-cat{background:var(--cream);color:var(--muted);border:1px solid var(--border);}
 .reagent-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.3;}
 .reagent-qty{font-size:14px;color:var(--text);font-weight:600;}
 .reagent-qty small{font-weight:400;color:var(--muted);margin-left:4px;}
 .reagent-exchange{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--green);font-weight:600;background:rgba(13,124,62,0.06);padding:8px 10px;border-radius:8px;line-height:1.4;}
+.reagent-price{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--blue);font-weight:800;background:rgba(26,74,122,0.07);padding:8px 12px;border-radius:8px;line-height:1.4;letter-spacing:0.02em;}
 .reagent-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--border);padding-top:12px;margin-top:auto;}
 .reagent-inst{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:5px;line-height:1.3;}
 .reagent-contact{font-size:11px;font-weight:700;color:var(--white);background:var(--green);padding:7px 14px;border-radius:50px;cursor:pointer;border:none;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;white-space:nowrap;}
+.reagent-card.r-for-sale .reagent-contact{background:var(--blue);}
+.reagent-card.r-seeking .reagent-contact{background:var(--gold);color:var(--dark);}
 .reagent-contact:hover{background:var(--dark);transform:translateY(-1px);}
 
 /* PROFESSORS */
@@ -812,12 +817,13 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <!-- REAGENTS -->
 <div class="section" id="sec-reagents">
   <div class="section-hd">
-    <div><div class="section-title">Reagent Exchange</div><div class="section-sub">Share or request lab reagents, equipment, and consumables across institutions</div></div>
+    <div><div class="section-title">Reagent Exchange & Marketplace</div><div class="section-sub">Share, request, or buy lab reagents, equipment, and consumables — connect with institutions and biotech vendors across Ghana</div></div>
   </div>
   <div class="filter-row">
     <button class="f-btn active" data-f="all" onclick="filterReagents(this)">All</button>
     <button class="f-btn" data-f="available" onclick="filterReagents(this)">Available</button>
     <button class="f-btn" data-f="seeking" onclick="filterReagents(this)">Seeking</button>
+    <button class="f-btn" data-f="for-sale" onclick="filterReagents(this)">🏷️ For Sale</button>
     <button class="f-btn" data-f="equipment" onclick="filterReagents(this)">Equipment</button>
     <button class="f-btn" data-f="chemicals/biologics" onclick="filterReagents(this)">Chemicals/Biologics</button>
     <button class="f-btn" data-f="kits" onclick="filterReagents(this)">Kits</button>
@@ -984,7 +990,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 
     <div class="s-form" id="sf-reagent">
       <div class="form-row">
-        <div class="form-group"><label>Listing Type</label><select><option>I have it (Available)</option><option>I need it (Seeking)</option></select></div>
+        <div class="form-group"><label>Listing Type</label><select><option>I have it (Available — free / exchange)</option><option>I need it (Seeking)</option><option>For Sale (Biotech vendor)</option></select></div>
         <div class="form-group"><label>Category</label><select><option>Chemicals/Biologics</option><option>Kits</option><option>Equipment</option><option>Consumables</option></select></div>
       </div>
       <div class="form-group"><label>Reagent / Item Name</label><input type="text" placeholder="e.g. Taq DNA Polymerase 500U"/></div>
@@ -992,10 +998,11 @@ footer{background:var(--dark);padding:52px 5% 32px;}
         <div class="form-group"><label>Quantity</label><input type="text" placeholder="e.g. 200µl, 1 kit, 50g"/></div>
         <div class="form-group"><label>Condition</label><select><option>New / Unopened</option><option>Partially Used</option><option>Expired (non-critical)</option></select></div>
       </div>
-      <div class="form-group"><label>What Can You Offer in Exchange? (optional)</label><input type="text" placeholder="e.g. Agarose powder, PCR tubes, open to discussion"/></div>
-      <div class="form-group"><label>Your Institution</label><input type="text" placeholder="e.g. KNUST Biochemistry Lab"/></div>
+      <div class="form-group"><label>Price <span style="color:var(--muted);font-weight:400">(For Sale listings only — leave blank otherwise)</span></label><input type="text" placeholder="e.g. GH¢ 1,200 / pack, $210 per kit, Contact for quote"/></div>
+      <div class="form-group"><label>What Can You Offer in Exchange? <span style="color:var(--muted);font-weight:400">(optional — for trades)</span></label><input type="text" placeholder="e.g. Agarose powder, PCR tubes, open to discussion"/></div>
+      <div class="form-group"><label>Your Institution / Company</label><input type="text" placeholder="e.g. KNUST Biochemistry Lab, or Fons Biotech Ghana"/></div>
       <div class="form-group"><label>Contact Email</label><input type="email" placeholder="lab@example.edu.gh"/></div>
-      <div class="form-group"><label>Additional Notes</label><textarea placeholder="Storage conditions, expiry, urgency…" style="min-height:70px"></textarea></div>
+      <div class="form-group"><label>Additional Notes</label><textarea placeholder="Storage conditions, expiry, urgency, delivery terms, warranty…" style="min-height:70px"></textarea></div>
       <button class="btn-submit" onclick="submitForm('Reagent listing')">Submit Reagent →</button>
       <p class="submit-note">Reviewed within 24 hours. Contact shared only after approval.</p>
     </div>
@@ -1225,6 +1232,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <div class="modal-row"><div class="modal-label">Category</div><div class="modal-val" id="rm-category"></div></div>
     <div class="modal-row"><div class="modal-label">Quantity</div><div class="modal-val" id="rm-qty"></div></div>
     <div class="modal-row"><div class="modal-label">Condition</div><div class="modal-val" id="rm-condition"></div></div>
+    <div class="modal-row" id="rm-price-row" style="display:none"><div class="modal-label">Price</div><div class="modal-val" id="rm-price" style="font-weight:700;color:var(--blue)"></div></div>
     <div class="modal-row" id="rm-exchange-row"><div class="modal-label">Exchange</div><div class="modal-val" id="rm-exchange"></div></div>
     <hr/>
     <p class="modal-desc" id="rm-notes"></p>
@@ -1356,7 +1364,10 @@ const programmes=[{id:1,uni:"ug",flag:"🇬🇭",title:"MPhil Biochemistry, Cell
 
 const internships=[{id:1,flag:"🇬🇭",title:"Research Assistant — Malaria Genomics",host:"Noguchi Memorial Institute",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"6 months",fields:"Genomics, Malaria, Parasitology",link:"https://www.noguchi.ug.edu.gh"},{id:2,flag:"🇬🇭",title:"Lab Intern — Plant Biotechnology",host:"CSIR — Plant Genetic Resources Research Institute",location:"Bunso, Ghana",type:"research",paid:true,compensation:"Paid",duration:"3 months",fields:"Plant Biology, Biotechnology, Agriculture",link:"https://www.csir.org.gh"},{id:3,flag:"🇬🇭",title:"Field Research Assistant — Wildlife Ecology",host:"Wildlife Division, Forestry Commission",location:"Mole National Park",type:"research",paid:false,compensation:"Accommodation provided",duration:"4 months",fields:"Ecology, Wildlife, Conservation",link:"https://www.fcghana.org"},{id:4,flag:"🇺🇸",title:"Summer Research Fellow — Infectious Disease",host:"NIH — NIAID",location:"Bethesda, USA",type:"international",paid:true,compensation:"Fully Paid",duration:"10 weeks",fields:"Infectious Disease, Immunology, Virology",link:"https://www.niaid.nih.gov"},{id:5,flag:"🇬🇭",title:"Quality Assurance Intern — Pharmaceuticals",host:"Dannex Ayrton Starwin Pharmaceuticals",location:"Accra, Ghana",type:"industry",paid:true,compensation:"Paid",duration:"3 months",fields:"Pharmacology, Quality Assurance, Biochemistry",link:"https://www.das-pharma.com"},{id:6,flag:"🇿🇦",title:"Research Intern — African Academy of Sciences",host:"African Academy of Sciences",location:"Nairobi / Remote",type:"research",paid:true,compensation:"Stipend",duration:"3 months",fields:"Science Policy, Research Management",link:"https://www.aasciences.africa"},{id:7,flag:"🇬🇭",title:"Microbiology Intern",host:"Ghana Standards Authority",location:"Accra, Ghana",type:"industry",paid:false,compensation:"Certificate",duration:"2 months",fields:"Microbiology, Food Safety, Standards",link:"https://www.gsa.gov.gh"},{id:8,flag:"🇬🇧",title:"Computational Biology Internship",host:"Wellcome Sanger Institute",location:"Cambridge, UK",type:"international",paid:true,compensation:"Fully Paid",duration:"12 weeks",fields:"Bioinformatics, Genomics, Computing",link:"https://www.sanger.ac.uk"},{id:9,flag:"🇬🇭",title:"Research Assistant — Aquatic Biology",host:"Water Research Institute, CSIR",location:"Accra, Ghana",type:"research",paid:true,compensation:"Stipend",duration:"4 months",fields:"Aquatic Biology, Water Quality, Ecology",link:"https://www.csir.org.gh"}];
 
-const reagents=[{id:1,type:"available",category:"chemicals/biologics",name:"Taq DNA Polymerase",qty:"500U (200µl remaining)",condition:"Partially Used",inst:"KNUST Biochemistry Dept.",notes:"Stored at -20°C. Valid until March 2026.",contact:"reagents@knust.edu.gh",exchange:""},{id:2,type:"seeking",category:"chemicals/biologics",name:"Ethidium Bromide",qty:"10mg needed",condition:"New preferred",inst:"UG Molecular Biology Lab",notes:"For gel electrophoresis.",contact:"molbio@ug.edu.gh",exchange:"Agarose powder (100g), PCR tubes"},{id:3,type:"available",category:"kits",name:"DNA Extraction Kit (Qiagen DNeasy)",qty:"3 kits (25 preps each)",condition:"New / Unopened",inst:"Noguchi Institute — NMIMR",notes:"Excess from a completed project.",contact:"labmanager@noguchi.ug.edu.gh",exchange:""},{id:4,type:"seeking",category:"equipment",name:"Microcentrifuge (benchtop)",qty:"1 unit needed",condition:"Working condition",inst:"UCC Life Sciences Dept.",notes:"Borrowing preferred — grant pending.",contact:"lifesci@ucc.edu.gh",exchange:"Bradford assay kits, lab glassware"},{id:5,type:"available",category:"chemicals/biologics",name:"Agarose Powder (Molecular Grade)",qty:"100g",condition:"New / Unopened",inst:"UDS Biological Sciences",notes:"Free to any Ghanaian institution.",contact:"biolab@uds.edu.gh",exchange:""},{id:6,type:"available",category:"kits",name:"Bradford Protein Assay Kit",qty:"200 assays",condition:"New / Unopened",inst:"CSIR-Food Research Institute",notes:"Expires Dec 2026.",contact:"fri@csir.org.gh",exchange:""},{id:7,type:"seeking",category:"chemicals/biologics",name:"Restriction Enzymes (EcoRI, HindIII)",qty:"1,000U each",condition:"Any",inst:"University of Ghana — Biotechnology Dept.",notes:"For cloning project.",contact:"biotech@ug.edu.gh",exchange:"Co-authorship or Taq polymerase"},{id:8,type:"available",category:"equipment",name:"UV Transilluminator",qty:"1 unit",condition:"Working — minor cosmetic wear",inst:"KNUST Molecular Lab",notes:"Available for long-term loan.",contact:"mollab@knust.edu.gh",exchange:""},{id:9,type:"seeking",category:"kits",name:"ELISA Kit — Malaria Antigen (PfHRP2)",qty:"1–2 kits",condition:"New only",inst:"Ghana Health Service — Research Dept.",notes:"For validation study.",contact:"research@ghs.gov.gh",exchange:"ELISA reader access, co-authorship"},{id:10,type:"available",category:"chemicals/biologics",name:"Liquid Nitrogen (for transport)",qty:"20L available",condition:"N/A — cryogenic",inst:"UGMS Biobank",notes:"Available for collection by Accra-based labs.",contact:"biobank@ugmedical.edu.gh",exchange:""}];
+const reagents=[{id:1,type:"available",category:"chemicals/biologics",name:"Taq DNA Polymerase",qty:"500U (200µl remaining)",condition:"Partially Used",inst:"KNUST Biochemistry Dept.",notes:"Stored at -20°C. Valid until March 2026.",contact:"reagents@knust.edu.gh",exchange:""},{id:2,type:"seeking",category:"chemicals/biologics",name:"Ethidium Bromide",qty:"10mg needed",condition:"New preferred",inst:"UG Molecular Biology Lab",notes:"For gel electrophoresis.",contact:"molbio@ug.edu.gh",exchange:"Agarose powder (100g), PCR tubes"},{id:3,type:"available",category:"kits",name:"DNA Extraction Kit (Qiagen DNeasy)",qty:"3 kits (25 preps each)",condition:"New / Unopened",inst:"Noguchi Institute — NMIMR",notes:"Excess from a completed project.",contact:"labmanager@noguchi.ug.edu.gh",exchange:""},{id:4,type:"seeking",category:"equipment",name:"Microcentrifuge (benchtop)",qty:"1 unit needed",condition:"Working condition",inst:"UCC Life Sciences Dept.",notes:"Borrowing preferred — grant pending.",contact:"lifesci@ucc.edu.gh",exchange:"Bradford assay kits, lab glassware"},{id:5,type:"available",category:"chemicals/biologics",name:"Agarose Powder (Molecular Grade)",qty:"100g",condition:"New / Unopened",inst:"UDS Biological Sciences",notes:"Free to any Ghanaian institution.",contact:"biolab@uds.edu.gh",exchange:""},{id:6,type:"available",category:"kits",name:"Bradford Protein Assay Kit",qty:"200 assays",condition:"New / Unopened",inst:"CSIR-Food Research Institute",notes:"Expires Dec 2026.",contact:"fri@csir.org.gh",exchange:""},{id:7,type:"seeking",category:"chemicals/biologics",name:"Restriction Enzymes (EcoRI, HindIII)",qty:"1,000U each",condition:"Any",inst:"University of Ghana — Biotechnology Dept.",notes:"For cloning project.",contact:"biotech@ug.edu.gh",exchange:"Co-authorship or Taq polymerase"},{id:8,type:"available",category:"equipment",name:"UV Transilluminator",qty:"1 unit",condition:"Working — minor cosmetic wear",inst:"KNUST Molecular Lab",notes:"Available for long-term loan.",contact:"mollab@knust.edu.gh",exchange:""},{id:9,type:"seeking",category:"kits",name:"ELISA Kit — Malaria Antigen (PfHRP2)",qty:"1–2 kits",condition:"New only",inst:"Ghana Health Service — Research Dept.",notes:"For validation study.",contact:"research@ghs.gov.gh",exchange:"ELISA reader access, co-authorship"},{id:10,type:"available",category:"chemicals/biologics",name:"Liquid Nitrogen (for transport)",qty:"20L available",condition:"N/A — cryogenic",inst:"UGMS Biobank",notes:"Available for collection by Accra-based labs.",contact:"biobank@ugmedical.edu.gh",exchange:""},
+{id:11,type:"for-sale",category:"chemicals/biologics",name:"PCR Master Mix (2× hot-start)",qty:"5 mL × 6 tubes per pack",condition:"New / Sealed",inst:"Fons Biotech Ghana",notes:"Cold-chain delivered. Free delivery within Accra/Tema. Bulk discounts on orders above 10 packs.",contact:"sales@fonsbiotech.com",exchange:"",price:"GH¢ 1,200 / pack"},
+{id:12,type:"for-sale",category:"equipment",name:"Mini Vortex Mixer",qty:"In stock — 12 units",condition:"New / Boxed",inst:"BioGenex Ghana Ltd.",notes:"1-year warranty. Variable speed 0–3000 rpm. Includes Ghanaian standard plug.",contact:"orders@biogenex.com.gh",exchange:"",price:"GH¢ 850 / unit"},
+{id:13,type:"for-sale",category:"kits",name:"qPCR Detection Kit — SYBR Green",qty:"100 reactions per kit",condition:"New / Cold-chain",inst:"AccuBio West Africa",notes:"Validated for COVID, malaria, and TB targets. Lot certificates included with every shipment.",contact:"info@accubio-wa.com",exchange:"",price:"$210 per kit"}];
 
 const workshops=[{id:1,flag:"🇬🇭",title:"Bioinformatics & Genomics Boot Camp",host:"H3ABioNet / University of Ghana",date:"10–14 March 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Bioinformatics, Genomics, Data Analysis",desc:"Intensive hands-on training in bioinformatics tools for African researchers. Covers sequence analysis, variant calling, and data visualisation.",link:"https://www.h3abionet.org"},{id:2,flag:"🇬🇭",title:"West Africa Microbiology Conference",host:"Ghana Society for Microbiology",date:"22–24 April 2026",location:"KNUST, Kumasi",type:"conference",cost:"paid",mode:"in-person",fields:"Microbiology, Infectious Disease, AMR",desc:"Annual gathering of microbiologists from West Africa. Keynotes, oral presentations, poster sessions, and networking.",link:"https://www.knust.edu.gh"},{id:3,flag:"🌐",title:"One Health Africa Symposium",host:"African Union / WHO",date:"5–7 May 2026",location:"Virtual",type:"conference",cost:"free",mode:"virtual",fields:"Public Health, Zoonosis, Ecology",desc:"Interdisciplinary symposium on the intersection of human, animal, and environmental health. Open to all researchers.",link:"https://www.who.int"},{id:4,flag:"🇬🇭",title:"PCR & Molecular Techniques Workshop",host:"CSIR — Water Research Institute",date:"20–21 February 2026",location:"Accra, Ghana",type:"workshop",cost:"free",mode:"in-person",fields:"Molecular Biology, PCR, Lab Techniques",desc:"Practical training workshop on PCR techniques, gel electrophoresis, and basic molecular biology. Limited spaces.",link:"https://www.csir.org.gh"},{id:5,flag:"🇳🇬",title:"African Society for Biochemistry Conference",host:"ASBMB",date:"15–18 June 2026",location:"Lagos, Nigeria",type:"conference",cost:"paid",mode:"in-person",fields:"Biochemistry, Molecular Biology, Enzymology",desc:"Premier biochemistry conference for African researchers. Travel grants available for Ghanaian participants.",link:"https://www.asbmb.org"},{id:6,flag:"🌐",title:"Science Communication for African Researchers",host:"SciDev.Net / AESA",date:"Rolling — Online",location:"Virtual",type:"workshop",cost:"free",mode:"virtual",fields:"Science Communication, Writing, Media",desc:"Self-paced online workshop on communicating science to policymakers and the public. Certificate on completion.",link:"https://www.scidev.net"}];
 
@@ -1646,19 +1657,27 @@ function filterInternships(btn){
 function renderReagents(data){
   document.getElementById('reagent-empty').style.display=data.length?'none':'';
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
-    const isAvail = r.type==='available';
-    return '<div class="reagent-card '+(isAvail?'r-available':'r-seeking')+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
+    const cardCls    = r.type==='available' ? 'r-available'
+                     : r.type==='for-sale'  ? 'r-for-sale'
+                     :                         'r-seeking';
+    const statusLbl  = r.type==='available' ? '✅ Available'
+                     : r.type==='for-sale'  ? '🏷️ For Sale'
+                     :                         '🔍 Seeking';
+    const instIcon   = r.type==='for-sale'  ? '🏢' : '🏛';
+    const btnLabel   = r.type==='for-sale'  ? 'Order →' : 'View →';
+    return '<div class="reagent-card '+cardCls+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
       bookmarkButton('reagent', r.id)+
       '<div class="reagent-head">'+
-        '<span class="reagent-pill reagent-pill-status">'+(isAvail?'✅ Available':'🔍 Seeking')+'</span>'+
+        '<span class="reagent-pill reagent-pill-status">'+statusLbl+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
       '</div>'+
       '<div class="reagent-name">'+r.name+'</div>'+
       '<div class="reagent-qty">'+r.qty+'<small>· '+r.condition+'</small></div>'+
+      (r.price?'<div class="reagent-price"><span>💵</span><span>'+r.price+'</span></div>':'')+
       (r.exchange?'<div class="reagent-exchange"><span>🔄</span><span>Can offer: '+r.exchange+'</span></div>':'')+
       '<div class="reagent-meta">'+
-        '<div class="reagent-inst">🏛 '+r.inst+'</div>'+
-        '<button class="reagent-contact" onclick="event.stopPropagation();openReagentModal(\''+r.id+'\')">View →</button>'+
+        '<div class="reagent-inst">'+instIcon+' '+r.inst+'</div>'+
+        '<button class="reagent-contact" onclick="event.stopPropagation();openReagentModal(\''+r.id+'\')">'+btnLabel+'</button>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -1803,11 +1822,24 @@ function closeGrantModal(e){
 function openReagentModal(id){
   const r=reagents.find(x=>String(x.id)===String(id));if(!r)return;
   document.getElementById('rm-name').textContent=r.name;
-  document.getElementById('rm-inst').textContent='🏛 '+r.inst;
-  document.getElementById('rm-type').textContent=r.type==='available'?'✅ Available — offering':'🔍 Seeking — needed';
+  const isForSale = r.type==='for-sale';
+  document.getElementById('rm-inst').textContent=(isForSale?'🏢 ':'🏛 ')+r.inst;
+  document.getElementById('rm-type').textContent =
+      r.type==='available' ? '✅ Available — offering' :
+      isForSale            ? '🏷️ For Sale — vendor listing' :
+                             '🔍 Seeking — needed';
   document.getElementById('rm-category').textContent=r.category;
   document.getElementById('rm-qty').textContent=r.qty;
   document.getElementById('rm-condition').textContent=r.condition;
+
+  // Price row — only for For Sale listings (or anything with a price set)
+  const priceRow=document.getElementById('rm-price-row');
+  if(r.price){
+    document.getElementById('rm-price').textContent=r.price;
+    priceRow.style.display='';
+  } else {
+    priceRow.style.display='none';
+  }
 
   const exchRow=document.getElementById('rm-exchange-row');
   if(r.exchange){
@@ -1819,12 +1851,14 @@ function openReagentModal(id){
 
   document.getElementById('rm-notes').textContent=r.notes||'';
 
-  // Contact button — mailto if it's an email, otherwise toast
+  // Contact / order button — mailto if it's an email, otherwise toast
   const contactBtn=document.getElementById('rm-contact');
   const isEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.contact);
+  const subjectPrefix = isForSale ? 'BioCommons%20Ghana%20%E2%80%94%20Order%20enquiry%3A%20' : 'BioCommons%20Ghana%20%E2%80%94%20';
+  const ctaWord       = isForSale ? 'Order from ' : 'Email ';
   if(isEmail){
-    contactBtn.href='mailto:'+r.contact+'?subject=BioCommons%20Ghana%20%E2%80%94%20'+encodeURIComponent(r.name);
-    contactBtn.textContent='Email '+r.contact+' →';
+    contactBtn.href='mailto:'+r.contact+'?subject='+subjectPrefix+encodeURIComponent(r.name);
+    contactBtn.textContent=ctaWord+r.contact+' →';
     contactBtn.onclick=null;
   } else {
     contactBtn.href='#';
@@ -1833,9 +1867,12 @@ function openReagentModal(id){
   }
 
   document.getElementById('rm-share-row').innerHTML=modalBookmarkButton('reagent',r.id)+modalShareRow('reagent',r.id);
+  const badgeCls   = r.type==='available' ? 'badge-green' : isForSale ? 'badge-blue' : 'badge-gold';
+  const badgeLabel = r.type==='available' ? 'Available'   : isForSale ? 'For Sale'   : 'Seeking';
   document.getElementById('rm-badges').innerHTML=
-    '<span class="badge '+(r.type==='available'?'badge-green':'badge-gold')+'">'+(r.type==='available'?'Available':'Seeking')+'</span>'+
-    '<span class="badge badge-blue">'+r.category+'</span>';
+    '<span class="badge '+badgeCls+'">'+badgeLabel+'</span>'+
+    '<span class="badge badge-blue">'+r.category+'</span>'+
+    (r.price?'<span class="badge badge-gold">💵 '+r.price+'</span>':'');
 
   document.getElementById('reagent-overlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -2208,8 +2245,8 @@ function sheetToInternship(row, id) {
 function sheetToReagent(row, id) {
   // Apps Script encoding for reagents:
   //   Degree col (row.degree)   → category ('Chemicals', 'Kits'…)
-  //   Funding col (row.funding) → listing_type ('available' / 'seeking')
-  //   Description encodes: Quantity, Condition, Exchange, Notes on separate lines
+  //   Funding col (row.funding) → listing_type ('available' / 'seeking' / 'for sale')
+  //   Description encodes: Quantity, Condition, Price, Exchange, Notes on separate lines
   const desc = String(row.description || '');
   const parse = (label) => {
     const m = desc.match(new RegExp('^' + label + ':\\s*(.+)$', 'mi'));
@@ -2217,11 +2254,14 @@ function sheetToReagent(row, id) {
   };
   const qty       = parse('Quantity')   || 'See notes';
   const condition = parse('Condition')  || 'See notes';
+  const price     = parse('Price')      || '';
   const exchange  = parse('Exchange')   || '';
   const notes     = parse('Notes')      || desc;  // fallback to full description
 
   const lt = String(row.funding || '').toLowerCase();
-  const type = lt.includes('seek') || lt.includes('need') ? 'seeking' : 'available';
+  const type = (lt.includes('sale') || lt.includes('vendor') || lt.includes('buy')) ? 'for-sale'
+             : (lt.includes('seek') || lt.includes('need'))                          ? 'seeking'
+             :                                                                         'available';
   // Normalise category to one of the filter values
   // Form options: Chemicals, Kits, Equipment, Consumables, Biological Materials
   const catRaw = String(row.degree || '').toLowerCase().trim();
@@ -2235,7 +2275,7 @@ function sheetToReagent(row, id) {
   return {
     id: 4000 + id, type, category,
     name: row.title || '', qty, condition,
-    notes, exchange,
+    notes, exchange, price,
     inst: row.host || '',
     contact: row.email || '—'
   };
