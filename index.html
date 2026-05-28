@@ -114,6 +114,26 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 .announce-ticker span strong{color:var(--gold);font-weight:700;}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
+/* Announcement bar — phone optimisation */
+@media(max-width:720px){
+  .announce-bar{
+    font-size:13px;
+    padding:9px 14px;
+    gap:10px;
+  }
+  .announce-label{
+    font-size:13px;
+    padding:4px 9px;
+    line-height:1;
+  }
+  .announce-label-text{display:none;}      /* show only the 📢 emoji on phones */
+  .announce-ticker{
+    gap:36px;
+    animation-duration:20s;
+  }
+  .announce-ticker span{font-size:13px;}
+}
+
 /* NAV */
 .nav-bar{
   position:sticky;top:0;z-index:200;
@@ -590,7 +610,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 
 <!-- ANNOUNCEMENT BAR -->
 <div class="announce-bar">
-  <span class="announce-label">📢 Announcements</span>
+  <span class="announce-label">📢<span class="announce-label-text"> Announcements</span></span>
   <div class="announce-ticker-wrap">
     <div class="announce-ticker" id="announce-ticker">
       <span>Loading announcements…</span>
