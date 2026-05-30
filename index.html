@@ -723,9 +723,10 @@ footer::before{
   .nav-links{display:none;}
   .nav-submit-desktop{display:none;}
   .hamburger{display:flex;}
-  .hero{padding:52px 4% 0;max-height:none;}.hero-inner{flex-direction:column;gap:0;}
+  .hero{padding:52px 4% 0;max-height:none;}
+  .hero-inner{flex-direction:column;gap:0;flex:none;align-items:stretch;}
   .hero-right{display:none;}
-  .hero-left{padding-bottom:40px;}
+  .hero-left{flex:none;width:100%;max-width:none;padding-bottom:40px;}
   .hero-btns{grid-template-columns:1fr 1fr;}
   .stats-bar{flex-wrap:wrap;}.stat-item{flex:0 0 50%;padding:16px;}
   .section{padding:36px 4%;}.tabs-wrap{padding:0 4%;}
@@ -3180,7 +3181,6 @@ function refreshClosingAlert() {
   const banner = document.getElementById('closing-alert');
   if (!banner) { console.warn('[Closing] banner element not found'); return; }
   const items = getClosingItems();
-  console.log('[Closing] refresh check — found', items.length, 'items closing within 7 days');
   if (items.length === 0) { banner.style.display = 'none'; return; }
   document.getElementById('closing-count').textContent = items.length;
   document.getElementById('closing-label').textContent = items.length === 1
@@ -4085,8 +4085,6 @@ function injectStructuredData() {
   tag.dataset.schemaBc = '1';
   tag.textContent = JSON.stringify({ '@context': 'https://schema.org', '@graph': all });
   document.head.appendChild(tag);
-
-  console.log('[SEO] Injected structured data for ' + all.length + ' items');
 }
 
 // Re-inject as data loads from sheet (debounced via setTimeout in loaders)
@@ -4110,8 +4108,7 @@ async function loadApprovedEntries() {
   await Promise.allSettled(sheetConfig.map(async (s) => {
     try {
       const rows = await fetchSheetJSONP(s.name);
-      if (!rows.length) { console.log('[BioCommons] ' + s.name + ': no approved data'); return; }
-      console.log('[BioCommons] ✅ ' + s.name + ': ' + rows.length + ' approved entries loaded');
+      if (!rows.length) { return; }
       const existing = s.store.filter(e => typeof e.id !== 'number' || e.id < s.baseId);
       const newEntries = rows.map((row, i) => s.mapper(row, i));
       s.store.length = 0;
