@@ -91,6 +91,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:va
 ::-webkit-scrollbar-track{background:var(--cream);}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
+/* ACCESSIBILITY — visible keyboard focus for interactive elements */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid var(--gold);outline-offset:2px;border-radius:4px;
+}
+/* Screen-reader-only helper */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+/* ACCESSIBILITY — respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .announce-ticker{animation:none !important;transform:none !important;}
+  html{scroll-behavior:auto;}
+}
+
 /* ANNOUNCEMENT BAR */
 .announce-bar{
   background:var(--dark);color:rgba(255,251,244,0.85);
@@ -579,6 +598,34 @@ textarea{min-height:100px;resize:vertical;}
 .modal-apply{display:inline-block;background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;text-decoration:none;padding:13px 28px;border-radius:50px;transition:background 0.2s;}
 .modal-apply:hover{background:var(--dark2);}
 
+/* ABOUT */
+.about-lead{font-size:16px;line-height:1.85;color:var(--text);max-width:760px;margin-bottom:14px;}
+.about-lead strong{color:var(--green);font-weight:700;}
+.about-sub-p{font-size:14px;line-height:1.85;color:var(--muted);max-width:760px;margin-bottom:34px;}
+.about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:42px;}
+.about-stat{background:var(--white);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:20px 22px;}
+.about-stat-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--dark);line-height:1;}
+.about-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-top:8px;}
+.about-how-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:20px;}
+.about-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:44px;}
+.about-step{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px 22px;position:relative;}
+.about-step-num{width:34px;height:34px;border-radius:50%;background:var(--green-dim);color:var(--green);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.about-step h4{font-size:15px;font-weight:700;color:var(--text);margin-bottom:7px;}
+.about-step p{font-size:13px;color:var(--muted);line-height:1.7;}
+.about-venture{background:var(--dark);color:var(--cream);border-radius:16px;padding:30px 34px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;border:1px solid rgba(245,166,35,0.15);box-shadow:0 8px 32px rgba(11,38,24,0.1);}
+.about-venture-ring{width:60px;height:60px;border-radius:50%;border:5px solid var(--gold);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--gold);}
+.about-venture-body{flex:1;min-width:240px;}
+.about-venture-body h4{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--cream);margin-bottom:6px;}
+.about-venture-body p{font-size:13.5px;color:rgba(255,251,244,0.7);line-height:1.7;}
+.about-venture-body a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.4);}
+.about-values{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px;}
+.about-value-chip{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:50px;padding:9px 18px;font-size:13px;font-weight:600;color:var(--text);}
+.about-value-chip span{font-size:15px;}
+@media(max-width:860px){
+  .about-stats{grid-template-columns:repeat(2,1fr);}
+  .about-steps{grid-template-columns:1fr;}
+}
+
 /* CONTACT BAR */
 .contact-bar{background:var(--surface);border-top:1px solid var(--border);padding:28px 5%;}
 .contact-bar-inner{display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;max-width:1100px;margin:0 auto;}
@@ -660,6 +707,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <li><a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('programmes')">Graduate Programs-GH</a></li>
+    <li><a href="javascript:void(0)" onclick="showSection('about')">About</a></li>
   </ul>
   <a href="#" class="btn-nav nav-submit-desktop" onclick="showSection('submit')">+ Submit</a>
   <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
@@ -682,6 +730,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <a href="javascript:void(0)" onclick="_navMobile('workshops')"><span class="mm-icon">🏛</span><span>Workshops &amp; Conferences</span></a>
     <a href="javascript:void(0)" onclick="_navMobile('programmes')"><span class="mm-icon">📚</span><span>Graduate Programmes</span></a>
     <a href="javascript:void(0)" onclick="_navMobile('mylist')"><span class="mm-icon">⭐</span><span>My List</span></a>
+    <a href="javascript:void(0)" onclick="_navMobile('about')"><span class="mm-icon">ℹ️</span><span>About</span></a>
     <a href="#support" onclick="closeMobileMenu()"><span class="mm-icon">💚</span><span>Support Us</span></a>
   </nav>
   <a href="javascript:void(0)" class="mobile-menu-submit" onclick="_navMobile('submit')">+ Submit an Opportunity</a>
@@ -742,6 +791,8 @@ footer{background:var(--dark);padding:52px 5% 32px;}
   <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;">
       <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1920&q=85"
         alt="Researcher at microscope"
+        fetchpriority="high" decoding="async"
+        onerror="this.style.display='none'"
         style="width:100%;height:100%;object-fit:cover;object-position:72% 40%;
                opacity:1;display:block;
                filter:contrast(1.1) saturate(1.12) brightness(0.78);"/>
@@ -769,14 +820,14 @@ footer{background:var(--dark);padding:52px 5% 32px;}
 <div class="search-wrap">
   <div class="search-bar">
     <span class="search-icon">🔍</span>
-    <input type="text" id="global-search" placeholder="Search scholarships, grants, jobs, programmes…" autocomplete="off" oninput="runGlobalSearch(this.value)" onfocus="if(this.value)runGlobalSearch(this.value)"/>
+    <input type="text" id="global-search" aria-label="Search all opportunities" placeholder="Search scholarships, grants, jobs, programmes…" autocomplete="off" oninput="runGlobalSearch(this.value)" onfocus="if(this.value)runGlobalSearch(this.value)"/>
     <button class="search-clear" id="search-clear" onclick="clearGlobalSearch()" style="display:none">✕</button>
   </div>
   <div class="search-results" id="search-results" style="display:none"></div>
 </div>
 
 <!-- CLOSING THIS WEEK ALERT -->
-<div id="closing-alert" class="closing-alert" style="display:none" onclick="openClosingList()">
+<div id="closing-alert" class="closing-alert" style="display:none" role="button" tabindex="0" aria-label="View opportunities closing this week" onclick="openClosingList()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openClosingList();}">
   <span class="closing-pulse">⏰</span>
   <span class="closing-text"><strong id="closing-count">0</strong> <span id="closing-label">opportunities closing this week</span></span>
   <span class="closing-cta">View →</span>
@@ -792,6 +843,7 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <button class="tab-btn" onclick="showSection('workshops')" id="tab-workshops">🏛 Workshops & Conferences <span class="tab-count" id="tc-workshops">6</span></button>
     <button class="tab-btn" onclick="showSection('programmes')" id="tab-programmes">📚 Graduate Programs-GH <span class="tab-count" id="tc-prog">8</span></button>
     <button class="tab-btn" onclick="showSection('mylist')" id="tab-mylist">⭐ My List <span class="tab-count" id="tc-mylist">0</span></button>
+    <button class="tab-btn" onclick="showSection('about')" id="tab-about">ℹ️ About</button>
     <button class="tab-btn" onclick="showSection('submit')" id="tab-submit">➕ Submit</button>
   </div>
 </div>
@@ -916,6 +968,58 @@ footer{background:var(--dark);padding:52px 5% 32px;}
     <span class="result-count" id="mylist-count"></span>
   </div>
   <div id="mylist-content"></div>
+</div>
+
+<!-- ABOUT -->
+<div class="section" id="sec-about">
+  <div class="section-hd">
+    <div><div class="section-title">About BioCommons Ghana</div><div class="section-sub">Who we are, why we exist, and how the platform works.</div></div>
+  </div>
+
+  <p class="about-lead">BioCommons Ghana is a <strong>free, open hub</strong> that connects biological scientists across Ghana to the opportunities that move careers and research forward — scholarships, fellowships, grants, jobs, reagent exchange, workshops, and graduate programmes, all in one place.</p>
+  <p class="about-sub-p">Too much of this information is scattered across mailing lists, WhatsApp groups, and notice boards — and too often it reaches people only after the deadline has passed. We bring it together, verify the links, surface what's closing soon, and keep it open to everyone. No paywalls, no accounts required, no gatekeeping.</p>
+
+  <div class="about-stats">
+    <div class="about-stat"><div class="about-stat-num" id="ab-total">50+</div><div class="about-stat-label">Live opportunities</div></div>
+    <div class="about-stat"><div class="about-stat-num">6</div><div class="about-stat-label">Categories covered</div></div>
+    <div class="about-stat"><div class="about-stat-num">100%</div><div class="about-stat-label">Free &amp; open</div></div>
+    <div class="about-stat"><div class="about-stat-num">24h</div><div class="about-stat-label">Review turnaround</div></div>
+  </div>
+
+  <div class="about-how-title">How it works</div>
+  <div class="about-steps">
+    <div class="about-step">
+      <div class="about-step-num">1</div>
+      <h4>Discover</h4>
+      <p>Browse or search across every category. Filter by funding, degree level, or institution, and let the "closing this week" alert flag urgent deadlines.</p>
+    </div>
+    <div class="about-step">
+      <div class="about-step-num">2</div>
+      <h4>Save &amp; act</h4>
+      <p>Star anything to your private My List (stored in your own browser), set a deadline reminder, and apply straight from the verified official link.</p>
+    </div>
+    <div class="about-step">
+      <div class="about-step-num">3</div>
+      <h4>Share &amp; contribute</h4>
+      <p>Pass opportunities to colleagues on WhatsApp or X, and submit listings of your own. Every submission is reviewed before going live.</p>
+    </div>
+  </div>
+
+  <div class="about-how-title">What we stand for</div>
+  <div class="about-values">
+    <div class="about-value-chip"><span>🔓</span> Open access for all</div>
+    <div class="about-value-chip"><span>✅</span> Verified, current listings</div>
+    <div class="about-value-chip"><span>🇬🇭</span> Built for Ghana</div>
+    <div class="about-value-chip"><span>🤝</span> Community-contributed</div>
+  </div>
+
+  <div class="about-venture">
+    <div class="about-venture-ring">F&amp;J</div>
+    <div class="about-venture-body">
+      <h4>A venture of F&amp;J Company Limited</h4>
+      <p>BioCommons Ghana is built and maintained as an open-science initiative by F&amp;J Company Limited (also operating as Fons Biotech). We're committed to keeping it free, always. Partnerships, corrections, or ideas? Reach us at <a href="mailto:biocommonsghana@gmail.com">biocommonsghana@gmail.com</a>.</p>
+    </div>
+  </div>
 </div>
 
 <!-- SUBMIT -->
@@ -1191,6 +1295,8 @@ footer{background:var(--dark);padding:52px 5% 32px;}
       <a href="javascript:void(0)" onclick="showSection('reagents')">Reagent Exchange</a>
       <a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a>
       <a href="javascript:void(0)" onclick="showSection('programmes')">Graduate Programmes</a>
+      <a href="javascript:void(0)" onclick="showSection('about')">About Us</a>
+      <a href="javascript:void(0)" onclick="showSection('submit')">Submit an Opportunity</a>
     </div>
     <div class="footer-col">
       <h4>Universities</h4>
@@ -1476,6 +1582,9 @@ function updateAllCounts() {
   setText('st-reagents',  counts.reagents);
   setText('st-prog',      counts.prog);
   setText('st-workshops', counts.workshops);
+  // About section — total live listings across every category
+  const aboutTotal = counts.opp + counts.grants + counts.reagents + counts.int + counts.workshops + counts.prog;
+  setText('ab-total', aboutTotal + '+');
 }
 
 const COUNTRY_CODES = {
