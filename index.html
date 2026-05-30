@@ -671,6 +671,132 @@ footer{background:var(--dark);padding:52px 5% 32px;}
   .contact-bar{padding:24px 4%;}
   footer{padding:40px 4% 24px;}
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   AESTHETIC REFINEMENT LAYER
+   Deepens the existing warm-editorial direction: atmosphere, depth,
+   orchestrated motion, and typographic polish. Purely additive.
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* — Global rendering polish — */
+body{
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  position:relative;
+}
+::selection{background:rgba(245,166,35,0.28);color:var(--dark);}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--gold),#D4880F);border-radius:3px;}
+h1,h2,h3,.section-title,.card-title,.reagent-name{text-wrap:balance;}
+
+/* — Atmospheric background: soft glows + fine grain, fixed behind content — */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(820px circle at 12% -4%, rgba(245,166,35,0.10), transparent 60%),
+    radial-gradient(760px circle at 100% 8%, rgba(13,124,62,0.08), transparent 55%),
+    radial-gradient(900px circle at 50% 120%, rgba(13,124,62,0.06), transparent 60%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* — Orchestrated hero entrance (one well-staged page load) — */
+@keyframes riseIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.hero-badge,.hero h1,.hero-sub,.hero-cta-row,.hero-btns{
+  animation:riseIn 0.7s cubic-bezier(0.22,0.61,0.36,1) both;
+}
+.hero h1{animation-delay:0.08s;}
+.hero-sub{animation-delay:0.18s;}
+.hero-cta-row{animation-delay:0.28s;}
+.hero-btns{animation-delay:0.38s;}
+.hero-btn{transition:transform 0.28s cubic-bezier(0.22,0.61,0.36,1),background 0.28s,border-color 0.28s;}
+.hero-btn:hover{transform:translateY(-3px);}
+.hero-cta-primary{box-shadow:0 6px 22px rgba(245,166,35,0.32);}
+.hero-cta-primary:hover{box-shadow:0 10px 30px rgba(245,166,35,0.45);transform:translateY(-2px);}
+
+/* — Card system: warmth, layered depth, growing gold accent — */
+.card{
+  background:linear-gradient(165deg,var(--white) 0%,#FFFDF8 100%);
+  position:relative;
+  transition:transform 0.3s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.3s,border-color 0.3s;
+  box-shadow:0 1px 2px rgba(11,38,24,0.04);
+}
+.card::after{
+  content:'';position:absolute;left:0;right:0;top:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+  background:linear-gradient(90deg,var(--gold),#D4880F);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);
+}
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 2px 4px rgba(11,38,24,0.05),0 18px 44px -8px rgba(11,38,24,0.18);
+  border-color:rgba(245,166,35,0.4);
+}
+.card:hover::after{transform:scaleX(1);}
+.card:hover .card-title{color:var(--green);}
+.card-title{transition:color 0.25s;}
+
+/* — Staggered reveal for cards in the visible section — */
+@keyframes cardIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.section.active .card,.section.active .reagent-card{animation:cardIn 0.5s cubic-bezier(0.22,0.61,0.36,1) both;}
+.section.active .card:nth-child(1),.section.active .reagent-card:nth-child(1){animation-delay:0.02s;}
+.section.active .card:nth-child(2),.section.active .reagent-card:nth-child(2){animation-delay:0.06s;}
+.section.active .card:nth-child(3),.section.active .reagent-card:nth-child(3){animation-delay:0.10s;}
+.section.active .card:nth-child(4),.section.active .reagent-card:nth-child(4){animation-delay:0.14s;}
+.section.active .card:nth-child(5),.section.active .reagent-card:nth-child(5){animation-delay:0.18s;}
+.section.active .card:nth-child(6),.section.active .reagent-card:nth-child(6){animation-delay:0.22s;}
+.section.active .card:nth-child(n+7),.section.active .reagent-card:nth-child(n+7){animation-delay:0.26s;}
+.reagent-card{transition:transform 0.3s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.3s,border-color 0.3s;}
+.reagent-card:hover{transform:translateY(-5px);}
+
+/* — Editorial section headers: gold accent rule under the title — */
+.section-title{font-size:30px;letter-spacing:-0.01em;position:relative;display:inline-block;padding-bottom:10px;}
+.section-title::after{
+  content:'';position:absolute;left:0;bottom:0;width:44px;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,var(--gold),rgba(245,166,35,0.2));
+}
+
+/* — Refined filter chips — */
+.f-btn{transition:all 0.25s cubic-bezier(0.22,0.61,0.36,1);}
+.f-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,38,24,0.08);}
+.f-btn.active{box-shadow:0 4px 14px rgba(11,38,24,0.22);}
+
+/* — Tabs: smoother active indicator + subtle hover wash — */
+.tab-btn{border-bottom-width:2.5px;position:relative;transition:color 0.25s;}
+.tab-btn::after{
+  content:'';position:absolute;left:18px;right:18px;bottom:-1px;height:2.5px;border-radius:3px;
+  background:var(--gold);transform:scaleX(0);transform-origin:center;transition:transform 0.3s cubic-bezier(0.22,0.61,0.36,1);
+}
+.tab-btn:hover::after{transform:scaleX(0.5);}
+.tab-btn.active{border-bottom-color:transparent;}
+.tab-btn.active::after{transform:scaleX(1);background:var(--dark);}
+
+/* — Primary action buttons: gentle gradient + depth — */
+.card-action{background:linear-gradient(180deg,var(--dark2),var(--dark));box-shadow:0 4px 14px rgba(11,38,24,0.18);}
+.card-action:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(11,38,24,0.28);}
+.btn-nav{box-shadow:0 4px 14px rgba(11,38,24,0.18);transition:all 0.25s cubic-bezier(0.22,0.61,0.36,1);}
+.btn-nav:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(11,38,24,0.28);}
+.btn-submit{transition:all 0.25s cubic-bezier(0.22,0.61,0.36,1);}
+
+/* — Search bar: lift on focus — */
+.search-bar{transition:box-shadow 0.25s,border-color 0.25s;}
+.search-bar:focus-within{box-shadow:0 8px 28px rgba(11,38,24,0.10);}
+
+/* — About section cards inherit the same lift — */
+.about-stat,.about-step{transition:transform 0.3s cubic-bezier(0.22,0.61,0.36,1),box-shadow 0.3s;}
+.about-stat:hover,.about-step:hover{transform:translateY(-3px);box-shadow:0 12px 32px -8px rgba(11,38,24,0.16);}
+
+/* — Logo gentle entrance — */
+.nav-bar svg{animation:riseIn 0.6s ease both;}
+
+/* Keep refinements calm for reduced-motion users */
+@media (prefers-reduced-motion: reduce){
+  .hero-badge,.hero h1,.hero-sub,.hero-cta-row,.hero-btns,
+  .section.active .card,.section.active .reagent-card,.nav-bar svg{animation:none !important;}
+  .card:hover,.reagent-card:hover,.hero-btn:hover,.about-stat:hover,.about-step:hover{transform:none;}
+}
 </style>
 </head>
 <body>
