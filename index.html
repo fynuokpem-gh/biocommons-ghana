@@ -263,11 +263,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 body.menu-open{overflow:hidden;}
 
 /* HERO */
-.hero{background:var(--dark);padding:56px 5% 0;position:relative;overflow:hidden;max-height:100vh;display:flex;flex-direction:column;}
+.hero{background:var(--dark);padding:56px 5% 0;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
-.hero-inner{display:flex;align-items:center;gap:0;position:relative;z-index:1;flex:1;min-height:0;}
+.hero-inner{display:flex;align-items:center;gap:0;position:relative;z-index:1;}
 .hero-left{flex:0 0 52%;max-width:600px;padding-bottom:24px;}
 .hero-right{flex:0 0 620px;display:flex;align-items:flex-end;justify-content:center;}
+/* Desktop only: cap hero to viewport height so it "fits the screen" */
+@media(min-width:769px){
+  .hero{max-height:100vh;display:flex;flex-direction:column;}
+  .hero-inner{flex:1;min-height:0;}
+}
 
 .hero-eyebrow{
   display:flex;align-items:center;gap:10px;margin-bottom:22px;
@@ -1514,7 +1519,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-05-30b</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-05-30c</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
