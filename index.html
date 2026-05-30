@@ -1243,10 +1243,13 @@ body::after{
       </div>
       <div class="form-row">
         <div class="form-group"><label>Country</label><input type="text" placeholder="e.g. United Kingdom"/></div>
-        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
+        <div class="form-group"><label>Opening Date (optional)</label><input type="date" class="date-input"/></div>
       </div>
       <div class="form-row">
+        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
         <div class="form-group"><label>Degree Level</label><select><option>MSc</option><option>PhD</option><option>Both MSc & PhD</option><option>Postdoc</option></select></div>
+      </div>
+      <div class="form-row">
         <div class="form-group"><label>Funding Type</label><select><option>Fully Funded</option><option>Partial Funding</option><option>Stipend Only</option></select></div>
       </div>
       <div class="form-group"><label>Official Link</label><input type="url" placeholder="https://"/></div>
@@ -1276,9 +1279,12 @@ body::after{
       </div>
       <div class="form-row">
         <div class="form-group"><label>Amount / Value</label><input type="text" placeholder="e.g. Up to $50,000 or GH¢ 20,000"/></div>
-        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
+        <div class="form-group"><label>Opening Date (optional)</label><input type="date" class="date-input"/></div>
       </div>
-      <div class="form-group"><label>Eligibility</label><input type="text" placeholder="e.g. Early-career African researchers, PhD holders..."/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
+        <div class="form-group"><label>Eligibility</label><input type="text" placeholder="e.g. Early-career African researchers, PhD holders..."/></div>
+      </div>
       <div class="form-group"><label>Official Link</label><input type="url" placeholder="https://..."/></div>
       <div class="form-group"><label>Description</label><textarea rows="3" placeholder="Brief description of the grant and what it funds..."></textarea></div>
       <div class="form-row">
@@ -1519,7 +1525,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-05-30c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-05-30f</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1537,6 +1543,7 @@ body::after{
     <div class="modal-row"><div class="modal-label">Degree</div><div class="modal-val" id="m-degree"></div></div>
     <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="m-fields"></div></div>
     <div class="modal-row"><div class="modal-label">Funding</div><div class="modal-val" id="m-funding"></div></div>
+    <div class="modal-row" id="m-opens-row"><div class="modal-label">Opens</div><div class="modal-val" id="m-opens"></div></div>
     <div class="modal-row"><div class="modal-label">Deadline</div><div class="modal-val" id="m-deadline"></div></div>
     <hr/>
     <p class="modal-desc" id="m-desc"></p>
@@ -1558,6 +1565,7 @@ body::after{
     <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="gm-type"></div></div>
     <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="gm-fields"></div></div>
     <div class="modal-row"><div class="modal-label">Amount</div><div class="modal-val" id="gm-amount"></div></div>
+    <div class="modal-row" id="gm-opens-row"><div class="modal-label">Opens</div><div class="modal-val" id="gm-opens"></div></div>
     <div class="modal-row"><div class="modal-label">Deadline</div><div class="modal-val" id="gm-deadline"></div></div>
     <hr/>
     <p class="modal-desc" id="gm-desc"></p>
@@ -1635,7 +1643,7 @@ body::after{
   <div class="modal" style="max-width:480px;">
     <button class="modal-x" onclick="closeReminderModal()">✕</button>
     <h2>🔔 Get Deadline Reminders</h2>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">We'll email you 3 days before and 24 hours before this deadline. Nothing else.</p>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:18px;">We'll email you when this opens (if it hasn't yet), plus 3 days and 24 hours before the deadline. Nothing else.</p>
     <div id="rem-preview" style="background:var(--cream);border-radius:10px;padding:14px 16px;margin-bottom:18px;border-left:4px solid var(--gold);"></div>
     <div class="form-group" style="margin-bottom:16px;">
       <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Your email</label>
@@ -2185,6 +2193,9 @@ function openModal(id){
   document.getElementById('m-degree').textContent=o.degree;
   document.getElementById('m-fields').textContent=o.fields;
   document.getElementById('m-funding').textContent=o.funding;
+  const mOpensRow=document.getElementById('m-opens-row');
+  if(o.opens){document.getElementById('m-opens').textContent=o.opens;mOpensRow.style.display='';}
+  else{mOpensRow.style.display='none';}
   document.getElementById('m-deadline').textContent=o.deadline+(o.soon?' ⏰ Closing soon!':'');
   document.getElementById('m-desc').textContent=o.desc;
   document.getElementById('m-link').href=normalizeUrl(o.link);
@@ -2223,6 +2234,9 @@ function openGrantModal(id){
   document.getElementById('gm-type').textContent=(g.type||'').charAt(0).toUpperCase()+(g.type||'').slice(1);
   document.getElementById('gm-fields').textContent=g.fields||'—';
   document.getElementById('gm-amount').textContent=g.amount||'See link';
+  const gmOpensRow=document.getElementById('gm-opens-row');
+  if(g.opens){document.getElementById('gm-opens').textContent=g.opens;gmOpensRow.style.display='';}
+  else{gmOpensRow.style.display='none';}
   document.getElementById('gm-deadline').textContent=g.deadline+(g.soon?' ⏰ Closing soon!':'');
   document.getElementById('gm-desc').textContent=g.desc||'';
   document.getElementById('gm-link').href=normalizeUrl(g.link);
@@ -2594,6 +2608,7 @@ function sheetToScholarship(row, id) {
             tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD'),
     fields: 'Biological Sciences', tags,
     funding: row.funding || 'See link', deadline: row.deadline,
+    opens: row.opens || '',
     soon: false, desc: row.description, link: normalizeUrl(row.link),
     closed: _rowClosed(row)
   };
@@ -2622,6 +2637,7 @@ function sheetToGrant(row, id) {
   return {
     id: 2000 + id, flag: flagFor(country), title, host, country,
     type: tag, amount, deadline: dead, soon: false,
+    opens: row.opens || '',
     fields: 'Biological Sciences', desc,
     link: normalizeUrl(link), tags: tags,
     closed: _rowClosed(row)
@@ -2824,10 +2840,13 @@ function openReminderModal(kind, id, e) {
   const title = item.title || item.name || 'Opportunity';
   const host  = item.host || item.inst || '';
 
+  const opens = item.opens || '';
+
   document.getElementById('rem-preview').innerHTML =
     '<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;">' + src.icon + ' ' + src.name + '</div>' +
     '<div style="font-weight:700;color:var(--text);font-size:15px;line-height:1.3;margin-bottom:4px;">' + title + '</div>' +
     (host ? '<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">' + host + '</div>' : '') +
+    (opens ? '<div style="font-size:13px;color:var(--green);font-weight:700;margin-bottom:2px;">🔓 Opens: ' + opens + '</div>' : '') +
     '<div style="font-size:13px;color:#B8761A;font-weight:700;">📅 Deadline: ' + deadline + '</div>';
 
   document.getElementById('rem-email').value = '';
@@ -2861,6 +2880,7 @@ function submitReminder() {
     opportunity_id: String(id),
     title: item.title || item.name || '',
     host: item.host || item.inst || '',
+    opens: item.opens || '',
     deadline: item.deadline || item.date || '',
     link: item.link || '',
     section: src.section,
