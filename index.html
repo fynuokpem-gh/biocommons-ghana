@@ -245,7 +245,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 body.menu-open{overflow:hidden;}
 
 /* HERO */
-.hero{background:var(--dark);padding:96px 5% 0;position:relative;overflow:hidden;}
+.hero{background:var(--dark);padding:56px 5% 0;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
 .hero-inner{display:flex;align-items:center;gap:0;position:relative;z-index:1;}
 .hero-left{flex:0 0 52%;max-width:600px;padding-bottom:24px;}
@@ -1342,13 +1342,13 @@ body::after{
 
 <!-- NEWSLETTER -->
 <div style="background:var(--dark);padding:56px 5%;">
-  <div style="max-width:680px;margin:0 auto;text-align:center;">
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <span style="background:var(--gold);color:var(--dark);font-size:11px;font-weight:800;padding:4px 12px;border-radius:50px;letter-spacing:0.06em;text-transform:uppercase;">Monthly Newsletter</span>
     </div>
     <h2 style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--cream);margin-bottom:10px;line-height:1.15;">Stay in the loop.<br/><span style="color:var(--gold)">Never miss an opportunity.</span></h2>
-    <p style="font-size:15px;color:rgba(255,251,244,0.6);max-width:560px;margin:0 auto 32px;line-height:1.75;">Every month we send a curated digest of new scholarships, open jobs, reagent listings, and upcoming workshops directly to your inbox. Free. No spam.</p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <p style="font-size:15px;color:rgba(255,251,244,0.6);margin-bottom:32px;line-height:1.75;">Every month we send a curated digest of new scholarships, open jobs, reagent listings, and upcoming workshops directly to your inbox. Free. No spam.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
       <input type="text" id="nl-name" placeholder="Your full name" style="flex:1;min-width:160px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
       <input type="text" id="nl-institution" placeholder="Institution / University" style="flex:1;min-width:180px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
       <input type="email" id="nl-email" placeholder="Your email address" style="flex:2;min-width:220px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
