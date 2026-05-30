@@ -1809,13 +1809,13 @@ function renderGrants(data){
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+total;
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline)+'" onclick="openGrantModal(\''+g.id+'\')">'+
+  grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline, g.closed)+'" onclick="openGrantModal(\''+g.id+'\')">'+
     bookmarkButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
-      closedBadge(g.deadline)+
+      closedBadge(g.deadline, g.closed)+
       '<span class="badge badge-green">'+g.amount+'</span>'+
-      (isClosingSoon(g.deadline,g.soon)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (isClosingSoon(g.deadline,g.soon,g.closed)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
       (g.tags.includes('africa')?'<span class="badge badge-gold">Africa-Based</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+g.title+'</div><div class="card-host">'+g.host+'</div></div>'+
@@ -1840,15 +1840,15 @@ function renderOpportunities(data){
   document.getElementById('opp-count').textContent='Showing '+data.length+' of '+total;
   if(!data.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline)+'" onclick="openModal('+o.id+')">'+
+  grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline, o.closed)+'" onclick="openModal('+o.id+')">'+
     bookmarkButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
-      closedBadge(o.deadline)+
+      closedBadge(o.deadline, o.closed)+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
       (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
-      (isClosingSoon(o.deadline,o.soon)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
+      (isClosingSoon(o.deadline,o.soon,o.closed)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
     '</div>'+
     '<div><div class="card-title">'+o.title+'</div><div class="card-host">'+o.host+'</div></div>'+
     '<div class="card-meta"><span>📅 '+o.deadline+'</span><span>🎓 '+o.degree+'</span></div>'+
@@ -1880,11 +1880,11 @@ function renderProgrammes(data){
                    : d.includes('MPHIL') ? 'badge-gold'
                    : d.includes('MSC')   ? 'badge-green'
                    : 'badge-muted';
-    return '<div class="card'+isClosedCls(p.deadline)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
+    return '<div class="card'+isClosedCls(p.deadline, p.closed)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
-        closedBadge(p.deadline)+
+        closedBadge(p.deadline, p.closed)+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
         '<span class="badge badge-muted">'+(p.duration||'See link')+'</span>'+
       '</div>'+
@@ -1993,11 +1993,11 @@ function renderWorkshops(data){
                     : t === 'webinar'    ? 'badge-blue'
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
-    return '<div class="card'+isClosedCls(w.date)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
+    return '<div class="card'+isClosedCls(w.date, w.closed)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
       bookmarkButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
-        closedBadge(w.date)+
+        closedBadge(w.date, w.closed)+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
         (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
         (w.mode==='virtual'?'<span class="badge badge-gold">🌐 Virtual</span>':w.mode==='hybrid'?'<span class="badge badge-blue">Hybrid</span>':'<span class="badge badge-muted">In-Person</span>')+
@@ -2427,6 +2427,15 @@ function normalizeUrl(url) {
   return 'https://' + u.replace(/^\/+/, '');
 }
 
+function _rowClosed(row){
+  // Manual "closed" override from the sheet — independent of the deadline date.
+  // Set a "Closed" column to yes/true/closed/1, or put "closed"/"filled" in a Status column.
+  const c = String(row.closed || '').toLowerCase().trim();
+  if (c==='yes'||c==='true'||c==='closed'||c==='1'||c==='y') return true;
+  const s = String(row.status || row.state || '').toLowerCase();
+  return s.indexOf('closed')!==-1 || s.indexOf('filled')!==-1;
+}
+
 function sheetToScholarship(row, id) {
   const title = row.title || '';
   const country = row.country || 'Ghana';
@@ -2450,7 +2459,8 @@ function sheetToScholarship(row, id) {
             tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD'),
     fields: 'Biological Sciences', tags,
     funding: row.funding || 'See link', deadline: row.deadline,
-    soon: false, desc: row.description, link: normalizeUrl(row.link)
+    soon: false, desc: row.description, link: normalizeUrl(row.link),
+    closed: _rowClosed(row)
   };
 }
 
@@ -2478,7 +2488,8 @@ function sheetToGrant(row, id) {
     id: 2000 + id, flag: flagFor(country), title, host, country,
     type: tag, amount, deadline: dead, soon: false,
     fields: 'Biological Sciences', desc,
-    link: normalizeUrl(link), tags: tags
+    link: normalizeUrl(link), tags: tags,
+    closed: _rowClosed(row)
   };
 }
 
@@ -2605,7 +2616,8 @@ function sheetToWorkshop(row, id) {
     country: row.country || location,
     fields: 'Biological Sciences',
     description: parse('Notes') || desc,
-    link: row.link || row.email || '#'
+    link: row.link || row.email || '#',
+    closed: _rowClosed(row)
   };
 }
 
@@ -2627,6 +2639,8 @@ function sheetToProgramme(row, id) {
             : hostLow.includes('university of ghana') || /\bug\b/.test(hostLow) ? 'ug'
             : hostLow.includes('cape coast') || hostLow.includes('ucc') ? 'ucc'
             : hostLow.includes('development studies') || hostLow.includes('uds') ? 'uds'
+            : hostLow.includes('health and allied') || hostLow.includes('uhas') ? 'uhas'
+            : hostLow.includes('technology and applied') || hostLow.includes('utas') || hostLow.includes('tedam') ? 'utas'
             : 'other';
 
   return {
@@ -2638,7 +2652,8 @@ function sheetToProgramme(row, id) {
     deadline: row.deadline || '',
     description: row.description || '',
     requirements: row.description || '',
-    link: row.link || row.email || '#'
+    link: row.link || row.email || '#',
+    closed: _rowClosed(row)
   };
 }
 
@@ -2969,11 +2984,11 @@ function deadlineState(raw) {
   if (days >= -3) return 'closed';    // passed within last 3 days → show with Closed badge
   return 'expired';                   // more than 3 days past → auto-hide
 }
-function closedBadge(raw) {
-  return deadlineState(raw) === 'closed' ? '<span class="badge badge-closed">Closed</span>' : '';
+function closedBadge(raw, forceClosed) {
+  return (forceClosed || deadlineState(raw) === 'closed') ? '<span class="badge badge-closed">Closed</span>' : '';
 }
-function isClosedCls(raw) {
-  return deadlineState(raw) === 'closed' ? ' is-closed' : '';
+function isClosedCls(raw, forceClosed) {
+  return (forceClosed || deadlineState(raw) === 'closed') ? ' is-closed' : '';
 }
 function dropExpired(arr, field) {
   field = field || 'deadline';
@@ -2981,7 +2996,8 @@ function dropExpired(arr, field) {
 }
 // "Closing Soon" computed from the real deadline (within 14 days). Falls back to the
 // manual `soon` flag only when the deadline can't be parsed (e.g. "Rolling", "TBA").
-function isClosingSoon(raw, soonFlag) {
+function isClosingSoon(raw, soonFlag, forceClosed) {
+  if (forceClosed) return false;
   if (deadlineState(raw) !== 'open') return false;   // expired/closed are never "soon"
   const d = parseDeadline(raw);
   if (d) { const days = daysUntil(d); return days >= 0 && days <= 14; }
