@@ -164,6 +164,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .nav-links{display:flex;gap:2px;list-style:none;}
 .nav-links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:600;padding:8px 12px;border-radius:10px;transition:all 0.2s;}
 .nav-links a:hover{color:var(--dark);background:var(--surface);}
+/* About — set apart from the browse categories as a secondary destination */
+.nav-links a.nav-about{
+  margin-left:10px;color:var(--dark);
+  border:1.5px solid var(--border);border-radius:50px;padding:7px 18px;
+}
+.nav-links a.nav-about:hover{background:var(--dark);color:var(--cream);border-color:var(--dark);}
 .btn-nav{background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:16px;border:none;padding:14px 32px;border-radius:50px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .btn-nav:hover{background:var(--dark2);transform:translateY(-1px);}
 
@@ -242,7 +248,7 @@ body.menu-open{overflow:hidden;}
 .hero{background:var(--dark);padding:96px 5% 0;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
 .hero-inner{display:flex;align-items:center;gap:0;position:relative;z-index:1;}
-.hero-left{flex:0 0 52%;max-width:600px;padding-bottom:80px;}
+.hero-left{flex:0 0 52%;max-width:600px;padding-bottom:40px;}
 .hero-right{flex:0 0 620px;display:flex;align-items:flex-end;justify-content:center;}
 
 .hero-eyebrow{
@@ -455,7 +461,7 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
   .search-results{left:4%;right:4%;}
 }
 
-.tabs{display:flex;white-space:nowrap;}
+.tabs{display:flex;white-space:nowrap;width:max-content;margin:0 auto;}
 .tab-btn{padding:15px 18px;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
 .tab-btn:hover{color:var(--text);}
 .tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
@@ -833,7 +839,7 @@ body::after{
     <li><a href="javascript:void(0)" onclick="showSection('internships')">Jobs & Internships</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('workshops')">Workshops & Conferences</a></li>
     <li><a href="javascript:void(0)" onclick="showSection('programmes')">Graduate Programs-GH</a></li>
-    <li><a href="javascript:void(0)" onclick="showSection('about')">About</a></li>
+    <li><a href="javascript:void(0)" class="nav-about" onclick="showSection('about')">About</a></li>
   </ul>
   <a href="#" class="btn-nav nav-submit-desktop" onclick="showSection('submit')">+ Submit</a>
   <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Open menu">
