@@ -1089,6 +1089,7 @@ body::after{
     <button class="f-btn" data-f="ug" onclick="filterProgrammes(this)">Univ. of Ghana</button>
     <button class="f-btn" data-f="knust" onclick="filterProgrammes(this)">KNUST</button>
     <button class="f-btn" data-f="ucc" onclick="filterProgrammes(this)">UCC</button>
+    <button class="f-btn" data-f="uds" onclick="filterProgrammes(this)">UDS</button>
     <button class="f-btn" data-f="uhas" onclick="filterProgrammes(this)">UHAS</button>
     <button class="f-btn" data-f="utas" onclick="filterProgrammes(this)">UTAS</button>
     <div class="sort-wrap"><label for="sort-prog">Sort:</label><select id="sort-prog" class="sort-select" onchange="sortProgrammes(this.value)"><option value="default">Newest first</option><option value="deadline">Deadline (soonest)</option><option value="title">Title (A–Z)</option><option value="value">Degree (PhD first)</option></select></div>
@@ -1882,7 +1883,7 @@ function renderProgrammes(data){
                    : 'badge-muted';
     return '<div class="card'+isClosedCls(p.deadline, p.closed)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
-      '<div class="card-flag"><span class="card-flag-label">'+(p.host||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
+      '<div class="card-flag"><span class="card-flag-label">'+(p.country||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
       '<div class="badges">'+
         closedBadge(p.deadline, p.closed)+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
