@@ -1247,7 +1247,7 @@ body::after{
       </div>
       <div class="form-row">
         <div class="form-group"><label>Deadline</label><input type="date" class="date-input"/></div>
-        <div class="form-group"><label>Degree Level</label><select><option>MSc</option><option>PhD</option><option>Both MSc & PhD</option><option>Postdoc</option></select></div>
+        <div class="form-group"><label>Degree Level</label><select><option>MSc</option><option>PhD</option><option>Both MSc &amp; PhD</option><option>PostDoc</option><option>PhD &amp; PostDoc</option><option>MSc, PhD &amp; PostDoc</option></select></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>Funding Type</label><select><option>Fully Funded</option><option>Partial Funding</option><option>Stipend Only</option></select></div>
@@ -1525,7 +1525,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-05-30f</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-01b</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1806,16 +1806,7 @@ function showSection(name){
 }
 
 let oppFilter='all';
-const grants=[
-  {id:'g1',flag:'🌍',title:'Wellcome Trust Africa Research Grant',host:'Wellcome Trust',country:'UK/Africa',type:'research',amount:'Up to $50,000',deadline:'30 Apr 2027',soon:false,fields:'Any biological science discipline',desc:'Supports early-career African researchers conducting high-impact science on the continent.',link:'https://wellcome.org/grant-funding',tags:['research']},
-  {id:'g2',flag:'🇺🇸',title:'NIH Fogarty International Research Grant',host:'NIH Fogarty Center',country:'USA',type:'research',amount:'Up to $75,000',deadline:'15 Sep 2026',soon:false,fields:'Infectious disease, genomics, public health',desc:'Supports collaborative research between US and low/middle-income country scientists.',link:'https://www.fic.nih.gov/Funding/Pages/default.aspx',tags:['research']},
-  {id:'g3',flag:'🌍',title:'African Academy of Sciences CARTA Grant',host:'AAS / CARTA',country:'Africa',type:'research',amount:'Up to $20,000',deadline:'30 Oct 2026',soon:false,fields:'Population health, epidemiology, biomedical sciences',desc:'CARTA grants support doctoral and post-doctoral researchers at African institutions.',link:'https://cartafrica.org/',tags:['research','africa']},
-  {id:'g4',flag:'🇩🇪',title:'DAAD Research Travel Grant',host:'DAAD',country:'Germany',type:'travel',amount:'€1,500 – €3,000',deadline:'01 Jun 2026',soon:false,fields:'All sciences',desc:'Covers travel and accommodation for short-term research visits to German institutions.',link:'https://www.daad.de/en/study-and-research-in-germany/scholarships/',tags:['travel']},
-  {id:'g5',flag:'🇬🇧',title:'Royal Society Africa Travel Grant',host:'Royal Society',country:'UK',type:'travel',amount:'Up to £5,000',deadline:'15 Sep 2026',soon:true,fields:'All sciences',desc:'Enables African researchers to visit UK institutions for collaborative research.',link:'https://royalsociety.org/grants/',tags:['travel']},
-  {id:'g6',flag:'🇬🇭',title:'Ghana NaCCA Research Equipment Grant',host:'NaCCA Ghana',country:'Ghana',type:'equipment',amount:'GH¢ 50,000',deadline:'20 Sep 2026',soon:false,fields:'Laboratory sciences',desc:'Provides lab equipment grants to accredited Ghanaian research institutions.',link:'https://nacca.gov.gh/',tags:['equipment','africa']},
-  {id:'g7',flag:'🌍',title:'H3Africa Research Grant',host:'H3Africa Consortium',country:'Africa',type:'research',amount:'Up to $100,000',deadline:'28 Feb 2027',soon:false,fields:'Genomics, population genetics',desc:'Supports genomics and population health research led by African researchers.',link:'https://h3africa.org/',tags:['research','africa']},
-  {id:'g8',flag:'🇺🇸',title:'American Society for Microbiology SMID Grant',host:'ASM',country:'USA',type:'research',amount:'Up to $3,000',deadline:'01 Dec 2026',soon:false,fields:'Microbiology, infectious disease',desc:'Small research grants for early-career microbiologists, open to African applicants.',link:'https://asm.org/Grants',tags:['research']},
-];
+const grants=[];
 function setText(id, val) {
   const el = document.getElementById(id);
   if (el) el.textContent = val;
@@ -1980,6 +1971,7 @@ function renderOpportunities(data){
       closedBadge(o.deadline, o.closed)+
       (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
       (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
+      (o.tags.includes('postdoc')?'<span class="badge badge-blue">Postdoc</span>':'')+
       (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
       (isClosingSoon(o.deadline,o.soon,o.closed)?'<span class="badge badge-red">⏰ Closing Soon</span>':'')+
     '</div>'+
@@ -2203,6 +2195,7 @@ function openModal(id){
   document.getElementById('m-badges').innerHTML=
     (o.tags.includes('fully-funded')?'<span class="badge badge-green">Fully Funded</span>':'<span class="badge badge-gold">Partial</span>')+
     (o.tags.includes('phd')?'<span class="badge badge-blue">PhD</span>':'')+
+    (o.tags.includes('postdoc')?'<span class="badge badge-blue">Postdoc</span>':'')+
     (o.tags.includes('msc')?'<span class="badge badge-muted">MSc</span>':'')+
     (o.soon?'<span class="badge badge-red">⏰ Closing Soon</span>':'');
   document.getElementById('overlay').classList.add('open');
@@ -2591,13 +2584,17 @@ function sheetToScholarship(row, id) {
   const tags = [];
   // Combine all sources for tag detection
   const blob = (title + ' ' + (row.description||'') + ' ' + (row.degree||'') + ' ' + (row.funding||'')).toLowerCase();
-  // Funding tags
+  // Funding tags — funding wording can legitimately come from any field
   if (blob.includes('fully funded') || blob.includes('full tuition') || blob.includes('fully-funded')) {
     tags.push('fully-funded');
   }
-  // Degree tags
-  if (blob.includes('phd') || blob.includes('doctor')) tags.push('phd');
-  if (blob.includes('msc') || blob.includes('master') || blob.includes('mphil')) tags.push('msc');
+  // Degree tags — derive ONLY from the degree field (+ title), NOT the description.
+  // The description often mentions a degree as an eligibility requirement
+  // (e.g. "for applicants with a PhD"), which must not be mistaken for the award level.
+  const degBlob = ((row.degree||'') + ' ' + title).toLowerCase();
+  if (degBlob.includes('postdoc') || degBlob.includes('post-doc') || degBlob.includes('post doc')) tags.push('postdoc');
+  if (degBlob.includes('phd') || degBlob.includes('doctor')) tags.push('phd');
+  if (degBlob.includes('msc') || degBlob.includes('master') || degBlob.includes('mphil')) tags.push('msc');
   const isLocal = country.toLowerCase().includes('ghana');
   return {
     scope: isLocal ? 'local' : 'international',
@@ -2605,6 +2602,7 @@ function sheetToScholarship(row, id) {
     flag: flagFor(country),
     country, title, host: row.host,
     degree: row.degree || (tags.includes('phd') && tags.includes('msc') ? 'MSc & PhD' :
+            tags.includes('postdoc') ? 'Postdoc' :
             tags.includes('phd') ? 'PhD' : tags.includes('msc') ? 'MSc' : 'MSc & PhD'),
     fields: 'Biological Sciences', tags,
     funding: row.funding || 'See link', deadline: row.deadline,
