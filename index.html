@@ -1380,16 +1380,17 @@ body::after{
     <div class="s-form" id="sf-programme">
       <div class="form-row">
         <div class="form-group"><label>Programme Name</label><input type="text" placeholder="e.g. MSc Biochemistry"/></div>
-        <div class="form-group"><label>University</label><input type="text" placeholder="e.g. University of Ghana"/></div>
+        <div class="form-group"><label>Institution</label><input type="text" placeholder="e.g. University of Ghana"/></div>
       </div>
       <div class="form-row">
+        <div class="form-group"><label>Centre / Institute (optional)</label><input type="text" placeholder="e.g. WACCBIP"/></div>
         <div class="form-group"><label>Degree Type</label><select><option>MSc</option><option>MPhil</option><option>PhD</option><option>PGDip</option></select></div>
-        <div class="form-group"><label>Duration</label><input type="text" placeholder="e.g. 2 years"/></div>
       </div>
       <div class="form-row">
+        <div class="form-group"><label>Duration</label><input type="text" placeholder="e.g. 2 years"/></div>
         <div class="form-group"><label>Application Status</label><select><option>Open</option><option>Closed</option></select></div>
-        <div class="form-group"><label>Application Deadline (optional)</label><input type="date" class="date-input"/></div>
       </div>
+      <div class="form-group"><label>Application Deadline (optional)</label><input type="date" class="date-input"/></div>
       <div class="form-group"><label>Admission Requirements</label><textarea placeholder="Entry requirements, GPA, other qualifications…"></textarea></div>
       <div class="form-group"><label>Programme Link</label><input type="url" placeholder="https://"/></div>
       <button class="btn-submit" onclick="submitForm('Programme')">Submit Programme →</button>
@@ -1531,7 +1532,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02d</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1680,7 +1681,7 @@ body::after{
     <div class="badges" id="pm-badges" style="margin-bottom:14px"></div>
     <hr/>
     <div class="modal-row"><div class="modal-label">Degree</div><div class="modal-val" id="pm-degree"></div></div>
-    <div class="modal-row"><div class="modal-label">University</div><div class="modal-val" id="pm-uni"></div></div>
+    <div class="modal-row"><div class="modal-label">Institution</div><div class="modal-val" id="pm-uni"></div></div>
     <div class="modal-row"><div class="modal-label">Duration</div><div class="modal-val" id="pm-duration"></div></div>
     <div class="modal-row"><div class="modal-label">Fields</div><div class="modal-val" id="pm-fields"></div></div>
     <div class="modal-row" id="pm-deadline-row"><div class="modal-label">Deadline</div><div class="modal-val" id="pm-deadline"></div></div>
@@ -2816,7 +2817,7 @@ function sheetToProgramme(row, id) {
   // Detect university for filter (UG / KNUST / UCC / UDS / Other)
   const hostLow = String(row.host || '').toLowerCase();
   const uni = hostLow.includes('knust')      ? 'knust'
-            : hostLow.includes('university of ghana') || /\bug\b/.test(hostLow) ? 'ug'
+            : hostLow.includes('university of ghana') || hostLow.includes('waccbip') || hostLow.includes('noguchi') || /\bug\b/.test(hostLow) ? 'ug'
             : hostLow.includes('cape coast') || hostLow.includes('ucc') ? 'ucc'
             : hostLow.includes('development studies') || hostLow.includes('uds') ? 'uds'
             : hostLow.includes('health and allied') || hostLow.includes('uhas') ? 'uhas'
