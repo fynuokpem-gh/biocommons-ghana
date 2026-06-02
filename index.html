@@ -1372,6 +1372,10 @@ body::after{
         <div class="form-group"><label>Date</label><input type="date" class="date-input"/></div>
       </div>
       <div class="form-row">
+        <div class="form-group"><label>Duration <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="text" placeholder="e.g. 3 days"/></div>
+        <div class="form-group"><label>Registration Deadline <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="date" class="date-input"/></div>
+      </div>
+      <div class="form-row">
         <div class="form-group"><label>Location / Mode</label><input type="text" placeholder="e.g. Accra / Virtual / Hybrid"/></div>
         <div class="form-group"><label>Cost</label><select><option>Free</option><option>Paid — registration fee</option><option>Funded (travel & accommodation)</option></select></div>
       </div>
@@ -1540,7 +1544,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02g</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02h</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1645,6 +1649,8 @@ body::after{
     <hr/>
     <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="wm-type"></div></div>
     <div class="modal-row"><div class="modal-label">Date</div><div class="modal-val" id="wm-date"></div></div>
+    <div class="modal-row" id="wm-duration-row" style="display:none"><div class="modal-label">Duration</div><div class="modal-val" id="wm-duration"></div></div>
+    <div class="modal-row" id="wm-regdeadline-row" style="display:none"><div class="modal-label">Register By</div><div class="modal-val" id="wm-regdeadline"></div></div>
     <div class="modal-row"><div class="modal-label">Location</div><div class="modal-val" id="wm-location"></div></div>
     <div class="modal-row"><div class="modal-label">Mode</div><div class="modal-val" id="wm-mode"></div></div>
     <div class="modal-row"><div class="modal-label">Cost</div><div class="modal-val" id="wm-cost"></div></div>
@@ -2134,17 +2140,19 @@ function renderWorkshops(data){
                     : t === 'webinar'    ? 'badge-blue'
                     : t === 'seminar'    ? 'badge-muted'
                     : 'badge-green';
-    return '<div class="card'+isClosedCls(w.date, w.closed)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
+    const closeRef = w.regDeadline || w.date;
+    return '<div class="card'+isClosedCls(closeRef, w.closed)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
       bookmarkButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
-        closedBadge(w.date, w.closed)+
+        closedBadge(closeRef, w.closed)+
+        (isClosingSoon(closeRef,false,w.closed)?'<span class="badge badge-red">⏰ Registration Closing Soon</span>':'')+
         '<span class="badge '+typeBadge+'">'+(typeLabel||'Workshop')+'</span>'+
         (w.cost==='free'?'<span class="badge badge-green">Free</span>':'<span class="badge badge-muted">'+(w.cost==='funded'?'Funded':'Paid')+'</span>')+
         (w.mode==='virtual'?'<span class="badge badge-gold">🌐 Virtual</span>':w.mode==='hybrid'?'<span class="badge badge-blue">Hybrid</span>':'<span class="badge badge-muted">In-Person</span>')+
       '</div>'+
       '<div><div class="card-title">'+w.title+'</div><div class="card-host">'+w.host+'</div></div>'+
-      '<div class="card-meta"><span>📅 '+(w.date||'TBA')+'</span><span>📍 '+(w.location||'Ghana')+'</span>'+(w.added?'<span class="card-added">'+relativeTime(w.added)+'</span>':'')+'</div>'+
+      '<div class="card-meta"><span>📅 '+(w.date||'TBA')+'</span>'+(w.duration?'<span>⏱ '+w.duration+'</span>':'')+'<span>📍 '+(w.location||'Ghana')+'</span>'+(w.regDeadline?'<span>🗓 Register by '+w.regDeadline+'</span>':'')+(w.added?'<span class="card-added">'+relativeTime(w.added)+'</span>':'')+'</div>'+
       '<a class="card-action" href="'+normalizeUrl(w.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">Register →</a>'+
     '</div>';
   }).join('');
@@ -2401,6 +2409,12 @@ function openWorkshopModal(id){
   document.getElementById('wm-host').textContent=w.host;
   document.getElementById('wm-type').textContent=((w.type||'workshop').charAt(0).toUpperCase()+(w.type||'workshop').slice(1));
   document.getElementById('wm-date').textContent=w.date||'TBA';
+  const wmDurRow=document.getElementById('wm-duration-row');
+  if(w.duration){document.getElementById('wm-duration').textContent=w.duration;wmDurRow.style.display='';}
+  else wmDurRow.style.display='none';
+  const wmRegRow=document.getElementById('wm-regdeadline-row');
+  if(w.regDeadline){document.getElementById('wm-regdeadline').textContent=w.regDeadline;wmRegRow.style.display='';}
+  else wmRegRow.style.display='none';
   document.getElementById('wm-location').textContent=w.location||'Ghana';
   document.getElementById('wm-mode').textContent=w.mode==='virtual'?'🌐 Virtual':(w.mode==='hybrid'?'Hybrid':'In-Person');
   document.getElementById('wm-cost').textContent=w.cost==='free'?'Free':(w.cost==='funded'?'Funded (travel & accommodation)':'Paid registration');
@@ -2816,11 +2830,15 @@ function sheetToWorkshop(row, id) {
              : locLow.includes('hybrid')                                ? 'hybrid'
              : 'in-person';
 
+  const duration    = parse('Duration') || '';
+  const regDeadline = parse('Registration deadline') || '';
+
   return {
     added: row.added || row.date || '',
     id: 5000 + id, flag: flagFor(location), title: row.title || '', host: row.host || '',
     type, cost, mode,
     date: row.deadline || 'TBA', location,
+    duration, regDeadline,
     country: row.country || location,
     fields: 'Biological Sciences',
     description: parse('Notes') || desc,
