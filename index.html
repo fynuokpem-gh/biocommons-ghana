@@ -531,8 +531,9 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .card.is-closed .card-action{background:#B0B0B0;pointer-events:none;}
 .card-tags{display:flex;gap:6px;flex-wrap:wrap;}
 .tag{font-size:11px;color:var(--muted);background:var(--surface);padding:3px 9px;border-radius:6px;border:1px solid var(--border);}
-.card-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:auto;}
-.card-added{margin-left:auto;color:var(--muted2);font-size:11px;font-weight:600;white-space:nowrap;}
+.card-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;margin-top:auto;align-items:center;}
+.card-meta>span{display:inline-flex;align-items:center;gap:4px;}
+.card-added{flex-basis:100%;margin-top:2px;color:var(--muted2);font-size:11px;font-weight:600;white-space:nowrap;}
 .card-action{display:block;text-align:center;background:var(--dark);color:var(--cream);font-size:13px;font-weight:700;padding:10px;border-radius:8px;text-decoration:none;transition:all 0.2s;margin-top:4px;}
 .card-action:hover{background:var(--dark2);}
 
@@ -1526,7 +1527,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-01c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-01e</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2088,8 +2089,9 @@ function renderReagents(data){
       '<div class="reagent-qty">'+r.qty+'<small>· '+r.condition+'</small></div>'+
       (r.price?'<div class="reagent-price"><span>💵</span><span>'+r.price+'</span></div>':'')+
       (r.exchange?'<div class="reagent-exchange"><span>🔄</span><span>Can offer: '+r.exchange+'</span></div>':'')+
-      '<div class="reagent-meta">'+
-        '<div class="reagent-inst">'+instIcon+' '+r.inst+(r.added?' <span class="card-added">· '+relativeTime(r.added)+'</span>':'')+'</div>'+
+      (r.added?'<div class="card-added" style="border-top:1px solid var(--border);padding-top:10px;margin-top:auto;">'+relativeTime(r.added)+'</div>':'')+
+      '<div class="reagent-meta"'+(r.added?' style="border-top:none;padding-top:6px;margin-top:0;"':'')+'>'+
+        '<div class="reagent-inst">'+instIcon+' '+r.inst+'</div>'+
         '<button class="reagent-contact" onclick="event.stopPropagation();openReagentModal(\''+r.id+'\')">'+btnLabel+'</button>'+
       '</div>'+
     '</div>';
