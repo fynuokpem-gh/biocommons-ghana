@@ -1310,6 +1310,11 @@ body::after{
         <div class="form-group"><label>Type</label><select><option>Research</option><option>Industry</option><option>Field Work</option><option>Clinical</option></select></div>
         <div class="form-group"><label>Compensation</label><select><option>Paid</option><option>Stipend</option><option>Unpaid</option><option>Accommodation Provided</option></select></div>
       </div>
+      <div class="form-row">
+        <div class="form-group"><label>Opening Date <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="date" class="date-input"/></div>
+        <div class="form-group"><label>Deadline <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input type="date" class="date-input"/></div>
+      </div>
+      <div class="form-group"><label>Application Status</label><select><option value="Open">Open</option><option value="Closed">Closed</option></select></div>
       <div class="form-group"><label>Description & How to Apply</label><textarea placeholder="What will the person do? What are the requirements?"></textarea></div>
       <div class="form-group"><label>Application Link / Contact</label><input type="text" placeholder="Link or email"/></div>
       <button class="btn-submit" onclick="submitForm('Job / Internship')">Submit →</button>
@@ -1535,7 +1540,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02e</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02f</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1617,6 +1622,8 @@ body::after{
     <div class="modal-row"><div class="modal-label">Location</div><div class="modal-val" id="jm-location"></div></div>
     <div class="modal-row"><div class="modal-label">Type</div><div class="modal-val" id="jm-type"></div></div>
     <div class="modal-row" id="jm-duration-row"><div class="modal-label">Duration</div><div class="modal-val" id="jm-duration"></div></div>
+    <div class="modal-row" id="jm-opens-row" style="display:none"><div class="modal-label">Opens</div><div class="modal-val" id="jm-opens"></div></div>
+    <div class="modal-row" id="jm-deadline-row" style="display:none"><div class="modal-label">Deadline</div><div class="modal-val" id="jm-deadline"></div></div>
     <div class="modal-row"><div class="modal-label">Compensation</div><div class="modal-val" id="jm-comp"></div></div>
     <div class="modal-row" id="jm-qual-row"><div class="modal-label">Qualification</div><div class="modal-val" id="jm-qual"></div></div>
     <div class="modal-row" id="jm-avail-row"><div class="modal-label">Availability</div><div class="modal-val" id="jm-avail"></div></div>
@@ -2045,17 +2052,18 @@ function renderInternships(data){
     const isWanted = i.type === 'wanted';
     const wantedBadge = isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' : '';
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
-    return '<div class="card" onclick="openJobModal(\''+i.id+'\')">'+
+    return '<div class="card'+(!isWanted?isClosedCls(i.deadline, i.closed):'')+'" onclick="openJobModal(\''+i.id+'\')">'+
       bookmarkButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
+        (!isWanted ? closedBadge(i.deadline, i.closed) : '')+
         (!isWanted && i.paid ? '<span class="badge badge-green">'+(i.compensation||'Paid')+'</span>' : '')+
         (!isWanted && !i.paid ? '<span class="badge badge-muted">'+(i.compensation||'Unpaid')+'</span>' : '')+
         (typeLabel && !isWanted ? '<span class="badge badge-blue">'+typeLabel+'</span>' : '')+
       '</div>'+
       '<div><div class="card-title">'+i.title+'</div><div class="card-host">'+i.host+'</div></div>'+
-      '<div class="card-meta"><span>📍 '+(i.location||'Ghana')+'</span><span>⏱ '+(i.duration||'See link')+'</span>'+(i.added?'<span class="card-added">'+relativeTime(i.added)+'</span>':'')+'</div>'+
+      '<div class="card-meta"><span>📍 '+(i.location||'Ghana')+'</span><span>⏱ '+(i.duration||'See link')+'</span>'+(!isWanted&&i.deadline?'<span>📅 '+i.deadline+'</span>':'')+(i.added?'<span class="card-added">'+relativeTime(i.added)+'</span>':'')+'</div>'+
       '<a class="card-action" href="'+normalizeUrl(i.link)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">'+(isWanted?'View Profile →':'View Position →')+'</a>'+
     '</div>';
   }).join('');
@@ -2348,6 +2356,14 @@ function openJobModal(id){
     availRow.style.display='none';
   }
 
+  // Opens / Deadline rows (regular jobs only)
+  const opensRow=document.getElementById('jm-opens-row');
+  const deadlineRow=document.getElementById('jm-deadline-row');
+  if(!isWanted && j.opens){document.getElementById('jm-opens').textContent=j.opens;opensRow.style.display='';}
+  else opensRow.style.display='none';
+  if(!isWanted && j.deadline){document.getElementById('jm-deadline').textContent=j.deadline;deadlineRow.style.display='';}
+  else deadlineRow.style.display='none';
+
   document.getElementById('jm-desc').textContent=j.description||j.notes||'';
 
   // Link button — handle email vs URL
@@ -2364,7 +2380,8 @@ function openJobModal(id){
   document.getElementById('jm-share-row').innerHTML=modalShareRow('job',j.id);
   document.getElementById('jm-badges').innerHTML=
     (isWanted ? '<span class="badge badge-red">🙋 Looking for work</span>' :
-      ((j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
+      (closedBadge(j.deadline, j.closed)+
+       (j.paid?'<span class="badge badge-green">'+(j.compensation||'Paid')+'</span>':'<span class="badge badge-muted">'+(j.compensation||'Unpaid')+'</span>')+
        '<span class="badge badge-blue">'+((j.type||'').charAt(0).toUpperCase()+(j.type||'').slice(1))+'</span>'));
 
   document.getElementById('job-overlay').classList.add('open');
@@ -2716,7 +2733,10 @@ function sheetToInternship(row, id) {
     id: 3000 + id, flag: flagFor(row.country), title: row.title || '',
     host: row.host || '', location: row.country || 'Ghana',
     type, paid, compensation: fundingRaw || 'Not specified',
-    duration: parse('Duration') || row.deadline || 'See link',
+    duration: parse('Duration') || 'See link',
+    deadline: row.deadline || '',
+    opens: row.opens || '',
+    closed: _rowClosed(row),
     fields: 'Biological Sciences', description: desc,
     link: row.link || row.email || '#'
   };
