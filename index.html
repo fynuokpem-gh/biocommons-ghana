@@ -1540,7 +1540,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02f</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02g</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2638,10 +2638,14 @@ function sheetToScholarship(row, id) {
   // Degree tags — derive ONLY from the degree field (+ title), NOT the description.
   // The description often mentions a degree as an eligibility requirement
   // (e.g. "for applicants with a PhD"), which must not be mistaken for the award level.
+  // Word-boundary matching prevents substring false positives:
+  //   "MSCA" must not match MSc; "Postdoctoral" must not match PhD via "doctoral".
   const degBlob = ((row.degree||'') + ' ' + title).toLowerCase();
-  if (degBlob.includes('postdoc') || degBlob.includes('post-doc') || degBlob.includes('post doc')) tags.push('postdoc');
-  if (degBlob.includes('phd') || degBlob.includes('doctor')) tags.push('phd');
-  if (degBlob.includes('msc') || degBlob.includes('master') || degBlob.includes('mphil')) tags.push('msc');
+  if (/post[\s-]?doc/.test(degBlob)) tags.push('postdoc');
+  // Strip postdoc words first so "postdoctoral" never reads as doctoral/PhD
+  const phdBlob = degBlob.replace(/post[\s-]?doc\w*/g, ' ');
+  if (/\bph\.?\s?d\b/.test(phdBlob) || /\bdoctora(l|te)\b/.test(phdBlob)) tags.push('phd');
+  if (/\bm\.?\s?sc\b/.test(degBlob) || /\bmaster'?s?\b/.test(degBlob) || /\bmphil\b/.test(degBlob)) tags.push('msc');
   const isLocal = country.toLowerCase().includes('ghana');
   return {
     added: row.added || row.date || '',
