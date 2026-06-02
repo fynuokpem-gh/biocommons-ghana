@@ -874,7 +874,7 @@ body::after{
 <body>
 
 <!-- ANNOUNCEMENT BAR -->
-<div class="announce-bar">
+<div class="announce-bar" id="announce-bar">
   <span class="announce-label">📢<span class="announce-label-text"> Announcements</span></span>
   <div class="announce-ticker-wrap">
     <div class="announce-ticker" id="announce-ticker">
@@ -1527,7 +1527,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02a</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02b</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2836,13 +2836,7 @@ function sheetToProgramme(row, id) {
 
 // ─── Announcements ticker ────────────────────────────────────────────────────
 
-const DEFAULT_ANNOUNCEMENTS = [
-  '🎓 <strong>Gates Cambridge Scholarship</strong> — deadline 08 Jan 2026',
-  '⚗️ <strong>New reagent listed:</strong> DNA Extraction Kits at Noguchi Institute',
-  '🏛 <strong>DAAD Scholarships</strong> — closing 15 Oct 2026',
-  '🔬 <strong>NIH Summer Fellowship</strong> open for African applicants',
-  '📅 <strong>Upcoming:</strong> CSIR-SARI Biotechnology Workshop'
-];
+const DEFAULT_ANNOUNCEMENTS = [];
 
 // ─── Email Deadline Reminders ────────────────────────────────────────────────
 
@@ -3561,8 +3555,16 @@ document.addEventListener('click', function(e) {
 function renderTicker(items) {
   const ticker = document.getElementById('announce-ticker');
   if (!ticker) return;
+  const bar = document.getElementById('announce-bar');
+  const list = (items || []).filter(t => t && String(t).trim());
+  if (list.length === 0) {
+    if (bar) bar.style.display = 'none';
+    ticker.innerHTML = '';
+    return;
+  }
+  if (bar) bar.style.display = '';
   // Duplicate items for seamless infinite scroll
-  const all = [...items, ...items];
+  const all = [...list, ...list];
   ticker.innerHTML = all.map(t => '<span>' + t + '</span>').join('');
 }
 
