@@ -517,6 +517,8 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .card-flag{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .card-flag-emoji{font-size:22px;font-family:'Noto Color Emoji','Apple Color Emoji','Segoe UI Emoji',sans-serif;line-height:1;}
 .card-flag-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.03em;}
+.card-uni-logo{height:24px;width:auto;max-width:96px;object-fit:contain;display:inline-block;vertical-align:middle;border-radius:3px;}
+.card-uni-mono{display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:24px;padding:0 7px;border-radius:6px;background:var(--green);color:#fff;font-size:11px;font-weight:700;letter-spacing:0.02em;line-height:1;}
 .card-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.3;}
 .card-host{font-size:13px;color:var(--muted);font-weight:500;}
 .badges{display:flex;gap:6px;flex-wrap:wrap;}
@@ -1545,7 +1547,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-02i</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-04a</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1945,6 +1947,41 @@ function flagFor(country) {
   return empty;
 }
 
+// --- University identity for programme cards -------------------------------
+// Keyed by the `uni` code derived in sheetToProgramme (ug/knust/ucc/uds/uhas/utas).
+// To show a real logo: drop the image in the repo (e.g. logos/ug.png) and set
+// `logo` to that path/URL. Until then a clean initials badge is shown, and any
+// broken/missing logo image falls back to the badge automatically.
+const UNI_INFO = {
+  ug:    { name:'University of Ghana',                mono:'UG',    logo:'' },
+  knust: { name:'KNUST',                              mono:'KNUST', logo:'' },
+  ucc:   { name:'University of Cape Coast',           mono:'UCC',   logo:'' },
+  uds:   { name:'University for Development Studies', mono:'UDS',   logo:'' },
+  uhas:  { name:'UHAS',                               mono:'UHAS',  logo:'' },
+  utas:  { name:'UTAS',                               mono:'UTAS',  logo:'' }
+};
+function uniLogoFail(img){
+  const info = UNI_INFO[img.getAttribute('data-uni')];
+  const span = document.createElement('span');
+  span.className = 'card-uni-mono';
+  span.textContent = info ? info.mono : '•';
+  img.replaceWith(span);
+}
+function _uniMark(uni, info){
+  if(info.logo){
+    return '<img class="card-uni-logo" data-uni="'+uni+'" src="'+info.logo+'" alt="'+info.name+' logo" loading="lazy" onerror="uniLogoFail(this)">';
+  }
+  return '<span class="card-uni-mono">'+info.mono+'</span>';
+}
+function uniBadge(p){
+  const info = UNI_INFO[p.uni];
+  if(info){
+    return '<div class="card-flag">'+_uniMark(p.uni, info)+'<span class="card-flag-label">'+info.name+'</span></div>';
+  }
+  // 'other' / unclassified institution → keep host name + country flag
+  return '<div class="card-flag"><span class="card-flag-label">'+(p.host||p.country||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>';
+}
+
 
 function renderGrants(data){
   const grid=document.getElementById('grants-grid');
@@ -2028,7 +2065,7 @@ function renderProgrammes(data){
                    : 'badge-muted';
     return '<div class="card'+isClosedCls(p.deadline, p.closed)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
-      '<div class="card-flag"><span class="card-flag-label">'+(p.country||'Ghana')+'</span>'+flagFor(p.country||'Ghana')+'</div>'+
+      uniBadge(p)+
       '<div class="badges">'+
         closedBadge(p.deadline, p.closed)+
         '<span class="badge '+degBadge+'">'+(p.degree||'Programme')+'</span>'+
