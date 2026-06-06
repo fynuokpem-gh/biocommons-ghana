@@ -631,6 +631,18 @@ textarea{min-height:100px;resize:vertical;}
 .modal-apply{display:inline-block;background:var(--dark);color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;text-decoration:none;padding:13px 28px;border-radius:50px;transition:background 0.2s;}
 .modal-apply:hover{background:var(--dark2);}
 
+/* Reagent connect form — private contact exchange */
+.reagent-connect{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin:4px 0 8px;}
+.reagent-connect-head{font-weight:800;font-size:15px;color:var(--text);margin-bottom:4px;}
+.reagent-connect-sub{font-size:12.5px;color:var(--muted);line-height:1.55;margin:0 0 14px;}
+.reagent-connect-input{width:100%;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--text);background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:10px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.reagent-connect-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(13,124,62,0.13);}
+.reagent-connect-msg{resize:vertical;min-height:64px;line-height:1.5;}
+.reagent-connect-btn{display:block;width:100%;text-align:center;border:none;cursor:pointer;background:var(--green);margin-top:2px;}
+.reagent-connect-btn:hover{background:var(--dark);}
+.reagent-connect-btn:disabled{opacity:0.6;cursor:default;}
+.reagent-connect-note{font-size:10.5px;color:var(--muted);text-align:center;margin:12px 0 0;line-height:1.5;}
+
 /* ABOUT */
 .about-lead{font-size:16px;line-height:1.85;color:var(--text);max-width:760px;margin-bottom:14px;}
 .about-lead strong{color:var(--green);font-weight:700;}
@@ -1547,7 +1559,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06d</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1612,7 +1624,20 @@ body::after{
     <div class="modal-row" id="rm-exchange-row"><div class="modal-label">Exchange</div><div class="modal-val" id="rm-exchange"></div></div>
     <hr/>
     <p class="modal-desc" id="rm-notes"></p>
-    <a class="modal-apply" id="rm-contact" href="#">Contact →</a>
+
+    <!-- Connect form — exchanges contact details privately via email; the
+         uploader's address is never shown on the page. -->
+    <div id="rm-connect" class="reagent-connect">
+      <div class="reagent-connect-head" id="rm-connect-head">🤝 Connect with the lister</div>
+      <p class="reagent-connect-sub" id="rm-connect-sub">Enter your details — we'll email you and the lister each other's contact info so you can arrange it directly. Your email is shared only with the lister.</p>
+      <input type="text"  id="rm-connect-name"  class="reagent-connect-input" placeholder="Your name" autocomplete="name"/>
+      <input type="email" id="rm-connect-email" class="reagent-connect-input" placeholder="Your email" autocomplete="email"/>
+      <input type="text"  id="rm-connect-inst"  class="reagent-connect-input" placeholder="Your institution (optional)" autocomplete="organization"/>
+      <textarea id="rm-connect-msg" class="reagent-connect-input reagent-connect-msg" placeholder="Optional message to the lister"></textarea>
+      <button id="rm-connect-submit" class="modal-apply reagent-connect-btn" onclick="submitReagentConnect()">Request contact details →</button>
+      <p class="reagent-connect-note">By submitting, your name and email are shared with the lister so they can respond. We don't display either address publicly.</p>
+    </div>
+
     <div id="rm-share-row"></div>
   </div>
 </div>
@@ -2417,20 +2442,30 @@ function openReagentModal(id){
 
   document.getElementById('rm-notes').textContent=r.notes||'';
 
-  // Contact / order button — mailto if it's an email, otherwise toast
-  const contactBtn=document.getElementById('rm-contact');
-  const isEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.contact);
-  const subjectPrefix = isForSale ? 'BioCommons%20Ghana%20%E2%80%94%20Order%20enquiry%3A%20' : 'BioCommons%20Ghana%20%E2%80%94%20';
-  const ctaWord       = isForSale ? 'Order from ' : 'Email ';
-  if(isEmail){
-    contactBtn.href='mailto:'+r.contact+'?subject='+subjectPrefix+encodeURIComponent(r.name);
-    contactBtn.textContent=ctaWord+r.contact+' →';
-    contactBtn.onclick=null;
+  // Private connect form — uploader's email is never shown. Tailor the copy
+  // to the listing type, reset the inputs, and remember which reagent this is.
+  _currentConnectReagent = r;
+  const headEl = document.getElementById('rm-connect-head');
+  const subEl  = document.getElementById('rm-connect-sub');
+  const btnEl  = document.getElementById('rm-connect-submit');
+  if(isForSale){
+    headEl.textContent = '🤝 Request to order';
+    subEl.textContent  = "Enter your details — we'll connect you with the vendor by email so you can arrange the order directly. Your email is shared only with the vendor.";
+    btnEl.textContent  = 'Request order details →';
+  } else if(r.type==='seeking'){
+    headEl.textContent = '🤝 I can help with this';
+    subEl.textContent  = "Have this reagent? Enter your details — we'll email you and the person seeking it each other's contact info so you can arrange it directly.";
+    btnEl.textContent  = "I have this — connect us →";
   } else {
-    contactBtn.href='#';
-    contactBtn.textContent='Contact: '+r.contact;
-    contactBtn.onclick=function(e){e.preventDefault();showToast('Contact: '+r.contact);};
+    headEl.textContent = '🤝 Connect with the lister';
+    subEl.textContent  = "Enter your details — we'll email you and the lister each other's contact info so you can arrange it directly. Your email is shared only with the lister.";
+    btnEl.textContent  = 'Request contact details →';
   }
+  btnEl.disabled = false;
+  document.getElementById('rm-connect-name').value  = '';
+  document.getElementById('rm-connect-email').value = '';
+  document.getElementById('rm-connect-inst').value  = '';
+  document.getElementById('rm-connect-msg').value   = '';
 
   document.getElementById('rm-share-row').innerHTML=modalShareRow('reagent',r.id,{reminder:false});
   const badgeCls   = r.type==='available' ? 'badge-green' : isForSale ? 'badge-blue' : 'badge-gold';
@@ -3091,6 +3126,59 @@ function submitReminder() {
 
 function reminderButton(kind, id) {
   return '<button class="modal-bookmark" style="background:rgba(245,166,35,0.12);border-color:rgba(245,166,35,0.5);color:#B8761A;" onclick="openReminderModal(\'' + kind + '\',\'' + id + '\',event)">🔔 Remind me</button>';
+}
+
+// ─── Reagent contact exchange ────────────────────────────────────────────────
+// Collects an interested party's name + email and POSTs them to the backend,
+// which emails BOTH the requester and the original lister each other's details.
+// The lister's email is never rendered on the page.
+let _currentConnectReagent = null;
+
+function submitReagentConnect() {
+  const r = _currentConnectReagent;
+  if (!r) return;
+  const name  = document.getElementById('rm-connect-name').value.trim();
+  const email = document.getElementById('rm-connect-email').value.trim();
+  const inst  = document.getElementById('rm-connect-inst').value.trim();
+  const msg   = document.getElementById('rm-connect-msg').value.trim();
+
+  if (!name) { showToast('Please enter your name'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email address'); return;
+  }
+
+  const btn = document.getElementById('rm-connect-submit');
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Connecting…';
+
+  const payload = {
+    type: 'reagent_connect',
+    reagent_id: String(r.id),
+    reagent_name: r.name || '',
+    reagent_type: r.type || '',          // available | seeking | for-sale
+    reagent_category: r.category || '',
+    lister_email: r.contact || '',        // sent to backend only, never shown on page
+    lister_inst: r.inst || '',
+    requester_name: name,
+    requester_email: email,
+    requester_inst: inst,
+    message: msg,
+    submittedAt: new Date().toISOString()
+  };
+
+  const done = () => {
+    showToast('✅ Sent! Check your inbox — we\'ve shared your details with the lister.');
+    closeReagentModal();
+    btn.disabled = false;
+    btn.textContent = original;
+  };
+
+  fetch(BIOCOMMONS_API, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  }).then(done).catch(done);
 }
 
 // ─── Bookmarks (localStorage) ────────────────────────────────────────────────
