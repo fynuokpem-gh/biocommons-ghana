@@ -1547,7 +1547,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-04b</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06a</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1829,6 +1829,43 @@ function showSection(name){
 }
 
 let oppFilter='all';
+// When true, an explicit user-chosen sort is active and render() should NOT
+// re-apply the default newest-first ordering. Reset to false whenever a filter
+// button is clicked (filters return to the default newest-first ordering).
+let _sortActive=false;
+// ─── Multi-select filters ────────────────────────────────────────────────────
+// Each section keeps a Set of active filter keys. Empty set == "All".
+// Items must match EVERY active filter (AND logic).
+const _activeFilters = {
+  opportunities: new Set(),
+  grants:        new Set(),
+  internships:   new Set(),
+  reagents:      new Set(),
+  workshops:     new Set(),
+  programmes:    new Set()
+};
+// Toggle a filter button's state within a section and sync the "All" button.
+// Returns the (possibly mutated) Set of active filters for that section.
+function _toggleFilter(section, btn, f){
+  _sortActive = false; // filtering returns to default newest-first ordering
+  const sec = document.getElementById('sec-'+section);
+  const set = _activeFilters[section];
+  if(f === 'all'){
+    set.clear();
+  } else {
+    if(set.has(f)) set.delete(f); else set.add(f);
+  }
+  // Reflect state on buttons
+  sec.querySelectorAll('.f-btn').forEach(b=>{
+    const bf = b.dataset.f.toLowerCase();
+    if(bf === 'all') b.classList.toggle('active', set.size === 0);
+    else             b.classList.toggle('active', set.has(bf));
+  });
+  // Reset sort dropdown to default since we're filtering
+  const sortSel = sec.querySelector('.sort-select');
+  if(sortSel) sortSel.value = 'default';
+  return set;
+}
 const grants=[];
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -1986,6 +2023,7 @@ function uniBadge(p){
 function renderGrants(data){
   const grid=document.getElementById('grants-grid');
   const empty=document.getElementById('grants-empty');
+  if(!_sortActive)data=_byNewest(data);
   data=dropExpired(data,'deadline');
   const total=dropExpired(grants,'deadline').length;
   document.getElementById('grants-count').textContent='Showing '+data.length+' of '+total;
@@ -2006,17 +2044,20 @@ function renderGrants(data){
   '</div>').join('');
 }
 function filterGrants(btn){
-  document.querySelectorAll('#sec-grants .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
-  renderGrants(f==='all'?grants:grants.filter(g=>{
+  const set=_toggleFilter('grants', btn, btn.dataset.f.toLowerCase());
+  if(set.size===0){ renderGrants(grants); return; }
+  renderGrants(grants.filter(g=>{
     const t=String(g.type||'').toLowerCase();
     const tags=(g.tags||[]).map(x=>String(x).toLowerCase());
-    return t===f || tags.indexOf(f)!==-1 || (f==='deadline-soon'&&g.soon);
+    return [...set].every(f =>
+      t===f || tags.indexOf(f)!==-1 || (f==='deadline-soon'&&g.soon)
+    );
   }));
 }
 
 function renderOpportunities(data){
   const grid=document.getElementById('opp-grid'),empty=document.getElementById('opp-empty');
+  if(!_sortActive)data=_byNewest(data);
   data=dropExpired(data,'deadline');
   const total=dropExpired(opportunities,'deadline').length;
   document.getElementById('opp-count').textContent='Showing '+data.length+' of '+total;
@@ -2039,20 +2080,26 @@ function renderOpportunities(data){
   '</div>').join('');
 }
 function filterOpportunities(btn){
-  document.querySelectorAll('#sec-opportunities .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');oppFilter=btn.dataset.f;
+  _toggleFilter('opportunities', btn, btn.dataset.f.toLowerCase());
   applyOppFilter();
 }
 function applyOppFilter(q=''){
   let data=opportunities;
-  if(oppFilter==='local')data=data.filter(o=>o.scope==='local');
-  else if(oppFilter==='international')data=data.filter(o=>o.scope==='international');
-  else if(oppFilter!=='all')data=data.filter(o=>o.tags.includes(oppFilter)||(oppFilter==='deadline-soon'&&o.soon));
+  const set=_activeFilters.opportunities;
+  if(set.size){
+    data=data.filter(o=>[...set].every(f=>{
+      if(f==='local')         return o.scope==='local';
+      if(f==='international')  return o.scope==='international';
+      if(f==='deadline-soon')  return o.soon;
+      return o.tags.includes(f);
+    }));
+  }
   if(q)data=data.filter(o=>o.title.toLowerCase().includes(q)||o.host.toLowerCase().includes(q)||o.country.toLowerCase().includes(q)||o.fields.toLowerCase().includes(q));
   renderOpportunities(data);
 }
 
 function renderProgrammes(data){
+  if(!_sortActive)data=_byNewest(data);
   data=dropExpired(data,'deadline');
   const total=dropExpired(programmes,'deadline').length;
   document.getElementById('prog-count').textContent='Showing '+data.length+' of '+total;
@@ -2078,18 +2125,26 @@ function renderProgrammes(data){
   }).join('');
 }
 function filterProgrammes(btn){
-  document.querySelectorAll('#sec-programmes .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
-  renderProgrammes(f==='all'?programmes:programmes.filter(p=>{
+  const set=_toggleFilter('programmes', btn, btn.dataset.f.toLowerCase());
+  if(set.size===0){ renderProgrammes(programmes); return; }
+  const UNIS=['ug','knust','ucc','uds','uhas','utas'];
+  const uniSel = [...set].filter(f=>UNIS.includes(f));
+  const degSel = [...set].filter(f=>!UNIS.includes(f)); // msc / phd
+  renderProgrammes(programmes.filter(p=>{
     const uni=String(p.uni||'').toLowerCase();
     const deg=String(p.degree||'').toLowerCase();
-    // "msc" filter should also match MPhil (commonly grouped)
-    if(f==='msc') return deg.includes('msc') || deg.includes('mphil');
-    return uni===f || deg.includes(f);
+    // University group: match ANY selected university (OR)
+    const uniOk = uniSel.length===0 || uniSel.includes(uni);
+    // Degree group: match ANY selected degree (OR); "msc" also matches MPhil
+    const degOk = degSel.length===0 || degSel.some(f=>
+      f==='msc' ? (deg.includes('msc')||deg.includes('mphil')) : deg.includes(f)
+    );
+    return uniOk && degOk; // groups AND together
   }));
 }
 
 function renderInternships(data){
+  if(!_sortActive)data=_byNewest(data);
   document.getElementById('int-count').textContent='Showing '+data.length+' of '+internships.length;
   document.getElementById('int-empty').style.display=data.length?'none':'';
   document.getElementById('int-grid').innerHTML=data.map(i=>{
@@ -2113,19 +2168,27 @@ function renderInternships(data){
   }).join('');
 }
 function filterInternships(btn){
-  document.querySelectorAll('#sec-internships .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
-  renderInternships(f==='all'?internships:internships.filter(i=>{
+  const set=_toggleFilter('internships', btn, btn.dataset.f.toLowerCase());
+  if(set.size===0){ renderInternships(internships); return; }
+  const TYPES=['research','industry'];
+  const typeSel=[...set].filter(f=>TYPES.includes(f));
+  const attrSel=[...set].filter(f=>!TYPES.includes(f)); // paid / international / wanted
+  renderInternships(internships.filter(i=>{
     const t=String(i.type||'').toLowerCase();
     const loc=String(i.location||i.country||'').toLowerCase();
-    if(f==='paid')          return i.paid && i.type!=='wanted';
-    if(f==='wanted')        return t==='wanted';
-    if(f==='international') return !loc.includes('ghana') && i.type!=='wanted';
-    return t===f;
+    const typeOk = typeSel.length===0 || typeSel.includes(t);
+    const attrOk = attrSel.every(f=>{
+      if(f==='paid')          return i.paid && i.type!=='wanted';
+      if(f==='wanted')        return t==='wanted';
+      if(f==='international')  return !loc.includes('ghana') && i.type!=='wanted';
+      return t===f;
+    });
+    return typeOk && attrOk;
   }));
 }
 
 function renderReagents(data){
+  if(!_sortActive)data=_byNewest(data);
   document.getElementById('reagent-empty').style.display=data.length?'none':'';
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
     const cardCls    = r.type==='available' ? 'r-available'
@@ -2155,16 +2218,22 @@ function renderReagents(data){
   }).join('');
 }
 function filterReagents(btn){
-  document.querySelectorAll('#sec-reagents .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
-  renderReagents(f==='all'?reagents:reagents.filter(r=>{
+  const set=_toggleFilter('reagents', btn, btn.dataset.f.toLowerCase());
+  if(set.size===0){ renderReagents(reagents); return; }
+  const STATUS=['available','seeking','for-sale'];
+  const statSel=[...set].filter(f=>STATUS.includes(f));
+  const catSel=[...set].filter(f=>!STATUS.includes(f));
+  renderReagents(reagents.filter(r=>{
     const t=String(r.type||'').toLowerCase();
     const c=String(r.category||'').toLowerCase();
-    return t===f || c===f || c.includes(f);
+    const statOk = statSel.length===0 || statSel.includes(t);
+    const catOk  = catSel.length===0 || catSel.some(f=> c===f || c.includes(f));
+    return statOk && catOk;
   }));
 }
 
 function renderWorkshops(data){
+  if(!_sortActive)data=_byNewest(data);
   data=dropExpired(data,'date');
   const cnt = document.getElementById('wks-count');
   const total = dropExpired(workshops,'date').length;
@@ -2196,14 +2265,20 @@ function renderWorkshops(data){
   }).join('');
 }
 function filterWorkshops(btn){
-  document.querySelectorAll('#sec-workshops .f-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');const f=btn.dataset.f.toLowerCase();
-  renderWorkshops(f==='all'?workshops:workshops.filter(w=>{
+  const set=_toggleFilter('workshops', btn, btn.dataset.f.toLowerCase());
+  if(set.size===0){ renderWorkshops(workshops); return; }
+  const TYPES=['workshop','conference'];
+  const typeSel=[...set].filter(f=>TYPES.includes(f));
+  const attrSel=[...set].filter(f=>!TYPES.includes(f)); // free / virtual
+  renderWorkshops(workshops.filter(w=>{
     const t=String(w.type||'').toLowerCase();
     const c=String(w.cost||'').toLowerCase();
     const m=String(w.mode||'').toLowerCase();
-    if(f==='workshop')   return t==='workshop' || t==='seminar' || t==='symposium' || t==='webinar';
-    return t===f || c===f || m===f;
+    const typeOk = typeSel.length===0 || typeSel.some(f=>
+      f==='workshop' ? (t==='workshop'||t==='seminar'||t==='symposium'||t==='webinar') : t===f
+    );
+    const attrOk = attrSel.every(f=> c===f || m===f);
+    return typeOk && attrOk;
   }));
 }
 
@@ -3975,6 +4050,7 @@ function _byAmount(items, field) {
 // ─── Per-section sort handlers ────────────────────────────────────────────────
 
 function sortOpportunities(mode) {
+  _sortActive = (mode && mode !== 'default');
   let sorted = opportunities;
   if (mode === 'deadline') sorted = _byDeadline(opportunities);
   else if (mode === 'title')    sorted = _byTitle(opportunities);
@@ -3982,36 +4058,42 @@ function sortOpportunities(mode) {
   else                          sorted = _byNewest(opportunities);
   renderOpportunities(sorted);
   // Reset filter to "All" so user sees the full sorted set
+  _activeFilters.opportunities.clear();
   document.querySelectorAll('#sec-opportunities .f-btn').forEach(b => b.classList.remove('active'));
   const allBtn = document.querySelector('#sec-opportunities .f-btn[data-f="all"]');
   if (allBtn) allBtn.classList.add('active');
 }
 
 function sortGrants(mode) {
+  _sortActive = (mode && mode !== 'default');
   let sorted = grants;
   if (mode === 'deadline')      sorted = _byDeadline(grants);
   else if (mode === 'title')    sorted = _byTitle(grants);
   else if (mode === 'value')    sorted = _byAmount(grants, 'amount');
   else                          sorted = _byNewest(grants);
   renderGrants(sorted);
+  _activeFilters.grants.clear();
   document.querySelectorAll('#sec-grants .f-btn').forEach(b => b.classList.remove('active'));
   const allBtn = document.querySelector('#sec-grants .f-btn[data-f="all"]');
   if (allBtn) allBtn.classList.add('active');
 }
 
 function sortInternships(mode) {
+  _sortActive = (mode && mode !== 'default');
   let sorted = internships;
   if (mode === 'deadline')      sorted = _byNewest(internships);   // jobs don't have deadlines; reuse newest
   else if (mode === 'title')    sorted = _byTitle(internships);
   else if (mode === 'value')    sorted = _byAmount(internships, 'compensation');
   else                          sorted = _byNewest(internships);
   renderInternships(sorted);
+  _activeFilters.internships.clear();
   document.querySelectorAll('#sec-internships .f-btn').forEach(b => b.classList.remove('active'));
   const allBtn = document.querySelector('#sec-internships .f-btn[data-f="all"]');
   if (allBtn) allBtn.classList.add('active');
 }
 
 function sortWorkshops(mode) {
+  _sortActive = (mode && mode !== 'default');
   let sorted = workshops;
   if (mode === 'deadline')      sorted = _byDeadline(workshops);   // 'date' is the event date
   else if (mode === 'title')    sorted = _byTitle(workshops);
@@ -4021,12 +4103,14 @@ function sortWorkshops(mode) {
   }
   else                          sorted = _byNewest(workshops);
   renderWorkshops(sorted);
+  _activeFilters.workshops.clear();
   document.querySelectorAll('#sec-workshops .f-btn').forEach(b => b.classList.remove('active'));
   const allBtn = document.querySelector('#sec-workshops .f-btn[data-f="all"]');
   if (allBtn) allBtn.classList.add('active');
 }
 
 function sortProgrammes(mode) {
+  _sortActive = (mode && mode !== 'default');
   let sorted = programmes;
   if (mode === 'deadline')      sorted = _byDeadline(programmes);
   else if (mode === 'title')    sorted = _byTitle(programmes);
@@ -4041,6 +4125,7 @@ function sortProgrammes(mode) {
   }
   else                          sorted = _byNewest(programmes);
   renderProgrammes(sorted);
+  _activeFilters.programmes.clear();
   document.querySelectorAll('#sec-programmes .f-btn').forEach(b => b.classList.remove('active'));
   const allBtn = document.querySelector('#sec-programmes .f-btn[data-f="all"]');
   if (allBtn) allBtn.classList.add('active');
