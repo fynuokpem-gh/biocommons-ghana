@@ -1547,7 +1547,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06a</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06b</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1665,7 +1665,7 @@ body::after{
 </div>
 
 <!-- REMINDER MODAL -->
-<div class="overlay" id="reminder-overlay" onclick="closeReminderModal(event)">
+<div class="overlay" id="reminder-overlay" style="z-index:1050" onclick="closeReminderModal(event)">
   <div class="modal" style="max-width:480px;">
     <button class="modal-x" onclick="closeReminderModal()">✕</button>
     <h2>🔔 Get Deadline Reminders</h2>
@@ -3041,7 +3041,9 @@ function openReminderModal(kind, id, e) {
 function closeReminderModal(e) {
   if (e && e.target !== document.getElementById('reminder-overlay')) return;
   document.getElementById('reminder-overlay').classList.remove('open');
-  document.body.style.overflow = '';
+  // Only release the scroll lock if no other modal is still open underneath
+  // (the reminder is usually launched from another open modal).
+  if (!document.querySelector('.overlay.open')) document.body.style.overflow = '';
 }
 
 function submitReminder() {
