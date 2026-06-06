@@ -1559,7 +1559,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06d</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06e</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -3543,10 +3543,15 @@ function buildShareUrl(item, kind) {
 function buildShareText(item) {
   const title    = item.title || item.name || 'Opportunity';
   const host     = item.host  || item.inst || '';
-  const deadline = item.deadline || item.date || '';
+  // For workshops the registration deadline (regDeadline) is the date to apply by —
+  // item.date is the EVENT date, not the deadline. Use regDeadline when present and
+  // label it "Apply by"; otherwise fall back to the generic deadline field.
+  const applyBy  = item.regDeadline || item.deadline || '';
+  const eventDate = item.date && item.date !== 'TBA' ? item.date : '';
   let txt = '🎓 ' + title;
-  if (host)     txt += '\n🏛️ ' + host;
-  if (deadline) txt += '\n⏰ Deadline: ' + deadline;
+  if (host)      txt += '\n🏛️ ' + host;
+  if (eventDate && item.regDeadline) txt += '\n📅 ' + eventDate;   // workshops: show event date too
+  if (applyBy)   txt += '\n⏰ Apply by: ' + applyBy;
   txt += '\n\nFound on BioCommons Ghana — Open Science. Open Doors. Open Ghana. 🇬🇭';
   txt += '\n' + BIOCOMMONS_SHORT_LINK;
   return txt;
@@ -3580,6 +3585,11 @@ function shareVia(platform, kind, id, e) {
   // Append application link only if it's a real URL different from the BioCommons short link
   const fullText = appLink ? text + '\n\nApply here: ' + appLink : text;
   const encodedUrl  = encodeURIComponent(appLink || BIOCOMMONS_SHORT_LINK);
+  // LinkedIn (and Twitter) build their preview card from the shared URL. Always
+  // point those at BioCommons so the preview shows OUR branded OG card — not the
+  // external apply page (e.g. crid-cam.com). The apply link still rides along in
+  // the post text for platforms that display it.
+  const encodedBioUrl = encodeURIComponent(buildShareUrl(item, kind));
   const encodedText = encodeURIComponent(fullText);
 
   // Native share (Web Share API) — renders emojis correctly on phone AND desktop.
@@ -3594,9 +3604,9 @@ function shareVia(platform, kind, id, e) {
   if (platform === 'whatsapp') {
     shareUrl = 'https://wa.me/?text=' + encodedText;
   } else if (platform === 'twitter') {
-    shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodedUrl;
+    shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodedBioUrl;
   } else if (platform === 'linkedin') {
-    shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodedUrl;
+    shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodedBioUrl;
   } else if (platform === 'copy') {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(() => showToast('Copied to clipboard!'));
