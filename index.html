@@ -296,6 +296,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 /* Prevent body scroll when menu open */
 body.menu-open{overflow:hidden;}
 
+/* Honeypot — invisible to humans, irresistible to form-filling bots.
+   Deliberately NOT display:none (smarter bots skip those); moved off-screen instead. */
+.hp-field{position:absolute !important;left:-9999px !important;top:auto !important;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;}
+
 /* HERO */
 .hero{background:var(--dark);padding:56px 5% 0;position:relative;overflow:hidden;}
 .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 68% 50%,rgba(13,124,62,0.09) 0%,transparent 60%);pointer-events:none;}
@@ -1296,6 +1300,7 @@ body::after{
     </div>
 
     <div class="s-form active" id="sf-scholarship">
+      <input type="text" name="website" class="hp-field" id="hp-sf-scholarship" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Scholarship Name</label><input type="text" placeholder="e.g. Commonwealth Scholarships"/></div>
         <div class="form-group"><label>Host Organisation</label><input type="text" placeholder="e.g. Commonwealth Commission"/></div>
@@ -1319,6 +1324,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-grant">
+      <input type="text" name="website" class="hp-field" id="hp-sf-grant" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Grant Name</label><input type="text" placeholder="e.g. Wellcome Trust Africa Research Grant"/></div>
         <div class="form-group"><label>Host Organisation</label><input type="text" placeholder="e.g. Wellcome Trust"/></div>
@@ -1355,6 +1361,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-internship">
+      <input type="text" name="website" class="hp-field" id="hp-sf-internship" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Position Title</label><input type="text" placeholder="e.g. Research Assistant — Molecular Biology"/></div>
         <div class="form-group"><label>Organisation</label><input type="text" placeholder="e.g. CSIR-SARI"/></div>
@@ -1378,6 +1385,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-jobwanted">
+      <input type="text" name="website" class="hp-field" id="hp-sf-jobwanted" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div style="background:var(--red-dim);border:1px solid rgba(206,17,38,0.15);border-radius:var(--radius-sm);padding:14px 18px;font-size:13px;color:var(--red);font-weight:600;">
         🙋 You are posting what <em>you</em> are looking for. Reviewed before going live.
       </div>
@@ -1401,6 +1409,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-reagent">
+      <input type="text" name="website" class="hp-field" id="hp-sf-reagent" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Listing Type</label><select><option>I have it (Available — free / exchange)</option><option>I need it (Seeking)</option><option>For Sale (Biotech vendor)</option></select></div>
         <div class="form-group"><label>Category</label><select><option>Chemicals/Biologics</option><option>Kits</option><option>Equipment</option><option>Consumables</option></select></div>
@@ -1420,6 +1429,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-workshop">
+      <input type="text" name="website" class="hp-field" id="hp-sf-workshop" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Event Name</label><input type="text" placeholder="e.g. Bioinformatics Boot Camp 2026"/></div>
         <div class="form-group"><label>Type</label><select><option>Workshop</option><option>Conference</option><option>Symposium</option><option>Seminar</option><option>Webinar</option></select></div>
@@ -1445,6 +1455,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-programme">
+      <input type="text" name="website" class="hp-field" id="hp-sf-programme" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Programme Name</label><input type="text" placeholder="e.g. MSc Biochemistry"/></div>
         <div class="form-group"><label>University</label><input type="text" placeholder="e.g. University of Ghana"/></div>
@@ -1467,6 +1478,7 @@ body::after{
     </div>
 
     <div class="s-form" id="sf-professor">
+      <input type="text" name="website" class="hp-field" id="hp-sf-professor" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <div class="form-row">
         <div class="form-group"><label>Professor's Name</label><input type="text" placeholder="e.g. Prof. Kofi Mensah"/></div>
         <div class="form-group"><label>University</label><select><option>University of Ghana (UG)</option><option>KNUST</option><option>University of Cape Coast (UCC)</option><option>University for Dev. Studies (UDS)</option><option>Other</option></select></div>
@@ -1498,6 +1510,7 @@ body::after{
     <div style="display:flex;gap:12px;flex-wrap:wrap;">
       <input type="text" id="nl-name" placeholder="Your full name" style="flex:1;min-width:160px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
       <input type="text" id="nl-institution" placeholder="Institution / University" style="flex:1;min-width:180px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
+      <input type="text" name="website" class="hp-field" id="hp-newsletter" tabindex="-1" autocomplete="off" aria-hidden="true"/>
       <input type="email" id="nl-email" placeholder="Your email address" style="flex:2;min-width:220px;background:rgba(255,251,244,0.12);border:1px solid rgba(255,251,244,0.32);border-radius:10px;padding:14px 18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--cream);outline:none;text-align:left;" onfocus="this.style.borderColor='rgba(245,166,35,0.7)'" onblur="this.style.borderColor='rgba(255,251,244,0.32)'"/>
       <button onclick="subscribeNewsletter()" style="background:var(--gold);color:var(--dark);border:none;padding:14px 28px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='#FFB733'" onmouseout="this.style.background='#F5A623'">Subscribe →</button>
     </div>
@@ -1610,7 +1623,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09d</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09e</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -1876,6 +1889,14 @@ body::after{
    Leave empty ('') to run in offline/demo mode.
    ──────────────────────────────────────────────────────────────────────── */
 const BIOCOMMONS_API = 'https://script.google.com/macros/s/AKfycbzDfl9FxRfdm-tdiLYdVdKuFdor6kdcS-eIw26WJ448yuU76JA_WEtuiu-YZ86hojJ8/exec';
+
+// Honeypot value for a given form ('' = human; bots auto-fill it). Server-side,
+// Code.gs requires this field to be PRESENT and EMPTY — catching both page bots
+// (they fill it) and direct-endpoint bots (they omit it entirely).
+function hpValue(formId){
+  const el=document.getElementById('hp-'+formId);
+  return el?el.value:'';
+}
 
 const opportunities=[];
 
@@ -2721,7 +2742,7 @@ function subscribeNewsletter(){
   }
   showToast('Subscribing…');
   fetch(BIOCOMMONS_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify({type:'newsletter',name,institution,email})})
+    body:JSON.stringify({type:'newsletter',name,institution,email,website:hpValue('newsletter')})})
   .then(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();})
   .catch(()=>{showToast('🎉 Subscribed! Welcome to BioCommons Ghana, '+name+'.');clear();});
 }
@@ -2819,6 +2840,7 @@ function submitForm(type){
   };
   const formId=formMap[type];
   const formData=collectFormData(formId);
+  formData.website=hpValue(formId);
   // Preserve any user-selected 'type' field from the form before overwriting with submission type
   if (formData.type !== undefined) formData.form_type = formData.type;
   formData.type=type.toLowerCase();
@@ -3186,7 +3208,8 @@ function submitReminder() {
     deadline: item.deadline || item.date || '',
     link: item.link || '',
     section: src.section,
-    submittedAt: new Date().toISOString()
+    submittedAt: new Date().toISOString(),
+    website: ''
   };
 
   fetch(BIOCOMMONS_API, {
@@ -3246,7 +3269,8 @@ function submitReagentConnect() {
     requester_email: email,
     requester_inst: inst,
     message: msg,
-    submittedAt: new Date().toISOString()
+    submittedAt: new Date().toISOString(),
+    website: ''
   };
 
   const done = () => {
