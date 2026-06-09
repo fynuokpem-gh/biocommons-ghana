@@ -497,6 +497,8 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .section-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
 .section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);}
 .section-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+.section-updated{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--muted2);margin-top:7px;letter-spacing:0.02em;}
+.section-updated::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green,#2E7D32);opacity:0.55;flex-shrink:0;}
 .result-count{font-size:13px;color:var(--muted);padding-top:8px;}
 
 .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px;align-items:center;}
@@ -1004,6 +1006,11 @@ body::after{
   <!-- BACKGROUND IMAGE — behind hero-inner text -->
   <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;">
       <img src="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1920&q=85"
+        srcset="https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=640&q=75 640w,
+                https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=960&q=78 960w,
+                https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1280&q=80 1280w,
+                https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&w=1920&q=85 1920w"
+        sizes="100vw"
         alt="Researcher at microscope"
         fetchpriority="high" decoding="async"
         onerror="this.style.display='none'"
@@ -1561,7 +1568,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09a</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09b</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2698,6 +2705,37 @@ function relativeTime(iso){
   if(days<30){const w=Math.floor(days/7); return 'Added '+w+' week'+(w>1?'s':'')+' ago';}
   if(days<365){const mo=Math.floor(days/30); return 'Added '+mo+' month'+(mo>1?'s':'')+' ago';}
   const yr=Math.floor(days/365); return 'Added '+yr+' year'+(yr>1?'s':'')+' ago';
+}
+
+// ─── Per-section "last updated" stamp ────────────────────────────────────────
+// Finds the newest `added` date across a section's items and writes a small
+// "Updated 9 Jun" line under the section subtitle. Derived purely from data
+// already in the sheet — silently skips if no item carries a valid date.
+const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function stampSectionUpdated(sectionId, items){
+  const hd=document.querySelector('#'+sectionId+' .section-hd');
+  if(!hd||!items||!items.length) return;
+  let newest=null;
+  items.forEach(it=>{
+    if(!it.added) return;
+    const d=new Date(it.added);
+    if(!isNaN(d.getTime())&&(!newest||d>newest)) newest=d;
+  });
+  if(!newest) return;
+  const now=new Date();
+  let label='Updated '+newest.getDate()+' '+MONTHS_SHORT[newest.getMonth()];
+  if(newest.getFullYear()!==now.getFullYear()) label+=' '+newest.getFullYear();
+  // Same-day freshness reads better as a word than a date
+  if(newest.toDateString()===now.toDateString()) label='Updated today';
+  let el=hd.querySelector('.section-updated');
+  if(!el){
+    el=document.createElement('div');
+    el.className='section-updated';
+    const subWrap=hd.querySelector('.section-sub');
+    if(subWrap&&subWrap.parentNode) subWrap.parentNode.appendChild(el);
+    else hd.appendChild(el);
+  }
+  el.textContent=label;
 }
 
 function formatPickedDate(iso){
@@ -4403,12 +4441,12 @@ setTimeout(injectStructuredData, 8000);
 
 async function loadApprovedEntries() {
   const sheetConfig = [
-    { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),              baseId: 1000 },
-    { name: 'Grants',             mapper: sheetToGrant,        store: grants,          render: ()=>renderGrants(grants),          baseId: 2000 },
-    { name: 'Jobs & Internships', mapper: sheetToInternship,   store: internships,     render: ()=>renderInternships(internships),baseId: 3000 },
-    { name: 'Reagents',           mapper: sheetToReagent,      store: reagents,        render: ()=>renderReagents(reagents),      baseId: 4000 },
-    { name: 'Workshops',          mapper: sheetToWorkshop,     store: workshops,       render: ()=>renderWorkshops(workshops),    baseId: 5000 },
-    { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes),  baseId: 6000 },
+    { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),              baseId: 1000, sec: 'sec-opportunities' },
+    { name: 'Grants',             mapper: sheetToGrant,        store: grants,          render: ()=>renderGrants(grants),          baseId: 2000, sec: 'sec-grants' },
+    { name: 'Jobs & Internships', mapper: sheetToInternship,   store: internships,     render: ()=>renderInternships(internships),baseId: 3000, sec: 'sec-internships' },
+    { name: 'Reagents',           mapper: sheetToReagent,      store: reagents,        render: ()=>renderReagents(reagents),      baseId: 4000, sec: 'sec-reagents' },
+    { name: 'Workshops',          mapper: sheetToWorkshop,     store: workshops,       render: ()=>renderWorkshops(workshops),    baseId: 5000, sec: 'sec-workshops' },
+    { name: 'Graduate Programs',  mapper: sheetToProgramme,    store: programmes,      render: ()=>renderProgrammes(programmes),  baseId: 6000, sec: 'sec-programmes' },
   ];
 
   // Fire all sheet requests in parallel. Each one re-renders its own section as it returns,
@@ -4424,6 +4462,7 @@ async function loadApprovedEntries() {
       existing.forEach(e => s.store.push(e));
       newEntries.forEach(e => s.store.push(e));
       s.render();
+      stampSectionUpdated(s.sec, s.store);
       updateAllCounts();
     } catch(err) {
       console.warn('[BioCommons] ' + s.name + ' error:', err.message);
