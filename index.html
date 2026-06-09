@@ -193,32 +193,34 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 
 /* SUPPORT / DONATION */
 .support-bar-wrap{padding:24px 5%;background:transparent;}
-.support-bar{max-width:620px;margin:0 auto;background:var(--dark);color:var(--cream);border-radius:16px;padding:28px 32px;text-align:center;box-shadow:0 8px 32px rgba(11,38,24,0.12);border:1px solid rgba(245,166,35,0.15);}
-.support-bar-icon{font-size:24px;margin-bottom:8px;display:block;}
-.support-bar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);margin-bottom:6px;}
-.support-bar-tagline{font-size:12.5px;color:rgba(255,251,244,0.6);margin-bottom:14px;letter-spacing:0.3px;}
-.support-bar-divider{width:36px;height:2px;background:var(--gold);margin:0 auto 14px;border-radius:2px;}
-.support-bar-note{font-size:12.5px;color:rgba(255,251,244,0.8);line-height:1.65;max-width:480px;margin:0 auto;}
+.support-bar{max-width:520px;margin:0 auto;background:var(--dark);color:var(--cream);border-radius:16px;padding:24px 28px 22px;text-align:center;box-shadow:0 8px 32px rgba(11,38,24,0.12);border:1px solid rgba(245,166,35,0.15);}
+.support-bar-icon{font-size:20px;margin-bottom:6px;display:block;}
+.support-bar-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);margin-bottom:4px;}
+.support-bar-tagline{font-size:11.5px;color:rgba(255,251,244,0.55);margin-bottom:12px;letter-spacing:0.3px;}
+.support-bar-divider{width:32px;height:2px;background:var(--gold);margin:0 auto 12px;border-radius:2px;}
+.support-bar-note{font-size:12px;color:rgba(255,251,244,0.72);line-height:1.6;max-width:400px;margin:0 auto;}
 .support-bar-note a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.4);transition:border-color 0.2s;}
 .support-bar-note a:hover{border-color:var(--gold);}
 .support-coming-soon{display:inline-block;margin:12px auto 0;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.35);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 14px;border-radius:50px;text-transform:uppercase;}
 
-/* Donation widget (Paystack inline) */
-.don-box{max-width:380px;margin:18px auto 0;display:flex;flex-direction:column;gap:10px;}
-.don-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+/* Donation widget (Paystack inline) — compact layout */
+.don-box{max-width:360px;margin:14px auto 0;display:flex;flex-direction:column;gap:8px;}
+.don-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
 .don-chip{
   background:rgba(255,251,244,0.05);border:1px solid rgba(255,251,244,0.16);
   color:rgba(255,251,244,0.8);font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:12.5px;font-weight:700;padding:10px 4px;border-radius:10px;
+  font-size:12px;font-weight:700;padding:8px 4px;border-radius:9px;
   cursor:pointer;transition:all 0.18s;
 }
 .don-chip:hover{border-color:rgba(245,166,35,0.5);color:var(--gold);}
 .don-chip.active{background:rgba(245,166,35,0.14);border-color:var(--gold);color:var(--gold);}
+.don-row{display:flex;gap:8px;}
 .don-custom-input,.don-email{
   width:100%;background:rgba(255,251,244,0.06);border:1px solid rgba(255,251,244,0.16);
-  color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;
-  padding:11px 14px;border-radius:10px;outline:none;transition:border-color 0.18s;box-sizing:border-box;
+  color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;
+  padding:10px 13px;border-radius:9px;outline:none;transition:border-color 0.18s;box-sizing:border-box;
 }
+.don-email{flex:1;min-width:0;}
 .don-custom-input:focus,.don-email:focus{border-color:var(--gold);}
 .don-custom-input::placeholder,.don-email::placeholder{color:rgba(255,251,244,0.35);}
 /* Hide number spinners — they look broken on the dark card */
@@ -226,21 +228,25 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .don-custom-input{-moz-appearance:textfield;appearance:textfield;}
 .don-btn{
   background:var(--gold);color:#1A0C00;border:none;cursor:pointer;
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;
-  padding:13px 26px;border-radius:50px;letter-spacing:0.01em;
-  transition:all 0.2s;box-shadow:0 6px 22px rgba(245,166,35,0.28);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;
+  padding:10px 20px;border-radius:50px;letter-spacing:0.01em;white-space:nowrap;flex-shrink:0;
+  transition:all 0.2s;box-shadow:0 4px 16px rgba(245,166,35,0.25);
 }
-.don-btn:hover{background:#FFB733;transform:translateY(-1px);box-shadow:0 10px 30px rgba(245,166,35,0.4);}
+.don-btn:hover{background:#FFB733;transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,0.38);}
 .don-btn:disabled{opacity:0.6;cursor:wait;transform:none;}
-.don-secure{font-size:11px;color:rgba(255,251,244,0.45);letter-spacing:0.03em;}
-.don-alt{font-size:11.5px;color:rgba(255,251,244,0.5);}
-.don-alt a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.4);}
+.don-secure{font-size:10.5px;color:rgba(255,251,244,0.42);letter-spacing:0.03em;margin-top:2px;}
+.don-alt{font-size:10.5px;color:rgba(255,251,244,0.42);}
+.don-alt a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.35);}
+@media(max-width:480px){
+  .don-row{flex-direction:column;}
+  .don-btn{padding:12px 20px;}
+}
 @media(max-width:420px){.don-chips{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:720px){
-  .support-bar-wrap{padding:28px 4%;}
-  .support-bar{padding:28px 22px;}
-  .support-bar-title{font-size:19px;}
-  .support-bar-note{font-size:13px;}
+  .support-bar-wrap{padding:24px 4%;}
+  .support-bar{padding:22px 18px 20px;}
+  .support-bar-title{font-size:17px;}
+  .support-bar-note{font-size:12.5px;}
 }
 
 /* LOADING SKELETONS */
@@ -721,9 +727,12 @@ textarea{min-height:100px;resize:vertical;}
 
 /* FOOTER */
 footer{background:var(--dark);padding:52px 5% 32px;position:relative;overflow:hidden;}
-footer::before{
+footer::before,.newsletter-wrap::before{
   content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340' viewBox='0 0 340 340'%3E%3Cg fill='none' stroke='%23F5A623' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round' opacity='0.1'%3E%3Cg transform='translate(58 64) rotate(18) scale(0.92)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(212 42) rotate(-40) scale(0.86)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(305 135) rotate(58) scale(0.66)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(150 120) rotate(128) scale(0.8)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(34 205) rotate(-24) scale(0.78)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(112 255) rotate(202) scale(0.7)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(252 232) rotate(72) scale(0.84)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(322 288) rotate(150) scale(0.58)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(180 318) rotate(-10) scale(0.74)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3Cg transform='translate(20 308) rotate(28) scale(0.64)'%3E%3Cpath d='M0,-47 C-13,-23 -13,31 0,47 C13,31 13,-23 0,-47 Z'/%3E%3Cpath d='M0,-42 L0,44'/%3E%3Cpath d='M0,34 Q9,29 13,23'/%3E%3Cpath d='M-0,34 Q-9,29 -13,23'/%3E%3Cpath d='M0,24 Q11,18 15,11'/%3E%3Cpath d='M-0,24 Q-11,18 -15,11'/%3E%3Cpath d='M0,14 Q12,7 16,0'/%3E%3Cpath d='M-0,14 Q-12,7 -16,0'/%3E%3Cpath d='M0,4 Q13,-4 16,-12'/%3E%3Cpath d='M-0,4 Q-13,-4 -16,-12'/%3E%3Cpath d='M0,-6 Q12,-15 14,-22'/%3E%3Cpath d='M-0,-6 Q-12,-15 -14,-22'/%3E%3Cpath d='M0,-16 Q10,-24 11,-31'/%3E%3Cpath d='M-0,-16 Q-10,-24 -11,-31'/%3E%3Cpath d='M0,-26 Q7,-33 7,-39'/%3E%3Cpath d='M-0,-26 Q-7,-33 -7,-39'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;background-size:300px 300px;pointer-events:none;}
 .footer-inner,.footer-bottom{position:relative;z-index:1;}
+/* Newsletter shares the footer's gold-leaf motif, dialled fainter */
+.newsletter-wrap{position:relative;overflow:hidden;}
+.newsletter-wrap::before{opacity:0.5;}
 .footer-inner{display:flex;gap:48px;flex-wrap:wrap;margin-bottom:40px;}
 .footer-brand{flex:2;min-width:220px;}
 .footer-tagline{font-size:13px;color:rgba(255,251,244,0.4);line-height:1.7;max-width:260px;margin-top:10px;}
@@ -1500,8 +1509,8 @@ body::after{
 </div>
 
 <!-- NEWSLETTER -->
-<div style="background:var(--dark);padding:56px 5%;">
-  <div style="max-width:680px;margin:0 auto;">
+<div class="newsletter-wrap" style="background:var(--dark);padding:56px 5%;">
+  <div style="max-width:680px;margin:0 auto;position:relative;z-index:1;">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <span style="background:var(--gold);color:var(--dark);font-size:11px;font-weight:800;padding:4px 12px;border-radius:50px;letter-spacing:0.06em;text-transform:uppercase;">Monthly Newsletter</span>
     </div>
@@ -1557,10 +1566,11 @@ body::after{
         <button type="button" class="don-chip" data-amt="custom" onclick="selectDonAmount(this,'custom')">Custom</button>
       </div>
       <input type="number" class="don-custom-input" id="don-custom" min="1" step="1" placeholder="Enter amount in GHS" style="display:none" oninput="donCustomChanged(this.value)"/>
-      <input type="email" class="don-email" id="don-email" placeholder="Your email (for your receipt)" autocomplete="email"/>
-      <button type="button" class="don-btn" id="don-btn" onclick="startDonation()">Donate GHS 50 →</button>
-      <div class="don-secure">🔒 Secured by Paystack · Mobile Money, cards &amp; bank transfer</div>
-      <div class="don-alt">Prefer to reach us directly? <a href="mailto:biocommonsghana@gmail.com">biocommonsghana@gmail.com</a></div>
+      <div class="don-row">
+        <input type="email" class="don-email" id="don-email" placeholder="Your email (for receipt)" autocomplete="email"/>
+        <button type="button" class="don-btn" id="don-btn" onclick="startDonation()">Donate GHS 50 →</button>
+      </div>
+      <div class="don-secure">🔒 Secured by Paystack · MoMo, cards &amp; bank transfer · <a href="mailto:biocommonsghana@gmail.com" style="color:var(--gold);text-decoration:none;">or reach us directly</a></div>
     </div>
   </div>
 </section>
@@ -1623,7 +1633,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09e</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09g</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
