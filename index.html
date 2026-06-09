@@ -747,9 +747,11 @@ footer::before{
   .hero{padding:52px 4% 0;max-height:none;display:block;}
   .hero-inner{display:block;}
   .hero-right{display:none;}
-  .hero-left{width:100%;max-width:none;padding-bottom:40px;}
+  .hero-left{width:100%;max-width:none;padding-bottom:28px;}
   .hero-btns{grid-template-columns:1fr 1fr;}
-  .stats-bar{flex-wrap:wrap;}.stat-item{flex:0 0 50%;padding:16px;}
+  /* Stats bar is redundant on mobile — the category cards above already show every
+     count. On the dark hero its low-contrast text read as an empty void, so hide it. */
+  .stats-bar{display:none;}
   .section{padding:36px 4%;}.tabs-wrap{padding:0 4%;}
   .contact-bar{padding:24px 4%;}
   footer{padding:40px 4% 24px;}
@@ -1559,7 +1561,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-06e</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09a</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
