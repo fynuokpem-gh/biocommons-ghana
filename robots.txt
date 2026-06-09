@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://fynuokpem-gh.github.io/biocommons-ghana/sitemap.xml
