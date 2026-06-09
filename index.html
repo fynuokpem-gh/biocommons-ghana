@@ -202,6 +202,40 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .support-bar-note a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.4);transition:border-color 0.2s;}
 .support-bar-note a:hover{border-color:var(--gold);}
 .support-coming-soon{display:inline-block;margin:12px auto 0;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.35);color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 14px;border-radius:50px;text-transform:uppercase;}
+
+/* Donation widget (Paystack inline) */
+.don-box{max-width:380px;margin:18px auto 0;display:flex;flex-direction:column;gap:10px;}
+.don-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.don-chip{
+  background:rgba(255,251,244,0.05);border:1px solid rgba(255,251,244,0.16);
+  color:rgba(255,251,244,0.8);font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:12.5px;font-weight:700;padding:10px 4px;border-radius:10px;
+  cursor:pointer;transition:all 0.18s;
+}
+.don-chip:hover{border-color:rgba(245,166,35,0.5);color:var(--gold);}
+.don-chip.active{background:rgba(245,166,35,0.14);border-color:var(--gold);color:var(--gold);}
+.don-custom-input,.don-email{
+  width:100%;background:rgba(255,251,244,0.06);border:1px solid rgba(255,251,244,0.16);
+  color:var(--cream);font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;
+  padding:11px 14px;border-radius:10px;outline:none;transition:border-color 0.18s;box-sizing:border-box;
+}
+.don-custom-input:focus,.don-email:focus{border-color:var(--gold);}
+.don-custom-input::placeholder,.don-email::placeholder{color:rgba(255,251,244,0.35);}
+/* Hide number spinners — they look broken on the dark card */
+.don-custom-input::-webkit-outer-spin-button,.don-custom-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.don-custom-input{-moz-appearance:textfield;appearance:textfield;}
+.don-btn{
+  background:var(--gold);color:#1A0C00;border:none;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;
+  padding:13px 26px;border-radius:50px;letter-spacing:0.01em;
+  transition:all 0.2s;box-shadow:0 6px 22px rgba(245,166,35,0.28);
+}
+.don-btn:hover{background:#FFB733;transform:translateY(-1px);box-shadow:0 10px 30px rgba(245,166,35,0.4);}
+.don-btn:disabled{opacity:0.6;cursor:wait;transform:none;}
+.don-secure{font-size:11px;color:rgba(255,251,244,0.45);letter-spacing:0.03em;}
+.don-alt{font-size:11.5px;color:rgba(255,251,244,0.5);}
+.don-alt a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(245,166,35,0.4);}
+@media(max-width:420px){.don-chips{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:720px){
   .support-bar-wrap{padding:28px 4%;}
   .support-bar{padding:28px 22px;}
@@ -1500,13 +1534,21 @@ body::after{
     <div class="support-bar-tagline">Open Science. Open Doors. Open Ghana — sustained by donors like you.</div>
     <div class="support-bar-divider"></div>
     <p class="support-bar-note">
-      We're working on setting up a seamless online donation experience via Paystack. In the meantime, if you'd like to support BioCommons Ghana directly, please reach out at
-      <a href="mailto:biocommonsghana@gmail.com">biocommonsghana@gmail.com</a> or message us on
-      <a href="https://x.com/BioCommons_GH" target="_blank" rel="noopener">X (@BioCommons_GH)</a> or
-      <a href="https://www.linkedin.com/in/biocommons-ghana-biocommons-ghana-9949a4409" target="_blank" rel="noopener">LinkedIn</a>.
-      Every contribution — big or small — keeps the doors open. <span class="fi fi-gh" style="border-radius:2px;vertical-align:middle;"></span>
+      BioCommons Ghana is free for every scientist — and always will be. If it has helped you, a voluntary donation keeps the doors open: hosting, curation, and reminder emails for the whole community. <span class="fi fi-gh" style="border-radius:2px;vertical-align:middle;"></span>
     </p>
-    <span class="support-coming-soon">⚡ Paystack donations coming soon</span>
+    <div class="don-box">
+      <div class="don-chips" role="group" aria-label="Choose donation amount">
+        <button type="button" class="don-chip" data-amt="20" onclick="selectDonAmount(this,20)">GHS 20</button>
+        <button type="button" class="don-chip active" data-amt="50" onclick="selectDonAmount(this,50)">GHS 50</button>
+        <button type="button" class="don-chip" data-amt="100" onclick="selectDonAmount(this,100)">GHS 100</button>
+        <button type="button" class="don-chip" data-amt="custom" onclick="selectDonAmount(this,'custom')">Custom</button>
+      </div>
+      <input type="number" class="don-custom-input" id="don-custom" min="1" step="1" placeholder="Enter amount in GHS" style="display:none" oninput="donCustomChanged(this.value)"/>
+      <input type="email" class="don-email" id="don-email" placeholder="Your email (for your receipt)" autocomplete="email"/>
+      <button type="button" class="don-btn" id="don-btn" onclick="startDonation()">Donate GHS 50 →</button>
+      <div class="don-secure">🔒 Secured by Paystack · Mobile Money, cards &amp; bank transfer</div>
+      <div class="don-alt">Prefer to reach us directly? <a href="mailto:biocommonsghana@gmail.com">biocommonsghana@gmail.com</a></div>
+    </div>
   </div>
 </section>
 
@@ -1568,7 +1610,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09d</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -4439,7 +4481,99 @@ setTimeout(injectStructuredData, 1500);
 setTimeout(injectStructuredData, 4000);
 setTimeout(injectStructuredData, 8000);
 
-// ─── Share deep links ─────────────────────────────────────────────────────────
+// ─── Donations via Paystack (inline popup) ───────────────────────────────────
+// Public key only — safe to expose by design. The secret key lives nowhere near
+// this site. Script is lazy-loaded on first donate tap to keep page weight down.
+const PAYSTACK_PUBLIC_KEY = 'pk_live_d90f7d1970e74614d0b8e7a89f4e91dad119cd01';
+let _donAmount = 50;
+
+function selectDonAmount(btn, amt) {
+  document.querySelectorAll('.don-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const customInput = document.getElementById('don-custom');
+  if (amt === 'custom') {
+    customInput.style.display = '';
+    customInput.focus();
+    _donAmount = parseInt(customInput.value, 10) || 0;
+  } else {
+    customInput.style.display = 'none';
+    _donAmount = amt;
+  }
+  updateDonBtn();
+}
+
+function donCustomChanged(v) {
+  _donAmount = parseInt(v, 10) || 0;
+  updateDonBtn();
+}
+
+function updateDonBtn() {
+  const btn = document.getElementById('don-btn');
+  if (!btn) return;
+  btn.textContent = _donAmount >= 1 ? 'Donate GHS ' + _donAmount + ' →' : 'Donate →';
+}
+
+let _paystackLoading = null;
+function loadPaystackScript() {
+  if (window.PaystackPop) return Promise.resolve();
+  if (_paystackLoading) return _paystackLoading;
+  _paystackLoading = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://js.paystack.co/v1/inline.js';
+    s.onload = () => resolve();
+    s.onerror = () => { _paystackLoading = null; reject(new Error('Paystack script failed to load')); };
+    document.head.appendChild(s);
+  });
+  return _paystackLoading;
+}
+
+function startDonation() {
+  const emailEl = document.getElementById('don-email');
+  const email = (emailEl.value || '').trim();
+  if (_donAmount < 1) {
+    showToast('Please choose or enter an amount (GHS 1 minimum)');
+    const ci = document.getElementById('don-custom');
+    if (ci && ci.style.display !== 'none') ci.focus();
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email for your receipt');
+    emailEl.focus();
+    return;
+  }
+  const btn = document.getElementById('don-btn');
+  btn.disabled = true;
+  const restore = () => { btn.disabled = false; updateDonBtn(); };
+  btn.textContent = 'Opening secure checkout…';
+  trackEvent('donation_start', { amount_ghs: _donAmount });
+  loadPaystackScript().then(() => {
+    restore();
+    const handler = PaystackPop.setup({
+      key: PAYSTACK_PUBLIC_KEY,
+      email: email,
+      amount: Math.round(_donAmount * 100), // GHS → pesewas
+      currency: 'GHS',
+      metadata: {
+        custom_fields: [
+          { display_name: 'Purpose', variable_name: 'purpose', value: 'BioCommons Ghana voluntary donation' }
+        ]
+      },
+      callback: function(response) {
+        trackEvent('donation_complete', { amount_ghs: _donAmount, reference: response.reference });
+        showToast('💚 Medaase! Your donation keeps BioCommons Ghana free for everyone.');
+      },
+      onClose: function() {
+        trackEvent('donation_abandoned', { amount_ghs: _donAmount });
+      }
+    });
+    handler.openIframe();
+  }).catch(() => {
+    restore();
+    showToast('Couldn\'t reach Paystack — please check your connection and try again, or email biocommonsghana@gmail.com');
+  });
+}
+
+
 // Share buttons generate URLs like ?share=scholarship:1004. On arrival, resolve
 // that param: jump to the right section and open the exact opportunity's modal.
 // Data loads asynchronously per-sheet, so we retry after each sheet lands and
