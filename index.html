@@ -1568,7 +1568,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09b</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09c</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -4439,6 +4439,44 @@ setTimeout(injectStructuredData, 1500);
 setTimeout(injectStructuredData, 4000);
 setTimeout(injectStructuredData, 8000);
 
+// ─── Share deep links ─────────────────────────────────────────────────────────
+// Share buttons generate URLs like ?share=scholarship:1004. On arrival, resolve
+// that param: jump to the right section and open the exact opportunity's modal.
+// Data loads asynchronously per-sheet, so we retry after each sheet lands and
+// give a graceful fallback if the listing no longer exists.
+let _pendingShare = (function(){
+  try {
+    const v = new URLSearchParams(location.search).get('share');
+    if (!v) return null;
+    const sep = v.indexOf(':');
+    if (sep < 1) return null;
+    return { kind: v.slice(0, sep), id: v.slice(sep + 1) };
+  } catch(e) { return null; }
+})();
+
+function tryResolvePendingShare(finalAttempt) {
+  if (!_pendingShare) return;
+  const src = BOOKMARK_SOURCES.find(s => s.kind === _pendingShare.kind);
+  if (!src) { _pendingShare = null; return; }
+  const item = (src.store() || []).find(x => String(x.id) === String(_pendingShare.id));
+  if (item) {
+    _pendingShare = null;
+    showSection(src.section);
+    src.openFn(item);
+    // Clean the param so refresh/bookmark/back doesn't re-trigger the modal
+    try { history.replaceState(null, '', location.pathname); } catch(e) {}
+    return;
+  }
+  if (finalAttempt) {
+    // All sheets settled and the item isn't there — listing removed or expired.
+    // Still land the visitor in the right section so the share isn't a dead end.
+    _pendingShare = null;
+    showSection(src.section);
+    if (typeof showToast === 'function') showToast('That listing is no longer available — here\'s what\'s open now');
+    try { history.replaceState(null, '', location.pathname); } catch(e) {}
+  }
+}
+
 async function loadApprovedEntries() {
   const sheetConfig = [
     { name: 'Scholarships',       mapper: sheetToScholarship, store: opportunities,  render: ()=>applyOppFilter(),              baseId: 1000, sec: 'sec-opportunities' },
@@ -4463,6 +4501,7 @@ async function loadApprovedEntries() {
       newEntries.forEach(e => s.store.push(e));
       s.render();
       stampSectionUpdated(s.sec, s.store);
+      tryResolvePendingShare(false);
       updateAllCounts();
     } catch(err) {
       console.warn('[BioCommons] ' + s.name + ' error:', err.message);
@@ -4470,9 +4509,12 @@ async function loadApprovedEntries() {
   }));
   // Final pass once everything has settled — ensures counts and schema reflect the full payload
   updateAllCounts();
+  tryResolvePendingShare(true);
   if (typeof injectStructuredData === 'function') injectStructuredData();
 }
 
+// Resolve immediately too, in case the shared item is in the static seed data
+tryResolvePendingShare(false);
 loadApprovedEntries();
 </script>
 </body>
