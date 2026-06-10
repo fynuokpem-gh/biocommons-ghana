@@ -598,6 +598,9 @@ mark{background:rgba(245,166,35,0.3);color:var(--text);padding:0 2px;border-radi
 .reagent-pill-status{background:rgba(13,124,62,0.12);color:var(--green);}
 .reagent-card.r-seeking .reagent-pill-status{background:rgba(245,166,35,0.15);color:#B8761A;}
 .reagent-card.r-for-sale .reagent-pill-status{background:rgba(26,74,122,0.12);color:var(--blue);}
+/* Fulfilled listings: visible for 3 days as social proof, slightly muted */
+.reagent-card.r-fulfilled{opacity:0.75;}
+.reagent-card.r-fulfilled .reagent-pill-status{background:rgba(13,124,62,0.18);color:var(--green);border:1px dashed rgba(13,124,62,0.4);}
 .reagent-pill-cat{background:var(--cream);color:var(--muted);border:1px solid var(--border);}
 .reagent-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--text);line-height:1.3;}
 .reagent-qty{font-size:14px;color:var(--text);font-weight:600;}
@@ -1633,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-09g</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-10a</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2298,14 +2301,16 @@ function renderReagents(data){
   if(!_sortActive)data=_byNewest(data);
   document.getElementById('reagent-empty').style.display=data.length?'none':'';
   document.getElementById('reagent-grid').innerHTML=data.map(r=>{
-    const cardCls    = r.type==='available' ? 'r-available'
-                     : r.type==='for-sale'  ? 'r-for-sale'
-                     :                         'r-seeking';
-    const statusLbl  = r.type==='available' ? '✅ Available'
+    const cardCls    = (r.fulfilled ? 'r-fulfilled ' : '')
+                     + (r.type==='available' ? 'r-available'
+                     :  r.type==='for-sale'  ? 'r-for-sale'
+                     :                         'r-seeking');
+    const statusLbl  = r.fulfilled            ? '🎉 Fulfilled'
+                     : r.type==='available' ? '✅ Available'
                      : r.type==='for-sale'  ? '🏷️ For Sale'
                      :                         '🔍 Seeking';
     const instIcon   = r.type==='for-sale'  ? '🏢' : '🏛';
-    const btnLabel   = r.type==='for-sale'  ? 'Order →' : 'View →';
+    const btnLabel   = r.fulfilled ? 'View →' : (r.type==='for-sale'  ? 'Order →' : 'View →');
     return '<div class="reagent-card '+cardCls+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
       bookmarkButton('reagent', r.id)+
       '<div class="reagent-head">'+
@@ -2527,6 +2532,23 @@ function openReagentModal(id){
   // Private connect form — uploader's email is never shown. Tailor the copy
   // to the listing type, reset the inputs, and remember which reagent this is.
   _currentConnectReagent = r;
+  // Fulfilled listings: the exchange is done — no more connections, show a note instead
+  const connectWrap=document.getElementById('rm-connect');
+  let doneNote=document.getElementById('rm-fulfilled-note');
+  if(r.fulfilled){
+    connectWrap.style.display='none';
+    if(!doneNote){
+      doneNote=document.createElement('div');
+      doneNote.id='rm-fulfilled-note';
+      doneNote.style.cssText='background:rgba(13,124,62,0.08);border:1px dashed rgba(13,124,62,0.35);border-radius:12px;padding:16px 18px;font-size:13.5px;color:var(--green);font-weight:600;text-align:center;margin-top:14px;';
+      connectWrap.parentNode.insertBefore(doneNote, connectWrap);
+    }
+    doneNote.textContent='🎉 This exchange has been completed — the listing will come down shortly.';
+    doneNote.style.display='';
+  } else {
+    connectWrap.style.display='';
+    if(doneNote) doneNote.style.display='none';
+  }
   const headEl = document.getElementById('rm-connect-head');
   const subEl  = document.getElementById('rm-connect-sub');
   const btnEl  = document.getElementById('rm-connect-submit');
@@ -3058,7 +3080,8 @@ function sheetToReagent(row, id) {
     name: row.title || '', qty, condition,
     notes, exchange, price,
     inst: row.host || '',
-    contact: row.email || '—'
+    contact: row.email || '—',
+    fulfilled: String(row.fulfilled || '')
   };
 }
 
