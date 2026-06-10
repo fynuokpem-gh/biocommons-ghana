@@ -1,0 +1,42 @@
+name: Generate programme pages
+
+# Rebuilds /programmes/ and sitemap.xml from the live Google Sheet (via the
+# Apps Script endpoint) every night, and commits only if something changed.
+# GitHub Pages then redeploys automatically.
+#
+# You can also run it on demand: Actions tab → "Generate programme pages" → Run workflow.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # 03:00 UTC nightly (3 AM in Ghana — GMT)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate pages from the live Sheet
+        run: node scripts/generate-programmes.mjs
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name  "biocommons-bot"
+          git config user.email "actions@github.com"
+          git add programmes sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No changes — nothing to commit."
+          else
+            git commit -m "chore: regenerate programme pages ($(date -u +%Y-%m-%d))"
+            git push
+          fi
