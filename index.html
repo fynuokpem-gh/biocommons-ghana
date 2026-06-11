@@ -1636,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11a</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11b</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -3682,10 +3682,13 @@ const BIOCOMMONS_SHORT_LINK = 'https://biocommonsghana.org';
 
 function buildShareUrl(item, kind) {
   const base = 'https://biocommonsghana.org/';
-  return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
+  // Clean ?share=job:3007 form (colon left readable; only the id is encoded).
+  // URLSearchParams on arrival decodes correctly either way, but the readable
+  // colon makes the link look trustworthy when shared on WhatsApp.
+  return base + '?share=' + kind + ':' + encodeURIComponent(item.id || '');
 }
 
-function buildShareText(item) {
+function buildShareText(item, kind) {
   const title    = item.title || item.name || 'Opportunity';
   const host     = item.host  || item.inst || '';
   // For workshops the registration deadline (regDeadline) is the date to apply by —
@@ -3698,7 +3701,10 @@ function buildShareText(item) {
   if (eventDate && item.regDeadline) txt += '\n📅 ' + eventDate;   // workshops: show event date too
   if (applyBy)   txt += '\n⏰ Apply by: ' + applyBy;
   txt += '\n\nFound on BioCommons Ghana — Open Science. Open Doors. Open Ghana. 🇬🇭';
-  txt += '\n' + BIOCOMMONS_SHORT_LINK;
+  // Deep link back to THIS exact listing (?share=kind:id) so a tap on WhatsApp,
+  // copy, or email lands on the opportunity itself, not the homepage. The
+  // resolver (tryResolvePendingShare) opens the right section + modal on arrival.
+  txt += '\n' + (kind ? buildShareUrl(item, kind) : BIOCOMMONS_SHORT_LINK);
   return txt;
 }
 
@@ -3726,7 +3732,7 @@ function shareVia(platform, kind, id, e) {
   if (!item) return;
 
   const appLink = item.link && item.link !== '#' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(item.link) ? item.link : '';
-  const text = buildShareText(item);
+  const text = buildShareText(item, kind);
   // Append application link only if it's a real URL different from the BioCommons short link
   const fullText = appLink ? text + '\n\nApply here: ' + appLink : text;
   const encodedUrl  = encodeURIComponent(appLink || BIOCOMMONS_SHORT_LINK);
