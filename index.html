@@ -478,7 +478,7 @@ body.menu-open{overflow:hidden;}
 
 /* SHARE BUTTONS */
 /* Wrapper positions both button and menu — menu anchors to button */
-.share-wrap-card{position:absolute;top:12px;right:12px;z-index:5;}
+.share-wrap-card{position:absolute;top:15px;right:56px;z-index:7;}
 .share-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.95);backdrop-filter:blur(4px);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s;color:var(--muted);line-height:1;}
 .share-btn:hover{background:var(--white);border-color:var(--green);color:var(--green);transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,38,24,0.08);}
 /* Menu sits directly below the button (its parent .share-wrap-card) */
@@ -492,7 +492,7 @@ body.menu-open{overflow:hidden;}
 .reagent-card{overflow:visible!important;}
 @media(max-width:720px){
   .share-btn{font-size:11px;padding:5px 10px;}
-  .share-wrap-card{top:10px;right:10px;}
+  .share-wrap-card{top:13px;right:52px;}
   .share-menu{min-width:160px;}
 }
 
@@ -1636,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-10a</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11a</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2141,6 +2141,7 @@ function renderGrants(data){
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline, g.closed)+'" onclick="openGrantModal(\''+g.id+'\')">'+
     bookmarkButton('grant', g.id)+
+    shareButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       closedBadge(g.deadline, g.closed)+
@@ -2175,6 +2176,7 @@ function renderOpportunities(data){
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline, o.closed)+'" onclick="openModal('+o.id+')">'+
     bookmarkButton('scholarship', o.id)+
+    shareButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       closedBadge(o.deadline, o.closed)+
@@ -2222,6 +2224,7 @@ function renderProgrammes(data){
                    : 'badge-muted';
     return '<div class="card'+isClosedCls(p.deadline, p.closed)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
+      shareButton('programme', p.id)+
       uniBadge(p)+
       '<div class="badges">'+
         closedBadge(p.deadline, p.closed)+
@@ -2263,6 +2266,7 @@ function renderInternships(data){
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
     return '<div class="card'+(!isWanted?isClosedCls(i.deadline, i.closed):'')+'" onclick="openJobModal(\''+i.id+'\')">'+
       bookmarkButton('job', i.id)+
+      shareButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
@@ -2313,6 +2317,7 @@ function renderReagents(data){
     const btnLabel   = r.fulfilled ? 'View →' : (r.type==='for-sale'  ? 'Order →' : 'View →');
     return '<div class="reagent-card '+cardCls+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
       bookmarkButton('reagent', r.id)+
+      shareButton('reagent', r.id)+
       '<div class="reagent-head">'+
         '<span class="reagent-pill reagent-pill-status">'+statusLbl+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
@@ -2362,6 +2367,7 @@ function renderWorkshops(data){
     const closeRef = w.regDeadline || w.date;
     return '<div class="card'+isClosedCls(closeRef, w.closed)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
       bookmarkButton('workshop', w.id)+
+      shareButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         closedBadge(closeRef, w.closed)+
