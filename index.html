@@ -24,7 +24,7 @@
 <meta property="og:title" content="BioCommons Ghana — Open Science. Open Doors. Open Ghana."/>
 <meta property="og:description" content="The open hub for biology opportunities in Ghana. Scholarships, grants, jobs, reagents, workshops, and graduate programmes — all in one place."/>
 <meta property="og:url" content="https://biocommonsghana.org/"/>
-<meta property="og:image" content="https://biocommonsghana.org/og-image.png"/>
+<meta property="og:image" content="https://biocommonsghana.org/og-image.png?v=2"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
 <meta property="og:image:alt" content="BioCommons Ghana — Open Science. Open Doors. Open Ghana."/>
@@ -35,7 +35,7 @@
 <meta name="twitter:site" content="@BioCommons_GH"/>
 <meta name="twitter:title" content="BioCommons Ghana — Open Science. Open Doors. Open Ghana."/>
 <meta name="twitter:description" content="The open hub for biology opportunities in Ghana. Scholarships, grants, jobs, reagents, workshops, programmes."/>
-<meta name="twitter:image" content="https://biocommonsghana.org/og-image.png"/>
+<meta name="twitter:image" content="https://biocommonsghana.org/og-image.png?v=2"/>
 
 <!-- ─── STRUCTURED DATA (Google Knowledge Graph) ───────────────────────────── -->
 <script type="application/ld+json">
@@ -1636,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11c</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11e</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -2141,7 +2141,6 @@ function renderGrants(data){
   empty.style.display='none';
   grid.innerHTML=data.map(g=>'<div class="card'+isClosedCls(g.deadline, g.closed)+'" onclick="openGrantModal(\''+g.id+'\')">'+
     bookmarkButton('grant', g.id)+
-    shareButton('grant', g.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(g.country||'Global')+'</span>'+flagFor(g.country||'Global')+'</div>'+
     '<div class="badges">'+
       closedBadge(g.deadline, g.closed)+
@@ -2176,7 +2175,6 @@ function renderOpportunities(data){
   empty.style.display='none';
   grid.innerHTML=data.map(o=>'<div class="card'+isClosedCls(o.deadline, o.closed)+'" onclick="openModal('+o.id+')">'+
     bookmarkButton('scholarship', o.id)+
-    shareButton('scholarship', o.id)+
     '<div class="card-flag"><span class="card-flag-label">'+(o.country||'Global')+'</span>'+flagFor(o.country||'Global')+'</div>'+
     '<div class="badges">'+
       closedBadge(o.deadline, o.closed)+
@@ -2224,7 +2222,6 @@ function renderProgrammes(data){
                    : 'badge-muted';
     return '<div class="card'+isClosedCls(p.deadline, p.closed)+'" onclick="openProgrammeModal(\''+p.id+'\')">'+
       bookmarkButton('programme', p.id)+
-      shareButton('programme', p.id)+
       uniBadge(p)+
       '<div class="badges">'+
         closedBadge(p.deadline, p.closed)+
@@ -2266,7 +2263,6 @@ function renderInternships(data){
     const typeLabel = (i.type||'').charAt(0).toUpperCase() + (i.type||'').slice(1);
     return '<div class="card'+(!isWanted?isClosedCls(i.deadline, i.closed):'')+'" onclick="openJobModal(\''+i.id+'\')">'+
       bookmarkButton('job', i.id)+
-      shareButton('job', i.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(i.location||i.country||'Ghana')+'</span>'+flagFor(i.country||i.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         wantedBadge+
@@ -2317,7 +2313,6 @@ function renderReagents(data){
     const btnLabel   = r.fulfilled ? 'View →' : (r.type==='for-sale'  ? 'Order →' : 'View →');
     return '<div class="reagent-card '+cardCls+'" onclick="openReagentModal(\''+r.id+'\')" style="cursor:pointer">'+
       bookmarkButton('reagent', r.id)+
-      shareButton('reagent', r.id)+
       '<div class="reagent-head">'+
         '<span class="reagent-pill reagent-pill-status">'+statusLbl+'</span>'+
         '<span class="reagent-pill reagent-pill-cat">'+r.category+'</span>'+
@@ -2367,7 +2362,6 @@ function renderWorkshops(data){
     const closeRef = w.regDeadline || w.date;
     return '<div class="card'+isClosedCls(closeRef, w.closed)+'" onclick="openWorkshopModal(\''+w.id+'\')">'+
       bookmarkButton('workshop', w.id)+
-      shareButton('workshop', w.id)+
       '<div class="card-flag"><span class="card-flag-label">'+(w.location||w.country||'Ghana')+'</span>'+flagFor(w.country||w.location||'Ghana')+'</div>'+
       '<div class="badges">'+
         closedBadge(closeRef, w.closed)+
@@ -3758,7 +3752,11 @@ function shareVia(platform, kind, id, e) {
   } else if (platform === 'twitter') {
     shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodedBioUrl;
   } else if (platform === 'linkedin') {
-    shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodedBioUrl;
+    // LinkedIn's old share-offsite endpoint is unreliable (especially with URLs
+    // that carry query strings, like our ?share= deep links). The feed composer
+    // opens a pre-filled post; LinkedIn linkifies the deep link in the text and
+    // renders the BioCommons OG card from it.
+    shareUrl = 'https://www.linkedin.com/feed/?shareActive=true&text=' + encodedText;
   } else if (platform === 'copy') {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(fullText).then(() => showToast('Copied to clipboard!'));
@@ -3778,8 +3776,20 @@ function shareVia(platform, kind, id, e) {
   }
 
   if (shareUrl) {
-    if (platform === 'email') window.location.href = shareUrl;
-    else window.open(shareUrl, '_blank', 'noopener,width=600,height=500');
+    if (platform === 'email') {
+      window.location.href = shareUrl;
+    } else {
+      // Anchor-click instead of window.open(...,features): popup-style opens are
+      // silently blocked inside in-app browsers (X, LinkedIn, Instagram webviews)
+      // and by some mobile popup blockers. A real anchor click always navigates.
+      const a = document.createElement('a');
+      a.href = shareUrl;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   }
   document.querySelectorAll('.share-menu.open').forEach(m => m.classList.remove('open'));
 }
@@ -3828,6 +3838,7 @@ function modalShareRow(kind, id, opts) {
     '<button class="modal-share-btn modal-share-wa" onclick="' + call('whatsapp') + '" aria-label="Share on WhatsApp" title="WhatsApp">' + SHARE_ICONS.whatsapp + '<span>WhatsApp</span></button>' +
     '<button class="modal-share-btn modal-share-icon" onclick="' + call('twitter')  + '" aria-label="Share on X (Twitter)" title="X (Twitter)">' + SHARE_ICONS.twitter + '</button>' +
     '<button class="modal-share-btn modal-share-icon" onclick="' + call('linkedin') + '" aria-label="Share on LinkedIn"     title="LinkedIn">'     + SHARE_ICONS.linkedin + '</button>' +
+    '<button class="modal-share-btn modal-share-icon" onclick="' + call('email')    + '" aria-label="Share by Email"        title="Email">'        + SHARE_ICONS.email    + '</button>' +
     '<button class="modal-share-btn modal-share-icon" onclick="' + call('copy')     + '" aria-label="Copy link"             title="Copy link">'    + SHARE_ICONS.link     + '</button>' +
   '</div>';
 }
