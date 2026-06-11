@@ -1636,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11e</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11f</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -3676,12 +3676,13 @@ const BIOCOMMONS_SHORT_LINK = 'https://biocommonsghana.org';
 
 function buildShareUrl(item, kind) {
   const base = 'https://biocommonsghana.org/';
-  // Encode the whole kind:id pair (?share=job%3A3007). A readable colon looks
-  // nicer but messaging-app linkifiers (notably WhatsApp) can cut the clickable
-  // link AT the colon, so the tap arrives as ?share=job and the resolver can't
-  // act — landing the visitor on the homepage. %3A survives every linkifier and
-  // URLSearchParams decodes it back to ':' transparently on arrival.
-  return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
+  // Hash-based deep link (#share=job-3007): contains no query string and no
+  // percent-encoded characters, so LinkedIn's composer, WhatsApp's linkifier,
+  // and every other platform keep the FULL link intact. (Query-string links
+  // were getting stripped to the bare homepage by LinkedIn's prefill.)
+  // Scrapers ignore the fragment and fetch the homepage -> branded OG card;
+  // the fragment survives the tap and the resolver opens the exact listing.
+  return base + '#share=' + kind + '-' + (item.id || '');
 }
 
 function buildShareText(item, kind) {
@@ -3696,7 +3697,9 @@ function buildShareText(item, kind) {
   if (host)      txt += '\n🏛️ ' + host;
   if (eventDate && item.regDeadline) txt += '\n📅 ' + eventDate;   // workshops: show event date too
   if (applyBy)   txt += '\n⏰ Apply by: ' + applyBy;
-  txt += '\n\nFound on BioCommons Ghana — Open Science. Open Doors. Open Ghana. 🇬🇭';
+  // No flag emoji here: 🇬🇭 renders as the literal letters "GH" on Windows
+  // (same issue that made us use the flag-icons library on the site itself).
+  txt += '\n\nFound on BioCommons Ghana — Open Science. Open Doors. Open Ghana.';
   // Deep link back to THIS exact listing (?share=kind:id) so a tap on WhatsApp,
   // copy, or email lands on the opportunity itself, not the homepage. The
   // resolver (tryResolvePendingShare) opens the right section + modal on arrival.
@@ -4655,17 +4658,27 @@ function startDonation() {
 }
 
 
-// Share buttons generate URLs like ?share=scholarship:1004. On arrival, resolve
-// that param: jump to the right section and open the exact opportunity's modal.
-// Data loads asynchronously per-sheet, so we retry after each sheet lands and
-// give a graceful fallback if the listing no longer exists.
+// Share buttons generate hash deep links like #share=job-3007 (legacy links used
+// ?share=job:3007 — still supported so previously shared links keep working).
+// On arrival, resolve it: jump to the right section and open the exact
+// opportunity's modal. Data loads asynchronously per-sheet, so we retry after
+// each sheet lands and give a graceful fallback if the listing no longer exists.
 let _pendingShare = (function(){
   try {
-    const v = new URLSearchParams(location.search).get('share');
-    if (!v) return null;
-    const sep = v.indexOf(':');
-    if (sep < 1) return null;
-    return { kind: v.slice(0, sep), id: v.slice(sep + 1) };
+    // New form: #share=kind-id  (kind never contains '-'; id may)
+    const h = (location.hash || '').replace(/^#/, '');
+    if (h.indexOf('share=') === 0) {
+      const v = h.slice(6);
+      const sep = v.indexOf('-');
+      if (sep > 0) return { kind: v.slice(0, sep), id: v.slice(sep + 1) };
+    }
+    // Legacy form: ?share=kind:id
+    const q = new URLSearchParams(location.search).get('share');
+    if (q) {
+      const sep = q.indexOf(':');
+      if (sep > 0) return { kind: q.slice(0, sep), id: q.slice(sep + 1) };
+    }
+    return null;
   } catch(e) { return null; }
 })();
 
