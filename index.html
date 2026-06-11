@@ -1636,7 +1636,7 @@ body::after{
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11b</span></span>
+    <span class="footer-copy">© 2026 BioCommons Ghana · An F&amp;J Company Venture. Free, always. · <a href="javascript:void(0)" onclick="openPrivacy()" style="color:rgba(255,251,244,0.5);text-decoration:none;">Privacy Notice</a> <span style="opacity:0.35;font-size:11px;">· build 2026-06-11c</span></span>
     <span class="footer-gh"><span class="fi fi-gh" style="border-radius:2px;font-size:14px;vertical-align:middle;margin-right:4px;"></span> Made for Ghana</span>
   </div>
 </footer>
@@ -3682,10 +3682,12 @@ const BIOCOMMONS_SHORT_LINK = 'https://biocommonsghana.org';
 
 function buildShareUrl(item, kind) {
   const base = 'https://biocommonsghana.org/';
-  // Clean ?share=job:3007 form (colon left readable; only the id is encoded).
-  // URLSearchParams on arrival decodes correctly either way, but the readable
-  // colon makes the link look trustworthy when shared on WhatsApp.
-  return base + '?share=' + kind + ':' + encodeURIComponent(item.id || '');
+  // Encode the whole kind:id pair (?share=job%3A3007). A readable colon looks
+  // nicer but messaging-app linkifiers (notably WhatsApp) can cut the clickable
+  // link AT the colon, so the tap arrives as ?share=job and the resolver can't
+  // act — landing the visitor on the homepage. %3A survives every linkifier and
+  // URLSearchParams decodes it back to ':' transparently on arrival.
+  return base + '?share=' + encodeURIComponent(kind + ':' + (item.id || ''));
 }
 
 function buildShareText(item, kind) {
@@ -3731,15 +3733,14 @@ function shareVia(platform, kind, id, e) {
   const item = items.find(x => String(x.id) === String(id));
   if (!item) return;
 
-  const appLink = item.link && item.link !== '#' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(item.link) ? item.link : '';
   const text = buildShareText(item, kind);
-  // Append application link only if it's a real URL different from the BioCommons short link
-  const fullText = appLink ? text + '\n\nApply here: ' + appLink : text;
-  const encodedUrl  = encodeURIComponent(appLink || BIOCOMMONS_SHORT_LINK);
+  // No direct application link in shares — the BioCommons deep link inside the
+  // text is the single destination. Visitors land on the exact listing and
+  // apply from there, keeping the site in the loop on every share.
+  const fullText = text;
   // LinkedIn (and Twitter) build their preview card from the shared URL. Always
   // point those at BioCommons so the preview shows OUR branded OG card — not the
-  // external apply page (e.g. crid-cam.com). The apply link still rides along in
-  // the post text for platforms that display it.
+  // external apply page (e.g. crid-cam.com).
   const encodedBioUrl = encodeURIComponent(buildShareUrl(item, kind));
   const encodedText = encodeURIComponent(fullText);
 
